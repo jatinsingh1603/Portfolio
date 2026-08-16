@@ -1,7 +1,7 @@
 import type { Stage } from "@/components/pipeline-diagram";
 
 /**
- * Each diagram is the project's own pipeline, transcribed. Nothing here is
+ * Each diagram is the project’s own pipeline, transcribed. Nothing here is
  * invented for visual effect — if a stage is not described in content/projects.ts
  * it does not appear.
  */

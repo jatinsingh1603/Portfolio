@@ -46,10 +46,21 @@ describe("content integrity", () => {
   });
 
   it("never exposes a withheld finding through the public list", () => {
-    // The §4.6 governance gate. If this fails, legally sensitive content is
-    // about to ship.
+    // The §4.6 governance gate. If this fails, content someone decided to
+    // withhold is about to ship.
     for (const f of publicFindings) expect(f.disclosure.public).toBe(true);
-    expect(publicFindings.length).toBeLessThan(findings.length);
+    expect(publicFindings).toHaveLength(
+      findings.filter((f) => f.disclosure.public).length,
+    );
+  });
+
+  it("states a disclosure basis for every published finding", () => {
+    // Publishing a vendor's name requires a reason you are allowed to: the
+    // programme permits it, the vendor approved it, or it is already public.
+    for (const f of publicFindings) {
+      if (!f.disclosure.public) continue;
+      expect(f.disclosure.basis).toBeDefined();
+    }
   });
 
   it("gives every withheld finding a recorded reason", () => {

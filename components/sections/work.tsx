@@ -29,7 +29,7 @@ export function Work() {
 
           return (
             <Container width="wide" key={project.slug}>
-              <Reveal className="grid items-start gap-12 lg:grid-cols-12">
+              <Reveal className="grid gap-12 lg:grid-cols-12">
                 <div className={`lg:col-span-6 ${flip ? "lg:order-2" : ""}`}>
                   <p className="t-mono text-[var(--text-tertiary)]">
                     {project.stack.join(" · ")}
@@ -90,7 +90,7 @@ export function Work() {
 
                 {diagram ? (
                   <div
-                    className={`rounded-[var(--radius-surface)] border border-[var(--border)] bg-[var(--bg-subtle)] p-8 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
+                    className={`flex h-full flex-col justify-center rounded-[var(--radius-surface)] border border-[var(--border)] bg-[var(--bg-subtle)] p-8 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
                   >
                     <PipelineDiagram
                       title={diagram.title}

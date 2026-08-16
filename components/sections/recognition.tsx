@@ -12,8 +12,7 @@ export function Recognition() {
       className="py-[var(--section-y)]"
     >
       <Container width="wide">
-        <p className="t-caption">Recognition &amp; competition</p>
-        <h2 id="recognition-heading" className="t-h2 mt-3">
+        <h2 id="recognition-heading" className="t-h2">
           Judged against other teams, three times.
         </h2>
 

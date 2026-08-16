@@ -24,12 +24,15 @@ export function Capabilities() {
       className="border-y border-[var(--border)] bg-[var(--bg-subtle)] py-[var(--section-y)]"
     >
       <Container width="wide">
-        <p className="t-caption">Capabilities</p>
-        <h2 id="capabilities-heading" className="t-h2 mt-3">
+        {/* No eyebrow here: "Capabilities" above "What I actually work with."
+            labels the same thing twice, and every section carrying the same
+            eyebrow-then-heading pair is what makes a long page read as a
+            template rather than a document. */}
+        <h2 id="capabilities-heading" className="t-h2">
           What I actually work with.
         </h2>
 
-        <div className="mt-12 grid gap-6 lg:grid-cols-12">
+        <div className="mt-12 grid items-start gap-6 lg:grid-cols-12">
           {capabilities.map((group, index) => (
             <Reveal
               key={group.label}

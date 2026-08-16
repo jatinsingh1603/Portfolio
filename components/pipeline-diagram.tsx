@@ -6,12 +6,15 @@ export type Stage = {
   gate?: boolean;
 };
 
-const NODE_H = 44;
-const GAP = 18;
-const PAD = 12;
-const WIDTH = 620;
-const NODE_W = 210;
-const NOTE_X = 226;
+/* The panel renders ~500px wide, so a 620-unit viewBox scales SVG text down by
+   ~20%. Every size here is set in viewBox units chosen so the smallest rendered
+   glyph still lands at ~12px on screen — the same floor as the caption style. */
+const NODE_H = 46;
+const GAP = 16;
+const PAD = 10;
+const WIDTH = 560;
+const NODE_W = 196;
+const NOTE_X = 212;
 
 /**
  * A real artifact, generated from each project's own pipeline description —
@@ -63,7 +66,7 @@ export function PipelineDiagram({
               <text
                 x={14}
                 y={y + NODE_H / 2 + 4}
-                fontSize={11}
+                fontSize={12}
                 fontWeight={500}
                 fill={stage.gate ? "var(--accent)" : "var(--text)"}
                 fontFamily="var(--font-geist-mono), monospace"
@@ -73,7 +76,8 @@ export function PipelineDiagram({
               <text
                 x={40}
                 y={y + NODE_H / 2 + 4}
-                fontSize={12}
+                fontSize={14}
+                fontWeight={500}
                 fill={stage.gate ? "var(--accent)" : "var(--text)"}
               >
                 {stage.label}
@@ -83,7 +87,7 @@ export function PipelineDiagram({
                 <text
                   x={NOTE_X}
                   y={y + NODE_H / 2 + 4}
-                  fontSize={12}
+                  fontSize={13}
                   fill="var(--text-secondary)"
                 >
                   {stage.note}

@@ -3,8 +3,8 @@ import { z } from "zod";
 /**
  * Every fact on this site is validated against these schemas by a Vitest test,
  * so a malformed or half-written content entry fails the build rather than
- * shipping. This matters more than usual here: the site's entire premise is
- * that a security researcher's public claims are accurate.
+ * shipping. This matters more than usual here: the site’s entire premise is
+ * that a security researcher’s public claims are accurate.
  */
 
 export const severitySchema = z.enum([
@@ -19,7 +19,7 @@ export type Severity = z.infer<typeof severitySchema>;
 /**
  * §4.6 governance gate. A finding is rendered only when `public` is true, and
  * a public finding must state the basis on which it may be disclosed — a
- * program's own rules, written vendor approval, or an existing public
+ * program’s own rules, written vendor approval, or an existing public
  * acknowledgement. Withheld findings must carry a reason so the decision is
  * recorded in the repo rather than lost in a chat log.
  */

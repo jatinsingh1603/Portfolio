@@ -22,7 +22,7 @@ export const projects: Project[] = [
       {
         label: "Cyber due diligence scanner",
         detail:
-          "Automated external assessment across 20+ parameters — SSL/TLS, SPF, DKIM, DMARC, security headers, vulnerability baseline, open ports, exposed services — producing evidence independent of vendor self-attestation.",
+          "Automated external assessment across 20+ parameters: SSL/TLS, SPF, DKIM, DMARC, security headers, vulnerability baseline, open ports and exposed services. The result is evidence independent of vendor self-attestation.",
       },
       {
         label: "Due diligence workflow",
@@ -82,7 +82,7 @@ export const projects: Project[] = [
       {
         label: "Safety enforced by structure, not by prompting",
         detail:
-          "A scope.yaml with authorised: false by default gates every packet-sending stage. Detection-only by design — it confirms weaknesses and refuses exploitation. A hash-chained append-only audit log with secret redaction, five enforcement hooks, scope enforcement and target-output isolation.",
+          "A scope.yaml with authorised: false by default gates every packet-sending stage. Detection-only by design: it confirms weaknesses and refuses exploitation. A hash-chained append-only audit log with secret redaction, five enforcement hooks, scope enforcement and target-output isolation.",
       },
       {
         label: "Planning instead of enumeration",
@@ -92,12 +92,12 @@ export const projects: Project[] = [
       {
         label: "Validation instead of assertion",
         detail:
-          "Control-contrast plus N-of-M reproduction behind a ≥3/5 gate, so a finding is evidence rather than a model's claim.",
+          "Control-contrast plus N-of-M reproduction behind a ≥3/5 gate, so a finding is evidence rather than a model’s claim.",
       },
       {
         label: "Termination instead of completion",
         detail:
-          "A coverage ledger over resolved hypotheses decides when testing is done — an 11-stage DAG with convergence-bounded discovery loops, and zero-packet passive phases that run before any authorisation gate.",
+          "A coverage ledger over resolved hypotheses decides when testing is done. Eleven stages run as a DAG with convergence-bounded discovery loops, and the zero-packet passive phases run before any authorisation gate.",
       },
     ],
     repo: "https://github.com/swiftsaneai/swiftPentest",

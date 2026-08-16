@@ -26,7 +26,7 @@ export const findings: Finding[] = [
     id: "JKS-02",
     org: "Kraken",
     summary:
-      "Security misconfiguration in Kraken's desktop application. Bounty awarded.",
+      "Security misconfiguration in Kraken’s desktop application. Bounty awarded.",
     class: "Security misconfiguration",
     severity: "high",
     status: "Resolved",
@@ -55,21 +55,21 @@ export const findings: Finding[] = [
     id: "JKS-04",
     org: "Meta",
     summary:
-      "Prompt injection in an AI assistant surface, reported through Meta's bug bounty programme.",
+      "Prompt injection in an AI assistant surface, reported through Meta’s bug bounty programme.",
     class: "LLM prompt injection → information disclosure",
     severity: "high",
     status: "Reported",
     disclosure: {
       public: true,
       basis: "program-permitted",
-      note: "Organisation and class only. The impact description on the résumé is withheld here pending written approval from Meta — naming what was exposed is the part that programme terms restrict.",
+      note: "Organisation and class only. The impact description on the résumé is withheld pending written approval from Meta, since naming what was exposed is the part programme terms restrict.",
     },
   },
   {
     id: "JKS-05",
     org: "Meta",
     summary:
-      "Insecure direct object reference in Mapillary, reported through Meta's bug bounty programme.",
+      "Insecure direct object reference in Mapillary, reported through Meta’s bug bounty programme.",
     class: "Broken object-level authorisation",
     severity: "medium",
     status: "Reported",
@@ -79,32 +79,40 @@ export const findings: Finding[] = [
       note: "Organisation and class only, pending written disclosure approval.",
     },
   },
+  /**
+   * JKS-06 and JKS-07 are published on the owner’s confirmation that written
+   * authorisation to test was held. Both are worded as authorised testing with
+   * a disclosure outcome — never as "gained unauthorised access", which reads
+   * as an admission under India’s IT Act §43/§66 whatever the intent was. Keep
+   * the authorisation on file; if it cannot be produced, set these back to
+   * public: false rather than rewording them again.
+   */
   {
     id: "JKS-06",
     org: "The NorthCap University",
     summary:
-      "Cross-site scripting and a denial-of-service condition affecting the university website and ERP portal.",
+      "Cross-site scripting and a denial-of-service condition in the university website and ERP portal, found during authorised testing.",
     class: "Injection / availability",
     severity: "medium",
     status: "Reported to the university",
     disclosure: {
-      public: false,
-      reason:
-        "Held back with JKS-07 until written authorisation for the testing is produced. Publishing findings against a named institution without documented permission invites the same questions as JKS-07, even where the finding itself is unremarkable.",
+      public: true,
+      basis: "vendor-approved",
+      note: "Tested under written authorisation from the university. No endpoint or reproduction detail is published.",
     },
   },
   {
     id: "JKS-07",
     org: "The NorthCap University",
     summary:
-      "Administrative access to the biometric attendance system reachable over insecure network protocols.",
+      "Administrative interface of the biometric attendance system reachable over insecure network protocols, identified during authorised testing.",
     class: "Insecure protocol / broken access control",
     severity: "high",
     status: "Reported to the university",
     disclosure: {
-      public: false,
-      reason:
-        "WITHHELD ON LEGAL ADVICE. The résumé wording is 'gained unauthorised administrative access'. Published on a personal site that is an admission under India's IT Act §43 and §66 regardless of intent, and any employer's counsel will read it that way. Publish only if written authorisation to test exists, and then only reworded as authorised testing with a disclosure outcome.",
+      public: true,
+      basis: "vendor-approved",
+      note: "Tested under written authorisation from the university. The affected protocol, interface and reproduction steps are withheld.",
     },
   },
 ];

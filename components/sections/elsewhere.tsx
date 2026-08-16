@@ -15,9 +15,8 @@ export function Elsewhere() {
       className="border-t border-[var(--border)] py-[var(--section-y)]"
     >
       <Container width="wide">
-        <p className="t-caption">Elsewhere</p>
-        <h2 id="elsewhere-heading" className="t-h2 mt-3">
-          Profiles.
+        <h2 id="elsewhere-heading" className="t-h2">
+          Elsewhere
         </h2>
 
         <ul className="mt-10">

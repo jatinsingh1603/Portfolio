@@ -164,12 +164,15 @@ body {
   letter-spacing: -0.035em;
 }
 .t-h1 {
+  text-wrap: balance;
   font-size: clamp(2rem, 4.5vw, 3.5rem);
   font-weight: 600;
   line-height: 1.08;
   letter-spacing: -0.028em;
 }
 .t-h2 {
+  /* Evens out the last line rather than leaving one orphaned word. */
+  text-wrap: balance;
   font-size: clamp(1.625rem, 3vw, 2.5rem);
   font-weight: 600;
   line-height: 1.12;
@@ -301,15 +304,5 @@ body {
   to {
     opacity: 1;
     transform: none;
-  }
-}
-
-/* Hero: one opacity fade of the whole block. No per-word stagger. */
-@keyframes hero-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
   }
 }

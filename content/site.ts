@@ -29,14 +29,23 @@ export const identity = {
 } as const;
 
 export const positioning = {
-  /** Hero claim. Declarative, not a slogan. */
-  headline:
-    "I break application security controls, then automate the work of proving they're fixed.",
+  /**
+   * Two beats, six words. Display type at 80px turns anything longer into a
+   * wall that pushes the calls to action off a phone’s first screen — the full
+   * claim lives in the intro below instead.
+   */
+  headline: "Break the control. Prove the fix.",
+  /**
+   * Rendered as explicit lines. Left to the measure, the wrap lands after
+   * "Prove" and splits a sentence across two lines — a designer would never
+   * let that ship, and no max-width holds it correctly at every viewport.
+   */
+  headlineLines: ["Break the control.", "Prove the fix."],
   intro:
-    "Information Security Analyst working across application security, red teaming and VAPT — and building the automation that turns vendor risk and regulatory compliance from a manual review into a repeatable pipeline.",
+    "I test application security controls, then build the automation that proves they\u2019re actually fixed. VAPT, red teaming, vendor risk and SEBI CSCRF.",
   /** Long form, used on /resume and in the llms.txt summary. */
   statement:
-    "Cybersecurity professional specialising in application security and AI-driven automation. CRTP — Certified Red Team Professional (Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).",
+    "Cybersecurity professional specialising in application security and AI-driven automation. CRTP (Certified Red Team Professional, Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).",
 } as const;
 
 export const nav = [
@@ -72,14 +81,14 @@ export const recognitions = [
   {
     org: "Meta",
     detail:
-      "Two reports accepted through Meta's bug bounty programme, including one against Mapillary.",
+      "Two reports accepted through Meta’s bug bounty programme, including one against Mapillary.",
   },
   {
     org: "Kraken",
     detail:
-      "Awarded a $500 bounty for a misconfiguration in Kraken's desktop application.",
+      "Awarded a $500 bounty for a misconfiguration in Kraken’s desktop application.",
   },
 ] as const;
 
 export const disclosurePolicy =
-  "All findings on this page were reported through the vendor's official channel or a national CERT. Technical details are withheld where a program's terms require it or where a fix is not yet confirmed deployed.";
+  "All findings on this page were reported through the vendor’s official channel or a national CERT. Technical details are withheld where a program’s terms require it or where a fix is not yet confirmed deployed.";

@@ -26,7 +26,7 @@ export const roles: Role[] = [
       {
         label: "AI merchant risk tool",
         detail:
-          "Built an automated merchant onboarding system in n8n for an Indian fintech bank, replacing manual due diligence with automated checks and approvals — faster decisions, less analyst load.",
+          "Built an automated merchant onboarding system in n8n for an Indian fintech bank, replacing manual due diligence with automated checks and approvals, so decisions land faster with less analyst load.",
       },
       {
         label: "GRC assessments",

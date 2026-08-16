@@ -1,6 +1,6 @@
 # Jatin Kumar Singh
 
-> Information Security Analyst based in Delhi, India. Cybersecurity professional specialising in application security and AI-driven automation. CRTP — Certified Red Team Professional (Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).
+> Information Security Analyst based in Delhi, India. Cybersecurity professional specialising in application security and AI-driven automation. CRTP (Certified Red Team Professional, Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).
 
 ## Contact
 - Email: singhjatin1603@gmail.com

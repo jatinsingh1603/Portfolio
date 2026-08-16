@@ -19,9 +19,10 @@ export function Hero() {
     <section
       aria-labelledby="hero-heading"
       /* 88vh, not 100vh: the fold should promise a next section, not hide it. */
+      /* No entrance animation. A fade here costs its own duration in LCP,
+         because Chrome will not count text as painted while it is transparent —
+         and the hero is the largest contentful paint on every viewport. */
       className="flex min-h-[88vh] items-center py-24"
-      /* The single opacity fade named in §5.1 — nothing else moves on load. */
-      style={{ animation: "hero-in var(--dur-base) var(--ease-out-soft)" }}
     >
       <Container width="wide">
         <div
@@ -36,8 +37,12 @@ export function Hero() {
               {identity.title} · {identity.location}
             </p>
 
-            <h1 id="hero-heading" className="t-display mt-5 max-w-[16ch]">
-              {positioning.headline}
+            <h1 id="hero-heading" className="t-display mt-5">
+              {positioning.headlineLines.map((line) => (
+                <span key={line} className="block">
+                  {line}
+                </span>
+              ))}
             </h1>
 
             <p className="t-intro mt-7">{positioning.intro}</p>
