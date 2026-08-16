@@ -1,0 +1,8 @@
+# Security policy for https://jatinkumarsingh.com
+# RFC 9116
+
+Contact: mailto:singhjatin1603@gmail.com
+Expires: 2027-08-16T19:41:21Z
+Preferred-Languages: en, hi
+Canonical: https://jatinkumarsingh.com/.well-known/security.txt
+Policy: https://jatinkumarsingh.com/security

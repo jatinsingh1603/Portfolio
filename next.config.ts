@@ -1,18 +1,33 @@
-import { createHash } from "node:crypto";
 import createMDX from "@next/mdx";
 import type { NextConfig } from "next";
-import { THEME_SCRIPT } from "./lib/theme-script";
 
 /**
- * The pre-paint theme script is the only inline script on the site. Hashing it
- * lets `script-src` stay at `'self'` + this hash — no `'unsafe-inline'`, and no
- * nonce (a nonce would force dynamic rendering and lose static generation).
+ * script-src: why 'unsafe-inline' and not a hash or nonce.
+ *
+ * The App Router streams its RSC payload through ~46 inline
+ * `self.__next_f.push(...)` scripts per route. Three approaches were measured:
+ *
+ *  1. Hash every inline script. Works in principle — the pages are static, so
+ *     the scripts are deterministic — but it means ~2.4 KB of hashes in the
+ *     header per route, regenerated on every build, and a silent loss of all
+ *     interactivity the moment one drifts. Also fatal here: CSP *ignores*
+ *     'unsafe-inline' whenever a hash is present, so a partial hash list is
+ *     worse than none. This was tried; it broke hydration outright.
+ *  2. Per-request nonce via middleware. Next's documented route, but it forces
+ *     dynamic rendering on every route and gives up static generation, which
+ *     is what buys the LCP budget.
+ *  3. 'unsafe-inline'. Accepted.
+ *
+ * The risk this concedes is bounded: every byte of content on this site is a
+ * compile-time constant. There is no user input, no query-param reflection, no
+ * CMS, no third-party script, and no authenticated surface — so there is no
+ * injection path for an attacker to reach the inline allowance with. The
+ * directives that do real work here are still strict: no external script host
+ * can execute, object-src is none, base-uri is locked, and framing is denied.
  */
-const themeScriptHash = `'sha256-${createHash("sha256").update(THEME_SCRIPT).digest("base64")}'`;
-
 const csp = [
   "default-src 'self'",
-  `script-src 'self' ${themeScriptHash}`,
+  "script-src 'self' 'unsafe-inline'",
   // Next inlines critical CSS and React sets style attributes during hydration.
   // Documented tradeoff: removing this requires a nonce, which requires dynamic
   // rendering, which costs more LCP than 'unsafe-inline' costs in risk here

@@ -1,0 +1,10 @@
+/* TEAM */
+Information Security Analyst: Jatin Kumar Singh
+Contact: singhjatin1603@gmail.com
+Location: Delhi, India
+
+/* SITE */
+Standards: HTML5, CSS, WCAG 2.2 AA
+Components: Next.js, React, TypeScript, Tailwind CSS
+Analytics: none
+Cookies: none

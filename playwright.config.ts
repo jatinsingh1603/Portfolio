@@ -6,11 +6,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? "github" : "list",
-  use: { baseURL: "http://127.0.0.1:3000", trace: "on-first-retry" },
+  use: { baseURL: "http://127.0.0.1:3100", trace: "on-first-retry" },
   projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
   webServer: {
-    command: "npm run start",
-    url: "http://127.0.0.1:3000",
+    // Port 3100, not 3000: `npm run dev` is usually running while these tests
+    // are, and a port clash reads as a mystery test failure.
+    command: "npm run start -- -p 3100",
+    url: "http://127.0.0.1:3100",
     reuseExistingServer: !process.env.CI,
     timeout: 120_000,
   },

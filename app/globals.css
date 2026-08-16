@@ -13,12 +13,22 @@
   --bg-subtle: #f5f5f7; /* Apple's section wash */
   --surface: #fbfbfd;
   --text: #1d1d1f;
-  --text-secondary: #6e6e73;
-  --text-tertiary: #86868b;
+  /* Apple ships #6e6e73/#86868b as its secondary/tertiary greys, but #86868b
+     is 3.33:1 on the #f5f5f7 wash — a fail at our 13px caption size. The scale
+     is shifted down one step instead of dropped: #6e6e73 becomes tertiary
+     (4.66:1) and secondary darkens, which keeps three visibly distinct levels
+     and clears 4.5:1 on both grounds. Verified in tests/unit/contrast.test.ts. */
+  --text-secondary: #55555a;
+  --text-tertiary: #6e6e73;
   --border: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.16);
   --accent: #0066cc;
   --accent-hover: #0055aa;
+  /* Foreground for text sitting ON an accent fill. Light mode's accent is dark
+     enough for white (5.57:1); dark mode's is deliberately bright so links
+     stay legible on black, which makes white-on-accent fail at 3.01:1 — so the
+     filled button flips to near-black text there instead of dimming the accent. */
+  --accent-on: #ffffff;
   --focus: #0066cc;
 
   /* Severity — the only additional hues on the site. Used as 1px border +
@@ -45,6 +55,7 @@
   --border-strong: rgba(255, 255, 255, 0.2);
   --accent: #2997ff; /* raised luminance so it still clears 4.5:1 on #000 */
   --accent-hover: #5aaeff;
+  --accent-on: #1d1d1f; /* 5.58:1 on the accent fill */
   --focus: #2997ff;
 
   /* Severity hues re-tuned for a dark ground; same semantic order. */
@@ -70,6 +81,7 @@
   --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
+  --color-accent-on: var(--accent-on);
   --color-focus: var(--focus);
 
   --color-critical: var(--sev-critical);
@@ -204,6 +216,18 @@ body {
   letter-spacing: -0.01em;
 }
 
+/* An inline link inside a paragraph cannot be distinguished by colour alone
+   (WCAG 1.4.1): the accent is only 1.33:1 against secondary body grey. Prose
+   links are underlined always; standalone links in lists and nav are not, since
+   there is no surrounding text to be confused with. */
+.t-body a,
+.t-small a,
+.t-intro a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+
 /* ── Focus ─────────────────────────────────────────────────────────────── */
 :focus-visible {
   outline: 2px solid var(--focus);
@@ -239,5 +263,53 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+}
+
+/* ── Reveal ───────────────────────────────────────────────────────────────
+   Paired with components/reveal.tsx. Kept in CSS so the transition runs on the
+   compositor and costs no JavaScript beyond the observer itself. */
+[data-reveal] {
+  transition:
+    opacity var(--dur-base) var(--ease-out-soft),
+    transform var(--dur-base) var(--ease-out-soft);
+}
+[data-reveal="out"] {
+  opacity: 0;
+  transform: translateY(12px);
+}
+[data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Server-rendered HTML must be readable before hydration and for anyone with
+   JS disabled — without this, a no-JS visitor sees a blank page. */
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* Mobile nav sheet: fade + 8px settle, no hamburger theatrics. */
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero: one opacity fade of the whole block. No per-word stagger. */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

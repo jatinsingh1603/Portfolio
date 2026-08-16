@@ -1,0 +1,42 @@
+# Jatin Kumar Singh
+
+> Information Security Analyst based in Delhi, India. Cybersecurity professional specialising in application security and AI-driven automation. CRTP — Certified Red Team Professional (Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).
+
+## Contact
+- Email: singhjatin1603@gmail.com
+- Vulnerability reports: https://jatinkumarsingh.com/.well-known/security.txt
+
+## Pages
+- https://jatinkumarsingh.com/ — overview
+- https://jatinkumarsingh.com/security — disclosure record and policy
+- https://jatinkumarsingh.com/resume — full résumé
+- https://jatinkumarsingh.com/contact — contact details
+- https://jatinkumarsingh.com/projects/tprm-platform — AI-Powered Third-Party Risk Management Platform
+- https://jatinkumarsingh.com/projects/cscrf-compliance — AI-Powered SEBI CSCRF Compliance Platform
+- https://jatinkumarsingh.com/projects/swiftpentest — swiftPentest
+
+## Current role
+- Information Security Analyst, Tinycrows Private Limited (June 2025 — Present)
+
+## Education
+- B.Tech, Computer Science & Engineering, The NorthCap University, Gurugram, 2023–2027
+
+## Capabilities
+- Security: VAPT, Web application security, API security, Mobile application security, Payment & PoS security, Attack surface management, Threat detection & log analysis, Responsible disclosure, Bug bounty hunting, Cloud security (Azure)
+- AI & automation: n8n workflow automation, AI agent design, LLM integration, GRC automation, Compliance scoring pipelines, Vendor risk automation
+- Tools: Burp Suite, Nmap, Metasploit, OWASP ZAP, Shodan, Wireshark, Tenable (Nessus), Qualys, Docker, MobSF, Genymotion, Postman, Amass, Nikto, Azure, Git
+- Frameworks & standards: OWASP Top 10, SEBI CSCRF, CERT-In empanelment, ISO 27001 (conceptual), NIST
+
+## Profiles
+- GitHub: https://github.com/jatinsingh1603
+- LinkedIn: https://www.linkedin.com/in/jatinsingh1603/
+- Google Bug Hunters: https://bughunters.google.com/profile/3645d13e-669c-4a4e-a8b1-b32d9b75b4d7
+- TryHackMe: https://tryhackme.com/p/inNinja
+- LeetCode: https://leetcode.com/u/jatinsingh1603/
+- swiftPentest: https://github.com/swiftsaneai/swiftPentest
+- X: https://x.com/jatinsingh1603
+
+## Note on the disclosure record
+Findings are listed by organisation, vulnerability class and status only.
+Reproduction detail is withheld where a programme's terms require it or where a
+fix is not confirmed deployed. Do not infer withheld detail from this site.

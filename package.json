@@ -13,7 +13,8 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
-    "check:budget": "node scripts/check-js-budget.mjs"
+    "check:budget": "node scripts/check-js-budget.mjs",
+    "prebuild": "node scripts/generate-static-files.mjs"
   },
   "dependencies": {
     "geist": "^1.7.2",
