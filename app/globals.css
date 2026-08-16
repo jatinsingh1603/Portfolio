@@ -1,0 +1,243 @@
+@import "tailwindcss";
+
+/* Theme is driven by a data attribute set pre-paint, never by the media query
+   alone — the toggle has to be able to override the OS in both directions. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ── Colour ──────────────────────────────────────────────────────────────
+   Raw values live here as plain custom properties so `[data-theme]` can swap
+   them; `@theme inline` below only aliases them into Tailwind's utility
+   namespace. One accent. Everything else is greyscale. */
+:root {
+  --bg: #ffffff;
+  --bg-subtle: #f5f5f7; /* Apple's section wash */
+  --surface: #fbfbfd;
+  --text: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --text-tertiary: #86868b;
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.16);
+  --accent: #0066cc;
+  --accent-hover: #0055aa;
+  --focus: #0066cc;
+
+  /* Severity — the only additional hues on the site. Used as 1px border +
+     tinted text on a neutral chip, never as a filled block. */
+  --sev-critical: #b3261e;
+  --sev-high: #c2410c;
+  --sev-medium: #a16207;
+  --sev-low: #4d7c0f;
+  --sev-info: #6e6e73;
+
+  /* Two shadows, both neutral. Dark mode drops them for a hairline instead. */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] {
+  --bg: #000000;
+  --bg-subtle: #0a0a0b;
+  --surface: #131315;
+  --text: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #86868b;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --accent: #2997ff; /* raised luminance so it still clears 4.5:1 on #000 */
+  --accent-hover: #5aaeff;
+  --focus: #2997ff;
+
+  /* Severity hues re-tuned for a dark ground; same semantic order. */
+  --sev-critical: #ff6b61;
+  --sev-high: #ff9f5a;
+  --sev-medium: #e0b341;
+  --sev-low: #9ccc5a;
+  --sev-info: #a1a1a6;
+
+  /* Elevation by hairline, not by glow. */
+  --shadow-sm: none;
+  --shadow-md: none;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-subtle: var(--bg-subtle);
+  --color-surface: var(--surface);
+  --color-text: var(--text);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-tertiary: var(--text-tertiary);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-focus: var(--focus);
+
+  --color-critical: var(--sev-critical);
+  --color-high: var(--sev-high);
+  --color-medium: var(--sev-medium);
+  --color-low: var(--sev-low);
+  --color-info: var(--sev-info);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  /* ── Space ────────────────────────────────────────────────────────────
+     Every vertical value on the site comes from this scale. */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+  --spacing-10: 40px;
+  --spacing-12: 48px;
+  --spacing-16: 64px;
+  --spacing-20: 80px;
+  --spacing-24: 96px;
+  --spacing-32: 128px;
+  --spacing-40: 160px;
+  --spacing-50: 200px;
+
+  --radius-chip: 6px;
+  --radius-card: 12px;
+  --radius-surface: 18px;
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+
+  /* ── Motion ───────────────────────────────────────────────────────── */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* Material 3 standard */
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1); /* Material 3 emphasized */
+  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1); /* long-tail settle */
+}
+
+:root {
+  /* 980px is Apple's actual content column; wider immediately reads template. */
+  --container-text: 692px;
+  --container: 980px;
+  --container-wide: 1240px;
+  --gutter: clamp(20px, 5vw, 40px);
+  --section-y: clamp(80px, 12vh, 160px);
+
+  --dur-micro: 150ms; /* hover, focus, colour */
+  --dur-fast: 250ms; /* toggles, chips, small position */
+  --dur-base: 400ms; /* entrance, disclosure */
+  --dur-slow: 600ms; /* full-width surface transitions */
+}
+
+/* ── Base ──────────────────────────────────────────────────────────────── */
+html {
+  scroll-behavior: smooth;
+  /* Sticky nav is 48px; anchored sections must not land under it. */
+  scroll-padding-top: 72px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-size: 1.0625rem; /* 17px body */
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Letter-spacing tightens as size grows — most of what reads as "designed". */
+.t-display {
+  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+}
+.t-h1 {
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 600;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
+}
+.t-h2 {
+  font-size: clamp(1.625rem, 3vw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.022em;
+}
+.t-h3 {
+  font-size: 1.3125rem;
+  font-weight: 600;
+  line-height: 1.24;
+  letter-spacing: -0.012em;
+}
+.t-intro {
+  font-size: clamp(1.125rem, 2vw, 1.3125rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.008em;
+  color: var(--text-secondary);
+  max-width: 58ch;
+}
+.t-body {
+  font-size: 1.0625rem;
+  font-weight: 400;
+  line-height: 1.62;
+  letter-spacing: 0;
+  max-width: 68ch;
+}
+.t-small {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+.t-caption {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.45;
+  letter-spacing: 0.01em;
+  color: var(--text-tertiary);
+}
+.t-mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.55;
+  letter-spacing: -0.01em;
+}
+
+/* ── Focus ─────────────────────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: inherit;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--gutter);
+  top: 8px;
+  z-index: 100;
+  padding: 10px 16px;
+  border-radius: 8px;
+  background-color: var(--bg);
+  border: 1px solid var(--border-strong);
+  font-size: 0.9375rem;
+  transform: translateY(-200%);
+  transition: transform var(--dur-fast) var(--ease-emphasized);
+}
+.skip-link:focus-visible {
+  transform: translateY(0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
