@@ -56,7 +56,7 @@ export function Research() {
               {publicFindings.map((finding) => (
                 <tr
                   key={finding.id}
-                  className="border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_3%,transparent)]"
+                  className="relative border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_4%,transparent)]"
                 >
                   <th
                     scope="row"
@@ -68,7 +68,10 @@ export function Research() {
                     {finding.slug ? (
                       <Link
                         href={`/security/${finding.slug}`}
-                        className="text-[var(--accent)] underline-offset-4 hover:underline"
+                        /* The anchor covers the row via ::after, so the whole
+                           row is the target while the accessible name stays
+                           just the organisation. */
+                        className="after:absolute after:inset-0 after:content-['']"
                       >
                         {finding.org}
                       </Link>

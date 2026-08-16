@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Chip, Container } from "@/components/primitives";
 import { publicFindings, withheldCount } from "@/content/findings";
 import { disclosurePolicy, identity } from "@/content/site";
@@ -54,7 +55,7 @@ export default function SecurityPage() {
               {publicFindings.map((finding) => (
                 <tr
                   key={finding.id}
-                  className="border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_3%,transparent)]"
+                  className="relative border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_4%,transparent)]"
                 >
                   <th
                     scope="row"
@@ -63,7 +64,16 @@ export default function SecurityPage() {
                     {finding.id}
                   </th>
                   <td className="py-6 pr-6 align-top font-medium whitespace-nowrap">
-                    {finding.org}
+                    {finding.slug ? (
+                      <Link
+                        href={`/security/${finding.slug}`}
+                        className="after:absolute after:inset-0 after:content-['']"
+                      >
+                        {finding.org}
+                      </Link>
+                    ) : (
+                      finding.org
+                    )}
                   </td>
                   <td className="max-w-[46ch] py-6 pr-6 align-top">
                     <p className="t-small">{finding.summary}</p>

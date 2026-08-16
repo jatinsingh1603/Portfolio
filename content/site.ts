@@ -41,6 +41,18 @@ export const positioning = {
    * let that ship, and no max-width holds it correctly at every viewport.
    */
   headlineLines: ["Break the control.", "Prove the fix."],
+  /**
+   * The rotating half of the headline. These are the four control types behind
+   * findings that appear further down this page: session management (JKS-03),
+   * object-level authorisation (JKS-05) and access control (JKS-07). Not a
+   * list of job titles.
+   *
+   * Two constraints on this list: every word is within one character of the
+   * others (the slot reserves the width of the longest, so an outlier leaves
+   * visible slack in a centred headline), and the canonical word is last
+   * because the rotation stops there rather than looping.
+   */
+  headlineRotating: ["session", "boundary", "control"],
   intro:
     "I test application security controls, then build the automation that proves they\u2019re actually fixed. VAPT, red teaming, vendor risk and SEBI CSCRF.",
   /** Long form, used on /resume and in the llms.txt summary. */

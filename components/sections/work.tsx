@@ -36,82 +36,87 @@ export function Work() {
 
           return (
             <Container width="wide" key={project.slug}>
-              <Reveal className="grid gap-12 lg:grid-cols-12">
-                <div
-                  className={`min-w-0 lg:col-span-6 ${flip ? "lg:order-2" : ""}`}
-                >
-                  <p className="t-mono text-[var(--text-tertiary)]">
-                    {project.stack.join(" · ")}
-                  </p>
-                  <h3 className="t-h2 mt-4">{project.name}</h3>
-
-                  <div className="mt-4 flex flex-wrap items-center gap-2">
-                    <Chip>{project.role}</Chip>
-                    {project.license ? <Chip>{project.license}</Chip> : null}
-                  </div>
-
-                  <p className="t-body mt-6 text-[var(--text-secondary)]">
-                    {project.summary}
-                  </p>
-
-                  <dl className="mt-8">
-                    {project.outcomes.map((outcome) => (
-                      <div
-                        key={outcome.label}
-                        className="border-t border-[var(--border)] py-5"
-                      >
-                        <dt className="font-medium">{outcome.label}</dt>
-                        <dd className="t-small mt-1.5 text-[var(--text-secondary)]">
-                          {outcome.detail}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-
-                  {project.recognition ? (
-                    <p className="t-small mt-6 border-l-2 border-[var(--accent)] pl-4 text-[var(--text-secondary)]">
-                      {project.recognition}
+              <Reveal className="material lift overflow-hidden rounded-[var(--radius-surface)]">
+                <div className="grid gap-12 p-8 lg:grid-cols-12 lg:p-12">
+                  <div
+                    className={`min-w-0 lg:col-span-6 ${flip ? "lg:order-2" : ""}`}
+                  >
+                    <p className="t-mono text-[var(--text-tertiary)]">
+                      {project.stack.join(" · ")}
                     </p>
-                  ) : null}
+                    <h3 className="t-h2 mt-4">{project.name}</h3>
 
-                  <div className="mt-8 flex flex-wrap items-center gap-6">
-                    <Link
-                      href={`/projects/${project.slug}`}
-                      className="inline-flex items-center gap-1 text-[var(--accent)] underline-offset-4 hover:underline"
-                    >
-                      Read the writeup
-                      <ArrowUpRight
-                        size={16}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                      />
-                    </Link>
-                    {project.repo ? (
-                      <ExternalLink
-                        href={project.repo}
-                        label={`${project.name} repository on GitHub`}
-                        /* The URL itself, not the word "Repository" — for an
+                    <div className="mt-4 flex flex-wrap items-center gap-2">
+                      <Chip>{project.role}</Chip>
+                      {project.license ? <Chip>{project.license}</Chip> : null}
+                    </div>
+
+                    <p className="t-body mt-6 text-[var(--text-secondary)]">
+                      {project.summary}
+                    </p>
+
+                    <dl className="mt-8">
+                      {project.outcomes.map((outcome) => (
+                        <div
+                          key={outcome.label}
+                          className="border-t border-[var(--border)] py-5"
+                        >
+                          <dt className="font-medium">{outcome.label}</dt>
+                          <dd className="t-small mt-1.5 text-[var(--text-secondary)]">
+                            {outcome.detail}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+
+                    {project.recognition ? (
+                      <p className="t-small mt-6 border-l-2 border-[var(--accent)] pl-4 text-[var(--text-secondary)]">
+                        {project.recognition}
+                      </p>
+                    ) : null}
+
+                    <div className="mt-8 flex flex-wrap items-center gap-6">
+                      <Link
+                        href={`/projects/${project.slug}`}
+                        className="inline-flex items-center gap-1 text-[var(--accent)] underline-offset-4 hover:underline"
+                      >
+                        Read the writeup
+                        <ArrowUpRight
+                          size={16}
+                          strokeWidth={1.5}
+                          aria-hidden="true"
+                        />
+                      </Link>
+                      {project.repo ? (
+                        <ExternalLink
+                          href={project.repo}
+                          label={`${project.name} repository on GitHub`}
+                          /* The URL itself, not the word "Repository" — for an
                            open-source contribution the path is the credential,
                            and it is the thing a reviewer wants to copy. */
-                        className="t-mono break-all"
-                      >
-                        {project.repo.replace("https://", "")}
-                      </ExternalLink>
-                    ) : null}
+                          className="t-mono break-all"
+                        >
+                          {project.repo.replace("https://", "")}
+                        </ExternalLink>
+                      ) : null}
+                    </div>
                   </div>
-                </div>
 
-                {diagram ? (
-                  <div
-                    className={`material lift flex h-full min-w-0 flex-col justify-center rounded-[var(--radius-surface)] p-8 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
-                  >
-                    <PipelineDiagram
-                      title={diagram.title}
-                      description={diagram.description}
-                      stages={diagram.stages}
-                    />
-                  </div>
-                ) : null}
+                  {diagram ? (
+                    <div
+                      /* The artifact sits on the page ground inside the card,
+                         so the card reads as a frame around two panes rather
+                         than a box inside a box. */
+                      className={`flex h-full min-w-0 flex-col justify-center rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--bg)] p-6 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
+                    >
+                      <PipelineDiagram
+                        title={diagram.title}
+                        description={diagram.description}
+                        stages={diagram.stages}
+                      />
+                    </div>
+                  ) : null}
+                </div>
               </Reveal>
             </Container>
           );

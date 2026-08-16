@@ -3,6 +3,7 @@ import path from "node:path";
 import Image from "next/image";
 import { ArrowDown, Download } from "lucide-react";
 import { Button, Chip, Container, ExternalLink } from "@/components/primitives";
+import { RotatingWord } from "@/components/rotating-word";
 import { awards } from "@/content/career";
 import { publicFindings } from "@/content/findings";
 import { profiles } from "@/content/profiles";
@@ -64,11 +65,23 @@ export function Hero() {
             </p>
 
             <h1 id="hero-heading" className="t-display mt-5">
-              {positioning.headlineLines.map((line) => (
-                <span key={line} className="block">
-                  {line}
+              {/* The rotation is decorative repetition of one word, so assistive
+                  tech gets the sentence once, statically, and never hears it
+                  swap. */}
+              <span className="sr-only">Break the control. Prove the fix.</span>
+              {/* The rotating word sits inline so the line still reads as the
+                  sentence it is: "Break the control." — not as three fragments
+                  stacked on top of each other. */}
+              <span aria-hidden="true" className="block">
+                <span className="block">
+                  Break the{" "}
+                  <RotatingWord
+                    words={positioning.headlineRotating}
+                    suffix="."
+                  />
                 </span>
-              ))}
+                <span className="block">Prove the fix.</span>
+              </span>
             </h1>
 
             <p className={`t-intro mt-7 ${hasHeadshot ? "" : "mx-auto"}`}>

@@ -314,6 +314,25 @@ body {
   );
 }
 
+/* Word swap: a short rise and fade, keyed on the word so React remounts it and
+   the animation restarts. No typewriter, no character stagger. */
+.word-swap {
+  animation: word-swap var(--dur-fast) var(--ease-out-soft);
+}
+
+@keyframes word-swap {
+  from {
+    opacity: 0;
+    transform: translateY(0.1em);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-swap {
+    animation: none;
+  }
+}
+
 /* ── Diagram motion ───────────────────────────────────────────────────────
    Stages draw themselves in sequence once the diagram is on screen: the nodes
    fade up, the connectors draw downward. It communicates that the thing is a
@@ -334,6 +353,23 @@ body {
   [data-reveal="in"] .stage {
     animation: none;
   }
+}
+
+/* Photo lightbox. The <dialog> element handles the top layer and Escape; this
+   only supplies the ground and the scrim. */
+.photo-dialog {
+  margin: auto;
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+.photo-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.72);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 /* ── Material ─────────────────────────────────────────────────────────────

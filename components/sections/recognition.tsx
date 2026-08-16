@@ -1,7 +1,9 @@
 import Link from "next/link";
+import { PhotoViewer } from "@/components/photo-viewer";
 import { Container, SectionHeader } from "@/components/primitives";
 import { Reveal } from "@/components/reveal";
 import { awards } from "@/content/career";
+import { awardPhotos } from "@/content/awards-media";
 import { projectBySlug } from "@/content/projects";
 
 export function Recognition() {
@@ -22,6 +24,9 @@ export function Recognition() {
         <ul className="mt-20 grid gap-8 lg:grid-cols-3">
           {awards.map((award, index) => {
             const project = projectBySlug(award.projectSlug);
+            // Empty until photos are added to public/images/awards/, and the
+            // card simply renders without a gallery until then.
+            const photos = awardPhotos(award.event);
             return (
               <Reveal
                 as="li"
@@ -35,6 +40,11 @@ export function Recognition() {
                   {award.organiser}
                   {award.venue ? ` · ${award.venue}` : ""}
                 </p>
+                <PhotoViewer
+                  photos={photos}
+                  alt={`${award.placement}, ${award.event}`}
+                />
+
                 {project ? (
                   <p className="t-small mt-6">
                     <Link

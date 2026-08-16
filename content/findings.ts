@@ -10,6 +10,7 @@ import type { Finding } from "./schema";
 export const findings: Finding[] = [
   {
     id: "JKS-01",
+    slug: "irctc-dom-xss",
     org: "IRCTC",
     summary:
       "DOM-based cross-site scripting, reported through CERT-In and acknowledged by them.",
@@ -24,6 +25,7 @@ export const findings: Finding[] = [
   },
   {
     id: "JKS-02",
+    slug: "kraken-desktop-misconfiguration",
     org: "Kraken",
     summary:
       "Security misconfiguration in Kraken’s desktop application. Bounty awarded.",
@@ -39,6 +41,7 @@ export const findings: Finding[] = [
   },
   {
     id: "JKS-03",
+    slug: "google-sso-session-persistence",
     org: "Google",
     summary:
       "Session persisted after logout in a third-party application using Google SSO, allowing continued access.",
@@ -53,6 +56,7 @@ export const findings: Finding[] = [
   },
   {
     id: "JKS-04",
+    slug: "meta-ai-prompt-injection",
     org: "Meta",
     summary:
       "Prompt injection in an AI assistant surface, reported through Meta’s bug bounty programme.",
@@ -67,6 +71,7 @@ export const findings: Finding[] = [
   },
   {
     id: "JKS-05",
+    slug: "mapillary-idor",
     org: "Meta",
     summary:
       "Insecure direct object reference in Mapillary, reported through Meta’s bug bounty programme.",
@@ -89,6 +94,7 @@ export const findings: Finding[] = [
    */
   {
     id: "JKS-06",
+    slug: "northcap-web-erp",
     org: "The NorthCap University",
     summary:
       "Cross-site scripting and a denial-of-service condition in the university website and ERP portal, found during authorised testing.",
@@ -103,6 +109,7 @@ export const findings: Finding[] = [
   },
   {
     id: "JKS-07",
+    slug: "northcap-biometric-access",
     org: "The NorthCap University",
     summary:
       "Administrative interface of the biometric attendance system reachable over insecure network protocols, identified during authorised testing.",
