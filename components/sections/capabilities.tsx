@@ -1,4 +1,4 @@
-import { Chip, Container } from "@/components/primitives";
+import { Chip, Container, SectionHeader } from "@/components/primitives";
 import { Reveal } from "@/components/reveal";
 import { capabilities } from "@/content/career";
 
@@ -21,23 +21,22 @@ export function Capabilities() {
     <section
       id="capabilities"
       aria-labelledby="capabilities-heading"
-      className="border-y border-[var(--border)] bg-[var(--bg-subtle)] py-[var(--section-y)]"
+      className="ground-wash py-[var(--section-y)]"
     >
       <Container width="wide">
-        {/* No eyebrow here: "Capabilities" above "What I actually work with."
-            labels the same thing twice, and every section carrying the same
-            eyebrow-then-heading pair is what makes a long page read as a
-            template rather than a document. */}
-        <h2 id="capabilities-heading" className="t-h2">
-          What I actually work with.
-        </h2>
+        <SectionHeader
+          id="capabilities-heading"
+          eyebrow="Capabilities"
+          title="What I actually work with."
+          intro="No percentage bars and no star ratings — a number against &ldquo;Burp Suite&rdquo; is a claim nobody can check."
+        />
 
-        <div className="mt-12 grid items-start gap-6 lg:grid-cols-12">
+        <div className="mt-20 grid items-start gap-6 lg:grid-cols-12">
           {capabilities.map((group, index) => (
             <Reveal
               key={group.label}
               delay={index * 60}
-              className={`rounded-[var(--radius-surface)] border border-[var(--border)] bg-[var(--bg)] p-8 ${spans[group.label] ?? "lg:col-span-6"}`}
+              className={`material lift rounded-[var(--radius-surface)] p-8 ${spans[group.label] ?? "lg:col-span-6"}`}
             >
               <h3 className="t-caption">{group.label}</h3>
               <ul className="mt-5 flex flex-wrap gap-2">

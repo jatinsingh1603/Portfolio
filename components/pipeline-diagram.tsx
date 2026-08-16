@@ -52,7 +52,11 @@ export function PipelineDiagram({
           const stroke = stage.gate ? "var(--accent)" : "var(--border-strong)";
 
           return (
-            <g key={stage.label}>
+            <g
+              key={stage.label}
+              className="stage"
+              style={{ animationDelay: `${index * 70}ms` }}
+            >
               <rect
                 x={0}
                 y={y}
@@ -69,7 +73,7 @@ export function PipelineDiagram({
                 fontSize={12}
                 fontWeight={500}
                 fill={stage.gate ? "var(--accent)" : "var(--text)"}
-                fontFamily="var(--font-geist-mono), monospace"
+                fontFamily="var(--font-code), monospace"
               >
                 {String(index + 1).padStart(2, "0")}
               </text>

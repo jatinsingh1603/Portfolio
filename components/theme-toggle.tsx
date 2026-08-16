@@ -43,6 +43,12 @@ export function ThemeToggle() {
   }, [choice]);
 
   function select(next: Choice) {
+    // macOS cross-fades an appearance change rather than snapping. The class is
+    // added only for the duration of the switch so it never affects first paint.
+    const root = document.documentElement;
+    root.classList.add("theme-switching");
+    window.setTimeout(() => root.classList.remove("theme-switching"), 300);
+
     setChoice(next);
     if (next === "system") localStorage.removeItem(THEME_STORAGE_KEY);
     else localStorage.setItem(THEME_STORAGE_KEY, next);

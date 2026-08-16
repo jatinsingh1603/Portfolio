@@ -124,7 +124,7 @@ export function SiteHeader() {
         <div
           id="mobile-menu"
           ref={sheetRef}
-          className="border-b border-[var(--border)] bg-[var(--bg)] lg:hidden"
+          className="material border-x-0 border-t-0 lg:hidden"
           style={{
             animation: "sheet-in var(--dur-fast) var(--ease-emphasized)",
           }}

@@ -1,4 +1,4 @@
-import { Container } from "@/components/primitives";
+import { Container, SectionHeader } from "@/components/primitives";
 import { Reveal } from "@/components/reveal";
 import { roles } from "@/content/career";
 
@@ -15,32 +15,26 @@ export function Currently() {
     <section
       id="about"
       aria-labelledby="currently-heading"
-      className="py-[var(--section-y)]"
+      className="ground-wash py-[var(--section-y)]"
     >
       <Container width="wide">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <p className="t-caption">Currently</p>
-            <h2 id="currently-heading" className="t-h2 mt-3">
-              {role.title}
-            </h2>
-            <p className="t-body mt-4 text-[var(--text-secondary)]">
-              {role.company} · {role.arrangement}
-            </p>
-            <p className="t-mono mt-2 text-[var(--text-tertiary)]">
-              {role.start} — {role.end}
-            </p>
-          </div>
+        <SectionHeader
+          id="currently-heading"
+          eyebrow="Currently"
+          title={role.title}
+          intro={`${role.company} · ${role.arrangement} · ${role.start} to ${role.end}`}
+        />
 
-          <dl className="lg:col-span-8">
+        <div className="mt-20 grid gap-x-12 gap-y-10 lg:grid-cols-2">
+          <dl className="contents">
             {role.highlights.map((item, index) => (
               <Reveal
                 key={item.label}
                 delay={Math.min(index, 4) * 60}
-                className="border-t border-[var(--border)] py-6 first:border-t-0 first:pt-0"
+                className="material rounded-[var(--radius-surface)] p-8"
               >
                 <dt className="t-h3">{item.label}</dt>
-                <dd className="t-body mt-2 text-[var(--text-secondary)]">
+                <dd className="t-small mt-3 text-[var(--text-secondary)]">
                   {item.detail}
                 </dd>
               </Reveal>

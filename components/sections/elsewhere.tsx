@@ -1,5 +1,5 @@
 import { ArrowUpRight } from "lucide-react";
-import { Container } from "@/components/primitives";
+import { Container, SectionHeader } from "@/components/primitives";
 import { profiles } from "@/content/profiles";
 
 /**
@@ -12,14 +12,17 @@ export function Elsewhere() {
     <section
       id="elsewhere"
       aria-labelledby="elsewhere-heading"
-      className="border-t border-[var(--border)] py-[var(--section-y)]"
+      className="ground-wash py-[var(--section-y)]"
     >
       <Container width="wide">
-        <h2 id="elsewhere-heading" className="t-h2">
-          Elsewhere
-        </h2>
+        <SectionHeader
+          id="elsewhere-heading"
+          eyebrow="Elsewhere"
+          title="Where the work is."
+          intro="A metric appears only where it was verified. Rows without one are links, not estimates."
+        />
 
-        <ul className="mt-10">
+        <ul className="mx-auto mt-20 max-w-[var(--container)]">
           {profiles.map((profile) => (
             <li key={profile.url}>
               <a

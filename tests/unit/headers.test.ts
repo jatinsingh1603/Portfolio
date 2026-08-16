@@ -1,5 +1,6 @@
 import { readFileSync } from "node:fs";
 import { describe, expect, it } from "vitest";
+import { buildCsp, securityHeaders } from "@/lib/csp";
 
 /**
  * next.config.ts headers apply to `next start`; vercel.json applies at the edge
@@ -7,48 +8,37 @@ import { describe, expect, it } from "vitest";
  * header that disappears in exactly one environment.
  */
 describe("security headers", () => {
-  const config = readFileSync("next.config.ts", "utf8");
   const vercel = JSON.parse(readFileSync("vercel.json", "utf8")) as {
     headers: { source: string; headers: { key: string; value: string }[] }[];
   };
   const edge = vercel.headers[0]?.headers ?? [];
+  const shipped = securityHeaders(false);
 
-  it("never allows unsafe-eval", () => {
-    expect(config).not.toContain("unsafe-eval");
+  it("never allows unsafe-eval in a shipped build", () => {
+    expect(buildCsp(false)).not.toContain("unsafe-eval");
     expect(JSON.stringify(vercel)).not.toContain("unsafe-eval");
   });
 
+  it("allows eval only in development, where the dev runtime needs it", () => {
+    // Without this, `next dev` cannot hydrate at all — see lib/csp.ts.
+    expect(buildCsp(true)).toContain("unsafe-eval");
+    expect(buildCsp(true)).toContain("ws:");
+  });
+
   it("declares the same header set in both places", () => {
-    const required = [
-      "Content-Security-Policy",
-      "Strict-Transport-Security",
-      "X-Content-Type-Options",
-      "Referrer-Policy",
-      "Permissions-Policy",
-      "Cross-Origin-Opener-Policy",
-      "X-Frame-Options",
-    ];
-    for (const key of required) {
-      expect(config, `${key} in next.config.ts`).toContain(key);
+    for (const { key } of shipped) {
       expect(
         edge.map((h) => h.key),
         `${key} in vercel.json`,
       ).toContain(key);
     }
+    expect(edge).toHaveLength(shipped.length);
   });
 
-  it("keeps the CSP directives identical across both", () => {
-    const edgeCsp =
-      edge.find((h) => h.key === "Content-Security-Policy")?.value ?? "";
-    for (const directive of [
-      "default-src 'self'",
-      "frame-ancestors 'none'",
-      "object-src 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-    ]) {
-      expect(edgeCsp).toContain(directive);
-      expect(config).toContain(directive);
+  it("keeps every header value identical across both", () => {
+    for (const { key, value } of shipped) {
+      const edgeValue = edge.find((h) => h.key === key)?.value;
+      expect(edgeValue, `${key} value`).toBe(value);
     }
   });
 });

@@ -105,7 +105,7 @@ export default async function ProjectPage({
 
           {diagram ? (
             <div className="lg:col-span-5">
-              <div className="rounded-[var(--radius-surface)] border border-[var(--border)] bg-[var(--bg-subtle)] p-8">
+              <div className="material rounded-[var(--radius-surface)] p-8">
                 <PipelineDiagram
                   title={diagram.title}
                   description={diagram.description}

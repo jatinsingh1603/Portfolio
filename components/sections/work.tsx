@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { PipelineDiagram } from "@/components/pipeline-diagram";
-import { Chip, Container, ExternalLink } from "@/components/primitives";
+import {
+  Chip,
+  Container,
+  ExternalLink,
+  SectionHeader,
+} from "@/components/primitives";
 import { Reveal } from "@/components/reveal";
 import { diagrams } from "@/content/diagrams";
 import { projects } from "@/content/projects";
@@ -11,16 +16,18 @@ export function Work() {
     <section
       id="work"
       aria-labelledby="work-heading"
-      className="py-[var(--section-y)]"
+      className="ground-page py-[var(--section-y)]"
     >
       <Container width="wide">
-        <p className="t-caption">Selected work</p>
-        <h2 id="work-heading" className="t-h2 mt-3 max-w-[20ch]">
-          Three systems, built to produce evidence rather than opinions.
-        </h2>
+        <SectionHeader
+          id="work-heading"
+          eyebrow="Selected work"
+          title="Three systems, built to produce evidence rather than opinions."
+          intro="Two platforms that automate risk and compliance work, and one open-source pentest engine whose safety model is enforced structurally."
+        />
       </Container>
 
-      <div className="mt-20 flex flex-col gap-[var(--section-y)]">
+      <div className="mt-24 flex flex-col gap-[var(--section-y)]">
         {projects.map((project, index) => {
           const diagram = diagrams[project.slug];
           // Alternate which side the artifact sits on so a three-entry list
@@ -30,7 +37,9 @@ export function Work() {
           return (
             <Container width="wide" key={project.slug}>
               <Reveal className="grid gap-12 lg:grid-cols-12">
-                <div className={`lg:col-span-6 ${flip ? "lg:order-2" : ""}`}>
+                <div
+                  className={`min-w-0 lg:col-span-6 ${flip ? "lg:order-2" : ""}`}
+                >
                   <p className="t-mono text-[var(--text-tertiary)]">
                     {project.stack.join(" · ")}
                   </p>
@@ -81,8 +90,12 @@ export function Work() {
                       <ExternalLink
                         href={project.repo}
                         label={`${project.name} repository on GitHub`}
+                        /* The URL itself, not the word "Repository" — for an
+                           open-source contribution the path is the credential,
+                           and it is the thing a reviewer wants to copy. */
+                        className="t-mono break-all"
                       >
-                        Repository
+                        {project.repo.replace("https://", "")}
                       </ExternalLink>
                     ) : null}
                   </div>
@@ -90,7 +103,7 @@ export function Work() {
 
                 {diagram ? (
                   <div
-                    className={`flex h-full flex-col justify-center rounded-[var(--radius-surface)] border border-[var(--border)] bg-[var(--bg-subtle)] p-8 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
+                    className={`material lift flex h-full min-w-0 flex-col justify-center rounded-[var(--radius-surface)] p-8 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
                   >
                     <PipelineDiagram
                       title={diagram.title}

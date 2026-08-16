@@ -2,7 +2,10 @@ import { existsSync } from "node:fs";
 import path from "node:path";
 import Image from "next/image";
 import { ArrowDown, Download } from "lucide-react";
-import { Button, Chip, Container } from "@/components/primitives";
+import { Button, Chip, Container, ExternalLink } from "@/components/primitives";
+import { awards } from "@/content/career";
+import { publicFindings } from "@/content/findings";
+import { profiles } from "@/content/profiles";
 import { credibilityChips, identity, positioning } from "@/content/site";
 
 /**
@@ -14,6 +17,26 @@ const hasHeadshot = existsSync(
   path.join(process.cwd(), "public", identity.headshot.replace(/^\//, "")),
 );
 
+/** The three a recruiter actually opens next, in that order. */
+const HERO_PROFILE_PLATFORMS = ["GitHub", "LinkedIn", "X"];
+const heroProfiles = HERO_PROFILE_PLATFORMS.map((name) =>
+  profiles.find((p) => p.platform === name),
+).filter((p) => p !== undefined);
+
+/**
+ * Derived from the content layer, never typed in — so the hero can never claim
+ * a number the rest of the page does not substantiate. If a finding is
+ * withheld, this count drops with it.
+ */
+const stats = [
+  { value: publicFindings.length, label: "findings reported" },
+  {
+    value: new Set(publicFindings.map((f) => f.org)).size,
+    label: "organisations",
+  },
+  { value: awards.length, label: "competition placements" },
+];
+
 export function Hero() {
   return (
     <section
@@ -22,7 +45,7 @@ export function Hero() {
       /* No entrance animation. A fade here costs its own duration in LCP,
          because Chrome will not count text as painted while it is transparent —
          and the hero is the largest contentful paint on every viewport. */
-      className="flex min-h-[88vh] items-center py-24"
+      className="ground-hero flex min-h-[88vh] items-center py-24"
     >
       <Container width="wide">
         <div
@@ -32,7 +55,10 @@ export function Hero() {
               : "grid gap-16"
           }
         >
-          <div className={hasHeadshot ? "lg:col-span-7" : ""}>
+          {/* With a portrait the 7/5 split is balanced. Without one, the same
+              left-aligned column leaves half the viewport empty and the page
+              reads as if it is falling off the left edge — so it centres. */}
+          <div className={hasHeadshot ? "lg:col-span-7" : "text-center"}>
             <p className="t-caption">
               {identity.title} · {identity.location}
             </p>
@@ -45,9 +71,13 @@ export function Hero() {
               ))}
             </h1>
 
-            <p className="t-intro mt-7">{positioning.intro}</p>
+            <p className={`t-intro mt-7 ${hasHeadshot ? "" : "mx-auto"}`}>
+              {positioning.intro}
+            </p>
 
-            <ul className="mt-9 flex flex-wrap gap-2">
+            <ul
+              className={`mt-9 flex flex-wrap gap-2 ${hasHeadshot ? "" : "justify-center"}`}
+            >
               {credibilityChips.map((chip) => (
                 <li key={chip}>
                   <Chip>{chip}</Chip>
@@ -55,7 +85,9 @@ export function Hero() {
               ))}
             </ul>
 
-            <div className="mt-10 flex flex-wrap gap-3">
+            <div
+              className={`mt-10 flex flex-wrap gap-3 ${hasHeadshot ? "" : "justify-center"}`}
+            >
               <Button href="#research">
                 View security research
                 <ArrowDown size={18} strokeWidth={1.5} aria-hidden="true" />
@@ -65,6 +97,47 @@ export function Hero() {
                 Download résumé
               </Button>
             </div>
+
+            {/* A recruiter's second click is almost always the GitHub or
+                LinkedIn profile. Burying them at the bottom of the page costs a
+                scroll for no reason. */}
+            <ul
+              className={`mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 ${hasHeadshot ? "" : "justify-center"}`}
+            >
+              {heroProfiles.map((profile) => (
+                <li key={profile.url}>
+                  <ExternalLink
+                    href={profile.url}
+                    label={`${profile.platform} profile`}
+                    className="t-small !text-[var(--text-secondary)] hover:!text-[var(--text)]"
+                  >
+                    {profile.platform}
+                  </ExternalLink>
+                </li>
+              ))}
+            </ul>
+
+            {/* Fills the lower hero with something verifiable rather than
+                decoration. Each figure is counted from the data that renders
+                further down the page. */}
+            <dl
+              className={`mt-16 flex flex-wrap gap-x-12 gap-y-6 ${hasHeadshot ? "" : "justify-center"}`}
+            >
+              {stats.map((stat) => (
+                <div key={stat.label}>
+                  <dt className="sr-only">{stat.label}</dt>
+                  <dd>
+                    <span className="t-h2 block">{stat.value}</span>
+                    <span
+                      className="t-caption mt-1 block tracking-[0.08em] uppercase"
+                      aria-hidden="true"
+                    >
+                      {stat.label}
+                    </span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
           </div>
 
           {hasHeadshot ? (

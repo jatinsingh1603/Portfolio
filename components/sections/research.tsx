@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Chip, Container } from "@/components/primitives";
+import { Chip, Container, SectionHeader } from "@/components/primitives";
 import { publicFindings, withheldCount } from "@/content/findings";
 import { disclosurePolicy } from "@/content/site";
 
@@ -13,16 +13,21 @@ export function Research() {
     <section
       id="research"
       aria-labelledby="research-heading"
-      className="border-y border-[var(--border)] bg-[var(--bg-subtle)] py-[var(--section-y)]"
+      className="ground-raised py-[var(--section-y)]"
     >
       <Container width="wide">
-        <p className="t-caption">Security research</p>
-        <h2 id="research-heading" className="t-h2 mt-3 max-w-[20ch]">
-          Reported through the vendor&rsquo;s channel, or through a national
-          CERT.
-        </h2>
+        <SectionHeader
+          id="research-heading"
+          eyebrow="Security research"
+          title={
+            <>
+              Reported through the vendor&rsquo;s channel, or a national CERT.
+            </>
+          }
+          intro="Organisation, class and status. Reproduction detail is withheld wherever a programme requires it or a fix is not confirmed deployed."
+        />
 
-        <div className="mt-12 overflow-x-auto">
+        <div className="mt-20 overflow-x-auto">
           <table className="w-full border-collapse text-left">
             <caption className="sr-only">
               Disclosure record: organisation, vulnerability class, severity and
@@ -92,7 +97,7 @@ export function Research() {
         </div>
 
         {/* Body type, not a warning box. The restraint is the credibility. */}
-        <div className="mt-12 max-w-[var(--container-text)]">
+        <div className="mx-auto mt-16 max-w-[var(--container-text)] text-center">
           <h3 className="t-h3">Disclosure policy</h3>
           <p className="t-body mt-3 text-[var(--text-secondary)]">
             {disclosurePolicy}

@@ -11,11 +11,11 @@ export function Contact() {
     <section
       id="contact"
       aria-labelledby="contact-heading"
-      className="bg-[var(--bg-subtle)] py-[var(--section-y)]"
+      className="ground-invert py-[var(--section-y)]"
     >
-      <Container width="wide">
-        <p className="t-caption">Contact</p>
-        <h2 id="contact-heading" className="mt-4">
+      <Container width="wide" className="text-center">
+        <p className="t-caption tracking-[0.08em] uppercase">Contact</p>
+        <h2 id="contact-heading" className="mt-6">
           <a
             href={`mailto:${identity.email}`}
             className="t-h1 break-words text-[var(--accent)] underline-offset-8 hover:underline"
@@ -24,7 +24,7 @@ export function Contact() {
           </a>
         </h2>
 
-        <p className="t-intro mt-8">
+        <p className="t-intro mx-auto mt-8">
           Based in {identity.location}. Open to application security and red
           team work, and to coordinated disclosure enquiries.
         </p>

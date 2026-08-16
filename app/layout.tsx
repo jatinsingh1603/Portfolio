@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist_Mono, Inter } from "next/font/google";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { SITE_URL, identity, positioning } from "@/content/site";
@@ -15,15 +15,19 @@ import "./globals.css";
  * the fallback face painted at FCP and the real face swapped in much later.
  * The Latin subset is ~20 KB per family and Next preloads it automatically.
  */
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const sans = Inter({
+  variable: "--font-ui",
   subsets: ["latin"],
   display: "swap",
   preload: true,
+  // Apple's own face is SF Pro, which is licensed for Apple platforms only and
+  // cannot ship on a public website. Inter is the closest legitimate match:
+  // same humanist-grotesque skeleton, near-identical apertures at display size.
+  axes: ["opsz"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const mono = Geist_Mono({
+  variable: "--font-code",
   subsets: ["latin"],
   display: "swap",
   preload: true,
@@ -57,7 +61,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`js-reveal-gate ${geistSans.variable} ${geistMono.variable}`}
+      className={`js-reveal-gate ${sans.variable} ${mono.variable}`}
     >
       <head>
         <noscript>

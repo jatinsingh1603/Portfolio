@@ -22,17 +22,20 @@
   --text-tertiary: #6e6e73;
   --border: rgba(0, 0, 0, 0.08);
   --border-strong: rgba(0, 0, 0, 0.16);
-  --accent: #0066cc;
-  --accent-hover: #0055aa;
+  /* Burnt orange, not a bright one: #ff9500 is 2.2:1 on white and unusable for
+     link text. This clears 5.02:1 on the page and 4.61:1 on the wash. */
+  --accent: #b4530a;
+  --accent-hover: #8f4108;
   /* Foreground for text sitting ON an accent fill. Light mode's accent is dark
      enough for white (5.57:1); dark mode's is deliberately bright so links
      stay legible on black, which makes white-on-accent fail at 3.01:1 — so the
      filled button flips to near-black text there instead of dimming the accent. */
   --accent-on: #ffffff;
-  --focus: #0066cc;
+  --focus: #b4530a;
 
-  /* Severity — the only additional hues on the site. Used as 1px border +
-     tinted text on a neutral chip, never as a filled block. */
+  /* Severity — the only additional hues on the site. Carried by a 6px dot with
+     neutral text beside it: tinting the text itself would make a "high" chip
+     read as a link now that the accent is orange. */
   --sev-critical: #b3261e;
   --sev-high: #c2410c;
   --sev-medium: #a16207;
@@ -53,10 +56,10 @@
   --text-tertiary: #86868b;
   --border: rgba(255, 255, 255, 0.1);
   --border-strong: rgba(255, 255, 255, 0.2);
-  --accent: #2997ff; /* raised luminance so it still clears 4.5:1 on #000 */
-  --accent-hover: #5aaeff;
+  --accent: #ff9f0a; /* 10.2:1 on black; the dark ground can carry a bright hue */
+  --accent-hover: #ffb340;
   --accent-on: #1d1d1f; /* 5.58:1 on the accent fill */
-  --focus: #2997ff;
+  --focus: #ff9f0a;
 
   /* Severity hues re-tuned for a dark ground; same semantic order. */
   --sev-critical: #ff6b61;
@@ -90,8 +93,8 @@
   --color-low: var(--sev-low);
   --color-info: var(--sev-info);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-ui);
+  --font-mono: var(--font-code);
 
   /* ── Space ────────────────────────────────────────────────────────────
      Every vertical value on the site comes from this scale. */
@@ -130,7 +133,8 @@
   --container: 980px;
   --container-wide: 1240px;
   --gutter: clamp(20px, 5vw, 40px);
-  --section-y: clamp(80px, 12vh, 160px);
+  /* Applies top and bottom. Generous on purpose: one idea per screen. */
+  --section-y: clamp(88px, 13vh, 168px);
 
   --dur-micro: 150ms; /* hover, focus, colour */
   --dur-fast: 250ms; /* toggles, chips, small position */
@@ -149,7 +153,7 @@ html {
 body {
   background-color: var(--bg);
   color: var(--text);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-ui), system-ui, sans-serif;
   font-size: 1.0625rem; /* 17px body */
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
@@ -212,11 +216,173 @@ body {
   color: var(--text-tertiary);
 }
 .t-mono {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+  font-family: var(--font-code), ui-monospace, monospace;
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.55;
   letter-spacing: -0.01em;
+}
+
+/* ── Hero ground ──────────────────────────────────────────────────────────
+   A single-hue radial wash, accent-tinted at 7%, anchored above the fold. It
+   gives the hero somewhere to sit without becoming "a gradient": one hue, no
+   hard stop, and it resolves to the page colour well before the first band.
+   Not a mesh, not animated, not multi-hue — those are the tells this whole
+   design is trying to avoid. */
+.ground-hero {
+  background-color: var(--bg);
+  background-image: radial-gradient(
+    120% 80% at 50% 0%,
+    color-mix(in oklab, var(--accent) 7%, var(--bg)) 0%,
+    var(--bg) 62%
+  );
+}
+
+/* ── Section grounds ──────────────────────────────────────────────────────
+   Four distinct grounds so consecutive sections never read as one continuous
+   document. Gradients are single-hue and under a 4% luminance delta — enough to
+   give a band depth at the top edge, not enough to be seen as "a gradient". */
+.ground-page {
+  background-color: var(--bg);
+}
+
+.ground-wash {
+  background-image: linear-gradient(
+    to bottom,
+    var(--bg-subtle) 0%,
+    color-mix(in oklab, var(--bg-subtle) 55%, var(--bg)) 100%
+  );
+}
+
+.ground-raised {
+  background-image: linear-gradient(
+    to bottom,
+    color-mix(in oklab, var(--bg-subtle) 60%, var(--bg)) 0%,
+    var(--bg-subtle) 100%
+  );
+}
+
+/* The one inverted band on the page. Apple alternates light and dark full-bleed
+   sections for exactly this reason: it segments a long scroll far more clearly
+   than any amount of whitespace can. Sets the theme tokens locally so every
+   child — chips, hairlines, secondary text — re-tunes without a single override. */
+.ground-invert {
+  --bg: #000000;
+  --bg-subtle: #0a0a0b;
+  --surface: #131315;
+  --text: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --text-tertiary: #86868b;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.2);
+  --accent: #ff9f0a;
+  --accent-hover: #ffb340;
+  --accent-on: #1d1d1f;
+  --focus: #ff9f0a;
+  --sev-critical: #ff6b61;
+  --sev-high: #ff9f5a;
+  --sev-medium: #e0b341;
+  --sev-low: #9ccc5a;
+  --sev-info: #a1a1a6;
+  --shadow-sm: none;
+  --shadow-md: none;
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+/* In dark mode an inverted band would be black on black and stop separating
+   anything. It lifts to the raised surface instead, so the band still reads as
+   a distinct segment in both themes. */
+[data-theme="dark"] .ground-invert {
+  --bg: #131315;
+  --bg-subtle: #1b1b1e;
+  --surface: #202024;
+  background-color: var(--bg);
+}
+
+/* A hairline that fades out at both ends — a full-width rule reads as a table
+   border, this reads as a seam. */
+.seam {
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--border-strong) 20%,
+    var(--border-strong) 80%,
+    transparent
+  );
+}
+
+/* ── Diagram motion ───────────────────────────────────────────────────────
+   Stages draw themselves in sequence once the diagram is on screen: the nodes
+   fade up, the connectors draw downward. It communicates that the thing is a
+   pipeline with an order, which a static diagram has to state in words.
+   Runs once, and only under the reveal that already gates it. */
+[data-reveal="in"] .stage {
+  animation: stage-in var(--dur-base) var(--ease-out-soft) backwards;
+}
+
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal="in"] .stage {
+    animation: none;
+  }
+}
+
+/* ── Material ─────────────────────────────────────────────────────────────
+   The macOS/iOS surface material: a translucent ground that picks up what sits
+   behind it, a real blur, and a hairline to define the edge. Deliberately not
+   "glassmorphism" — no saturation pump, no coloured tint, no glow border. The
+   translucency is 12–18%, which reads as depth rather than as an effect.
+   Falls back to an opaque surface where backdrop-filter is unsupported. */
+.material {
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+}
+
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .material {
+    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    backdrop-filter: blur(24px) saturate(160%);
+  }
+}
+
+/* Surfaces that lift on hover: colour and 2px of travel, nothing more. */
+.lift {
+  transition:
+    transform var(--dur-fast) var(--ease-out-soft),
+    border-color var(--dur-micro) var(--ease-standard),
+    background-color var(--dur-micro) var(--ease-standard);
+}
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-2px);
+    border-color: var(--border-strong);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lift:hover {
+    transform: none;
+  }
+}
+
+/* Appearance changes animate on macOS rather than snapping. Scoped to the
+   properties that actually change, and only while the toggle is switching, so
+   it never interferes with paint on first load. */
+.theme-switching,
+.theme-switching *:not([data-reveal]) {
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard) !important;
 }
 
 /* An inline link inside a paragraph cannot be distinguished by colour alone

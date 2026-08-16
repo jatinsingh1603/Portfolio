@@ -68,28 +68,69 @@ export function Section({
   );
 }
 
-/** Hairline, no fill, no icon. The site's only chip form. */
+/**
+ * Hairline, no fill, no icon. The site's only chip form.
+ *
+ * Severity is carried by a dot rather than by tinting the label: with an orange
+ * accent, orange text on a hairline chip reads as a link.
+ */
 export function Chip({
   children,
   tone,
 }: {
   children: React.ReactNode;
-  /** Severity tone tints the text and border only — never a filled block. */
   tone?: "critical" | "high" | "medium" | "low" | "info";
 }) {
-  const color = tone ? `var(--sev-${tone})` : undefined;
   return (
-    <span
-      className="t-caption inline-flex items-center rounded-[var(--radius-chip)] border px-2.5 py-1 whitespace-nowrap"
-      style={{
-        color: color ?? "var(--text-secondary)",
-        borderColor: color
-          ? `color-mix(in oklab, ${color} 40%, transparent)`
-          : "var(--border-strong)",
-      }}
-    >
+    <span className="t-caption inline-flex items-center gap-2 rounded-[var(--radius-chip)] border border-[var(--border-strong)] px-2.5 py-1 whitespace-nowrap text-[var(--text-secondary)]">
+      {tone ? (
+        <span
+          aria-hidden="true"
+          className="h-1.5 w-1.5 shrink-0 rounded-full"
+          style={{ backgroundColor: `var(--sev-${tone})` }}
+        />
+      ) : null}
       {children}
     </span>
+  );
+}
+
+/**
+ * The lead-in for a section: centred, in its own measure, with real air under
+ * it. Centring the header and left-aligning the content below is what stops a
+ * long page reading as one left-hugging column of documentation.
+ */
+export function SectionHeader({
+  id,
+  eyebrow,
+  title,
+  intro,
+  align = "center",
+}: {
+  id?: string;
+  eyebrow?: string;
+  title: React.ReactNode;
+  intro?: string;
+  align?: "center" | "left";
+}) {
+  const centred = align === "center";
+  return (
+    <div className={centred ? "text-center" : ""}>
+      {eyebrow ? (
+        <p className="t-caption tracking-[0.08em] uppercase">{eyebrow}</p>
+      ) : null}
+      {/* Title and intro carry their own measures — a shared wrapper would
+          either crush the intro or let the title run past a readable line. */}
+      <h2
+        id={id}
+        className={`t-h2 ${eyebrow ? "mt-4" : ""} ${centred ? "mx-auto max-w-[20ch]" : "max-w-[20ch]"}`}
+      >
+        {title}
+      </h2>
+      {intro ? (
+        <p className={`t-intro mt-6 ${centred ? "mx-auto" : ""}`}>{intro}</p>
+      ) : null}
+    </div>
   );
 }
 
