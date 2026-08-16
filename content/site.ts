@@ -47,10 +47,10 @@ export const positioning = {
    * object-level authorisation (JKS-05) and access control (JKS-07). Not a
    * list of job titles.
    *
-   * Two constraints on this list: every word is within one character of the
-   * others (the slot reserves the width of the longest, so an outlier leaves
-   * visible slack in a centred headline), and the canonical word is last
-   * because the rotation stops there rather than looping.
+   * Every word stays within one character of the others: the slot reserves the
+   * width of the longest, so an outlier leaves visible slack in a centred
+   * headline. The canonical word is last, because that is what reduced-motion
+   * users see pinned.
    */
   headlineRotating: ["session", "boundary", "control"],
   intro:
