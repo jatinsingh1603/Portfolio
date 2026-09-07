@@ -102,7 +102,23 @@ export function Research() {
                   <SeverityTag severity={f.severity} />
                 </td>
                 <td className="t-small">{f.status}</td>
-                <td className="t-small">{basisLabel(f.disclosure)}</td>
+                <td className="t-small">
+                  {basisLabel(f.disclosure)}
+                  {f.evidence ? (
+                    <>
+                      {" "}
+                      <a
+                        href={f.evidence.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${f.evidence.label} (opens in a new tab)`}
+                        className="t-label whitespace-nowrap text-[var(--accent)] underline-offset-4 hover:underline"
+                      >
+                        Evidence ↗
+                      </a>
+                    </>
+                  ) : null}
+                </td>
                 <td className="t-data">
                   <Bounty bounty={f.bounty} />
                 </td>

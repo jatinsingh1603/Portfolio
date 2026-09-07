@@ -30,7 +30,6 @@ and `tests/unit/labs.test.ts` enforce this and fail the build if it drifts.
 | `content/diagrams.ts`     | each project's own pipeline, transcribed                             |
 | `content/findings.ts`     | the disclosure record — only `publicFindings` may render             |
 | `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts) |
-| `content/journey.ts`      | the routed path; dates only where the record carries them            |
 | `content/achievements.ts` | derived cards; every metric verbatim or absent                       |
 | `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                   |
 | `content/schema.ts`       | zod schemas for all of the above                                     |
@@ -83,7 +82,7 @@ the browser — `connect-src 'self'` would block it anyway.
 
 ## Design system — "Deep Field Bench"
 
-A dark volume you move through, operated like a precision instrument. Eleven
+A dark volume you fly through, operated like a precision instrument. Nine
 home sections are **stations**; a left rail (the depth gauge) counts them and
 fills as you scroll. Colour is a law: `--accent` (teal) is the security signal,
 `--accent-2` (amber) is machine reasoning. Severity hues appear only on the
@@ -109,22 +108,32 @@ remaps it to secondary.
 `/styleguide` renders the whole system with live contrast ratios. It is
 `noindex` and absent from the sitemap.
 
-## The hero
+## The world
 
-The object behind the headline is the system the site argues for —
-USER → SECURITY → AI ENGINE → AUTOMATION → RESULT — as five wireframe solids
-along an S-curve in real depth: an octahedron, a ring gate, a gyroscope around
-an icosahedron, a hexagonal lattice of lanes, and a ruled sheet. Packets move
-along the spine, stall at the SECURITY gate, and take the amber tone through
-the engine. Scrolling dollies the camera forward and explodes the assembly.
+The whole page sits over a fixed, full-viewport WebGL scene: as the document
+scrolls, a camera flies along a path through gate rings and past the five
+solids of the system — USER → SECURITY → AI ENGINE → AUTOMATION → RESULT — an
+octahedron, a ring gate you pass through, a gyroscope around an icosahedron,
+a hexagonal lattice of lanes and a ruled sheet — inside a hyperspace field of
+light streaks that stretch with scroll velocity. Packets travel the path and
+stall at the gate. The station labels are real DOM text projected through the
+same camera.
 
-It is hand-written WebGL 1 (`lib/gl/`: ~90 lines of matrix maths, a two-program
-renderer, deterministic geometry) — about 6 KB gzipped against the ~150 KB a
-scene-graph library would cost. The code is split out of the initial bundle and
-booted on an idle callback; the server renders the identical topology as an
-inline SVG first (`components/hero/system-svg.tsx`), which is also the whole
-hero under reduced motion or without WebGL. The five station labels are real
-DOM text projected through the same camera every frame.
+It is hand-written WebGL 1 (`lib/gl/`): a two-program glow renderer whose
+streak field lives entirely in one static buffer and is positioned in the
+vertex shader, so the CPU does almost nothing per frame. About 7 KB gzipped,
+code-split and booted after load on an idle slice. It refuses software
+renderers (no GPU → the page stands on its own) and is never mounted under
+reduced motion; the hero then shows a server-rendered SVG of the same object.
+Append `?world=force` to see the world on a software-rendered browser.
+
+## Evidence
+
+Every card in Recognition links to the public place that substantiates it:
+hackathon placements and the CRTP certification to the LinkedIn listing, the
+Google report to the Bug Hunters profile, findings to their sheets, the
+open-source work to its repository. `content/schema.ts` carries the
+`evidence` shape; `tests/unit/labs.test.ts` fails if a card ships without one.
 
 ## Motion
 

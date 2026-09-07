@@ -57,18 +57,28 @@ export const brand = {
    * it, so no chip makes a claim the page does not then evidence.
    */
   credibility: [
-    { label: "CRTP", href: "#achievements" },
+    {
+      label: "CRTP",
+      href:
+        profiles.find((p) => p.platform === "LinkedIn")?.url ?? "#achievements",
+      external: true,
+    },
     {
       label: "CERT-In Recognised",
       href: `/security/${publicFindings.find((f) => f.org === "IRCTC")?.slug ?? ""}`,
+      external: false,
     },
     {
       label: "Google Bug Hunter",
-      href: `/security/${publicFindings.find((f) => f.org === "Google")?.slug ?? ""}`,
+      href:
+        profiles.find((p) => p.platform === "Google Bug Hunters")?.url ??
+        `/security/${publicFindings.find((f) => f.org === "Google")?.slug ?? ""}`,
+      external: true,
     },
     {
       label: "Kraken Bounty",
       href: `/security/${publicFindings.find((f) => f.org === "Kraken")?.slug ?? ""}`,
+      external: false,
     },
   ],
   ctas: {

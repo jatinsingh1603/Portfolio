@@ -40,6 +40,13 @@ export const disclosureSchema = z.discriminatedUnion("public", [
 ]);
 export type Disclosure = z.infer<typeof disclosureSchema>;
 
+/** A public place that substantiates a claim, e.g. a LinkedIn listing. */
+export const evidenceSchema = z.object({
+  label: z.string().min(1),
+  href: z.string().min(1),
+});
+export type Evidence = z.infer<typeof evidenceSchema>;
+
 export const findingSchema = z.object({
   id: z.string().regex(/^[A-Z]{2,4}-\d{2}$/, "e.g. JKS-01"),
   org: z.string().min(1),
@@ -54,6 +61,8 @@ export const findingSchema = z.object({
   disclosure: disclosureSchema,
   /** Set only when a cleared long-form writeup exists at /security/[slug]. */
   slug: z.string().optional(),
+  /** Public evidence beyond this site, e.g. a programme profile. */
+  evidence: evidenceSchema.optional(),
 });
 export type Finding = z.infer<typeof findingSchema>;
 
@@ -98,6 +107,7 @@ export const awardSchema = z.object({
   organiser: z.string().min(1),
   venue: z.string().optional(),
   projectSlug: z.string().min(1),
+  evidence: evidenceSchema.optional(),
 });
 export type Award = z.infer<typeof awardSchema>;
 
@@ -125,6 +135,8 @@ export const credentialSchema = z.object({
   issuer: z.string().min(1),
   detail: z.string().optional(),
   verifyUrl: z.string().url().optional(),
+  /** Where the credential is publicly listed when no verify URL exists. */
+  evidence: evidenceSchema.optional(),
 });
 export type Credential = z.infer<typeof credentialSchema>;
 
@@ -196,6 +208,8 @@ export const achievementSchema = z.object({
   /** Verbatim verified figure, or absent. Never an estimate. */
   metric: z.string().optional(),
   href: z.string().min(1).optional(),
+  /** The public place that substantiates the card. */
+  evidence: evidenceSchema.optional(),
 });
 export type Achievement = z.infer<typeof achievementSchema>;
 

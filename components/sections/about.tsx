@@ -1,9 +1,9 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { Panel, Reveal, Station } from "@/components/primitives";
+import { Reveal, Station } from "@/components/primitives";
 import { about } from "@/content/about";
 import { brand } from "@/content/brand";
-import { positioning, recognitions } from "@/content/site";
+import { positioning } from "@/content/site";
 
 /**
  * Station 02. The argument first — the three-beat thesis, each claim linking to
@@ -68,46 +68,6 @@ export function About() {
           </Reveal>
         ))}
       </dl>
-
-      <div className="mt-16 grid gap-10 md:mt-20 md:grid-cols-2 md:gap-12">
-        {/* Current focus. */}
-        <Reveal>
-          <Panel className="p-6 md:p-8">
-            <h3 className="t-label">Current focus</h3>
-            <ul className="mt-5 flex flex-col gap-3">
-              {about.focus.map((item) => (
-                <li key={item} className="flex items-baseline gap-3">
-                  <span
-                    aria-hidden="true"
-                    className="t-data shrink-0 text-[var(--accent)]"
-                  >
-                    &rarr;
-                  </span>
-                  <span className="t-mono">{item}</span>
-                </li>
-              ))}
-            </ul>
-          </Panel>
-        </Reveal>
-
-        {/* Recognition strip — text only, never logos. */}
-        <Reveal delay={60}>
-          <h3 className="t-label">Recognition</h3>
-          <ul className="mt-5">
-            {recognitions.map((entry) => (
-              <li
-                key={entry.org}
-                className="grid gap-1 border-t border-[var(--border)] py-5 first:border-t-0 first:pt-0 sm:grid-cols-[8rem_1fr] sm:gap-6"
-              >
-                <p className="t-h3">{entry.org}</p>
-                <p className="t-small text-[var(--text-secondary)]">
-                  {entry.detail}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Reveal>
-      </div>
     </Station>
   );
 }

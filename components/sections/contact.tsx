@@ -1,57 +1,48 @@
 import { ArrowUpRight } from "lucide-react";
 import { Button, Reveal, Station } from "@/components/primitives";
-import type { Profile } from "@/content/schema";
 import { profiles } from "@/content/profiles";
 import { identity } from "@/content/site";
+import type { GithubStats } from "@/lib/github";
 import { ContactCopy } from "./contact-client";
 
-/** The three off-site channels, in order, resolved from the profile list. */
-const CHANNELS = ["GitHub", "LinkedIn", "X"] as const;
-
-function byPlatform(platform: string): Profile | undefined {
-  return profiles.find((profile) => profile.platform === platform);
-}
-
 /**
- * Station 11. The close. No form on purpose: the fastest route to a security
- * engineer is an address you can paste into your own client, so the email is
- * the primary control and everything else is a plain, verifiable link. The one
- * interactive nicety — copy-to-clipboard — is a progressively-enhanced client
- * island; the mailto link works with or without it.
+ * Station 09. The close: every channel and every public profile in one place.
+ * No form on purpose — email is the fastest route to a security researcher,
+ * and a form that pretends to send is worse than none. A metric appears only
+ * where it was verified; the GitHub count refreshes at build with a verified
+ * static fallback.
  */
-export function Contact() {
-  const channels = CHANNELS.map(byPlatform).filter(
-    (profile): profile is Profile => profile !== undefined,
-  );
-
+export function Contact({ github }: { github: GithubStats | null }) {
   return (
     <Station
-      index={11}
+      index={9}
       id="contact"
       eyebrow="Contact"
       title="Send the scope."
       lede={`Based in ${identity.location}. Open to application security, red team and coordinated disclosure enquiries. Email is the fastest route — there is no contact form on purpose.`}
-      zone="teal"
+      width="default"
     >
-      <div className="max-w-[52rem]">
-        <ul className="m-0 list-none p-0">
-          <Reveal as="li">
-            <div
-              className="flex flex-wrap items-center justify-between gap-4 border-t border-[var(--border)] py-3"
-              style={{ minHeight: 64 }}
-            >
-              <a
-                href={`mailto:${identity.email}`}
-                className="t-h3 text-[var(--text)] underline-offset-4 hover:underline"
-              >
-                {identity.email}
-              </a>
-              <ContactCopy email={identity.email} />
-            </div>
-          </Reveal>
+      <Reveal>
+        <div className="flex flex-col gap-4 border-t border-[var(--border)] py-6 sm:flex-row sm:items-center sm:justify-between">
+          <a
+            href={`mailto:${identity.email}`}
+            className="t-h3 break-all text-[var(--text)] underline-offset-8 hover:underline"
+          >
+            {identity.email}
+          </a>
+          <ContactCopy email={identity.email} />
+        </div>
+      </Reveal>
 
-          {channels.map((profile, index) => (
-            <Reveal as="li" key={profile.platform} delay={60 * (index + 1)}>
+      <ul className="m-0 list-none p-0">
+        {profiles.map((profile, i) => {
+          const isGithub = profile.platform === "GitHub";
+          const metric =
+            isGithub && github
+              ? `${github.publicRepos} public repositories`
+              : profile.metric;
+          return (
+            <Reveal as="li" key={profile.url} delay={Math.min(i, 6) * 50}>
               <a
                 href={profile.url}
                 target="_blank"
@@ -59,44 +50,50 @@ export function Contact() {
                 aria-label={`${profile.platform} profile (opens in a new tab)`}
                 className="link-row"
               >
-                <span className="flex flex-col gap-1">
-                  <span className="t-h3 text-[var(--text)]">
-                    {profile.platform}
-                  </span>
-                  <span className="t-data text-[var(--text-tertiary)]">
+                <span className="flex min-w-0 flex-col">
+                  <span className="t-h3">{profile.platform}</span>
+                  <span className="t-data text-[var(--text-secondary)]">
                     {profile.handle}
                   </span>
                 </span>
-                <ArrowUpRight
-                  size={20}
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                  className="shrink-0 text-[var(--text-secondary)]"
-                />
+                <span className="flex min-w-0 shrink items-center gap-4">
+                  {metric ? (
+                    <span className="flex min-w-0 flex-col items-end text-right">
+                      <span className="t-data">{metric}</span>
+                      <span className="t-caption">
+                        {isGithub && github ? "verified at build" : "verified"}
+                      </span>
+                    </span>
+                  ) : null}
+                  <ArrowUpRight
+                    size={18}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                </span>
               </a>
             </Reveal>
-          ))}
-        </ul>
+          );
+        })}
+      </ul>
 
-        <Reveal delay={60 * (channels.length + 1)}>
-          <div className="mt-10 flex flex-col gap-6">
-            <Button href={identity.resumePdf} variant="ghost" download>
-              Download résumé (PDF)
-            </Button>
-
-            <p className="t-small text-[var(--text-secondary)]">
-              Vulnerability reports for this site:{" "}
-              <a
-                href="/.well-known/security.txt"
-                className="text-[var(--accent)]"
-              >
-                security.txt
-              </a>{" "}
-              per RFC 9116.
-            </p>
-          </div>
-        </Reveal>
-      </div>
+      <Reveal delay={120}>
+        <div className="mt-10 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <Button href={identity.resumePdf} variant="ghost" download>
+            Download résumé (PDF)
+          </Button>
+          <p className="t-small text-[var(--text-secondary)]">
+            Vulnerability in this site?{" "}
+            <a
+              href="/.well-known/security.txt"
+              className="t-mono text-[var(--accent)] underline-offset-4 hover:underline"
+            >
+              /.well-known/security.txt
+            </a>{" "}
+            per RFC 9116.
+          </p>
+        </div>
+      </Reveal>
     </Station>
   );
 }

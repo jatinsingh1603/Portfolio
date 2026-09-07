@@ -23,7 +23,7 @@ const KIND_LABEL: Record<Achievement["kind"], string> = {
 export function Achievements() {
   return (
     <Station
-      index={9}
+      index={8}
       id="achievements"
       eyebrow="Recognition"
       title="Validated by someone other than me."
@@ -39,8 +39,14 @@ export function Achievements() {
             className="reveal-rotate"
           >
             <Plane
-              href={item.href}
-              label={item.href ? item.title : undefined}
+              href={item.evidence?.href ?? item.href}
+              label={
+                item.evidence
+                  ? `${item.title} — ${item.evidence.label}`
+                  : item.href
+                    ? item.title
+                    : undefined
+              }
               className="flex h-full flex-col gap-3 p-6"
             >
               <p className="t-label text-[var(--accent)]">
@@ -54,6 +60,12 @@ export function Achievements() {
                 <p className="t-data text-[var(--text-secondary)]">
                   {item.metric}
                 </p>
+              ) : null}
+              {item.evidence ? (
+                <span className="t-label mt-4 inline-flex items-center gap-2 text-[var(--accent)]">
+                  Evidence · {item.evidence.label}
+                  <span aria-hidden="true">↗</span>
+                </span>
               ) : null}
             </Plane>
           </Reveal>

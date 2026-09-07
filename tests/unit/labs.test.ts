@@ -4,7 +4,6 @@ import { about } from "@/content/about";
 import { brand } from "@/content/brand";
 import { capabilities, credentials, roles } from "@/content/career";
 import { findings } from "@/content/findings";
-import { journey, phases } from "@/content/journey";
 import { aiScenarios, aiStages, cyberLab } from "@/content/labs";
 import { projects } from "@/content/projects";
 import {
@@ -12,7 +11,6 @@ import {
   aiScenarioSchema,
   aiStageSchema,
   cyberStageSchema,
-  milestoneSchema,
 } from "@/content/schema";
 
 const tools = new Set(
@@ -105,33 +103,18 @@ describe("ai automation lab", () => {
   });
 });
 
-describe("journey, achievements, brand, about", () => {
-  it("validates milestones and achievements", () => {
-    for (const m of journey)
-      expect(() => milestoneSchema.parse(m)).not.toThrow();
+describe("achievements, brand, about", () => {
+  it("validates achievements", () => {
     for (const a of achievements)
       expect(() => achievementSchema.parse(a)).not.toThrow();
   });
 
-  it("uses only the five declared phases, in order", () => {
-    const order = phases.map((p) => p.id);
-    let last = -1;
-    for (const m of journey) {
-      const i = order.indexOf(m.phase);
-      expect(i, m.id).toBeGreaterThanOrEqual(last);
-      last = i;
-    }
-  });
-
-  it("dates only what the record dates", () => {
-    // Education and the current role carry dates; nothing else may.
-    for (const m of journey) {
-      if (m.date) expect(["education", "tinycrows"]).toContain(m.id);
-    }
+  it("substantiates every achievement with public evidence", () => {
+    // The point of the cards: each one links to where the claim is proven.
+    for (const a of achievements) expect(a.evidence, a.id).toBeDefined();
   });
 
   it("has unique ids", () => {
-    expect(new Set(journey.map((m) => m.id)).size).toBe(journey.length);
     expect(new Set(achievements.map((a) => a.id)).size).toBe(
       achievements.length,
     );
@@ -150,7 +133,7 @@ describe("journey, achievements, brand, about", () => {
   });
 
   it("never publishes the phone number or a private impact description", () => {
-    const text = JSON.stringify({ about, journey, achievements, brand });
+    const text = JSON.stringify({ about, achievements, brand });
     expect(text).not.toContain("8175033816");
     // The Meta AI impact wording is withheld pending approval (JKS-04).
     expect(text.toLowerCase()).not.toContain("employee data");

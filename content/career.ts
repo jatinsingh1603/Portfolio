@@ -137,7 +137,9 @@ export const credentials: Credential[] = [
     detail:
       "Hands-on certification in Active Directory attacks and red team operations.",
     // verifyUrl intentionally absent — no badge is shown without a real
-    // credential URL to link it to.
+    // credential URL to link it to. The LinkedIn listing is the public record;
+    // content/achievements.ts attaches it, so this module stays loadable by
+    // plain Node in scripts/generate-static-files.mjs.
   },
 ];
 

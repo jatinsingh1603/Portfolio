@@ -53,6 +53,10 @@ export const findings: Finding[] = [
       basis: "program-permitted",
       note: "Reported via Google Bug Hunters. The affected application is not named.",
     },
+    evidence: {
+      label: "Google Bug Hunters profile",
+      href: "https://bughunters.google.com/profile/3645d13e-669c-4a4e-a8b1-b32d9b75b4d7",
+    },
   },
   {
     id: "JKS-04",

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import {
   Bricolage_Grotesque,
   IBM_Plex_Mono,
@@ -63,6 +63,20 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+/**
+ * viewport-fit=cover lets the page paint under notches and home indicators;
+ * the stylesheet pads the header, rail and gutters with the safe-area insets.
+ */
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f5f7f9" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0e13" },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: {
@@ -87,8 +101,6 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <div className="ground" aria-hidden="true" />
-        <div className="grain" aria-hidden="true" />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
