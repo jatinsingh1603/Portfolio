@@ -27,18 +27,11 @@ const display = Bricolage_Grotesque({
   display: "swap",
 });
 
-/**
- * Not preloaded on purpose: the headline is set in the display face, and this
- * 41 KB file competing for the same throttled connection was the difference
- * between LCP at 1.54 s and under the 1.5 s budget. It swaps in behind a
- * metric-matched fallback, so nothing shifts.
- */
 const sans = IBM_Plex_Sans({
   variable: "--font-ui",
   subsets: ["latin"],
   weight: ["400", "500"],
   display: "swap",
-  preload: false,
 });
 
 const mono = IBM_Plex_Mono({

@@ -7,12 +7,18 @@ import { brand } from "@/content/brand";
 import { identity, positioning } from "@/content/site";
 
 /**
- * Station 01. The text column argues; the object to its right is the argument
+ * Station 01. The text column argues; the object beside it is the argument
  * rendered: the five stations of the system in real depth, with data moving
  * through the authorisation gate. On phones the object sits above the words.
+ *
+ * DOM order is words first, object second, so the headline is parsed and
+ * painted before the inline SVG; the reversed column puts the object on top
+ * visually below the lg breakpoint.
  */
 export function Hero() {
   const labels = brand.system.map((s) => ({ id: s.id, label: s.label }));
+  const sceneLabel = `System diagram: ${brand.system.map((s) => s.label).join(", then ")}.`;
+
   return (
     <section
       id="hero"
@@ -37,7 +43,9 @@ export function Hero() {
               {brand.headline.map((line, i) => (
                 <span key={line} className="rise">
                   <span
-                    style={{ ["--rise-delay" as string]: `${120 + i * 90}ms` }}
+                    style={{
+                      ["--rise-delay" as string]: `${120 + i * 90}ms`,
+                    }}
                   >
                     {line}
                   </span>
@@ -99,31 +107,32 @@ export function Hero() {
           </div>
         </div>
       </Container>
-      {/* The object comes AFTER the words in the DOM so the headline is parsed
-          and painted first; on phones it is shown above them with CSS order. */}
+
       <div className="hero-stage">
         <div className="hero-stage__inner">
-          <div
-            className="system-scene"
-            role="img"
-            aria-label={`System diagram: ${brand.system.map((s) => s.label).join(", then ")}.`}
-          >
+          <div className="system-scene" role="img" aria-label={sceneLabel}>
             <SystemSvg className="system-scene__svg" labels={labels} />
             <SceneLoader labels={labels} />
           </div>
+          {/* Phones get a legend instead of projected labels. It is a
+              width-driven grid, so its row count cannot change when the mono
+              face swaps in — a wrapped row here moved the whole hero. */}
           <ol
-            className="t-label mt-2 flex flex-wrap gap-x-3 gap-y-1 lg:hidden"
+            className="t-label mt-3 grid gap-x-3 gap-y-1 lg:hidden"
+            style={{
+              gridTemplateColumns: "repeat(auto-fill, minmax(126px, 1fr))",
+            }}
             aria-hidden="true"
           >
             {brand.system.map((s, i) => (
-              <li key={s.id} className="inline-flex items-center gap-2">
+              <li
+                key={s.id}
+                className="flex items-center gap-2 whitespace-nowrap"
+              >
                 <span className="text-[var(--text-tertiary)]">
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="text-[var(--text-secondary)]">{s.label}</span>
-                {i < brand.system.length - 1 ? (
-                  <span aria-hidden="true">→</span>
-                ) : null}
               </li>
             ))}
           </ol>
