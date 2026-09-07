@@ -41,3 +41,13 @@ jobs:
 
       - name: Lighthouse budgets
         run: npx --yes @lhci/cli@0.14.x autorun
+      - name: Lighthouse metrics
+        if: always()
+        run: |
+          node -e '
+            const fs = require("fs");
+            for (const f of fs.readdirSync(".lighthouseci").filter((n) => n.startsWith("lhr-") && n.endsWith(".json"))) {
+              const d = JSON.parse(fs.readFileSync(".lighthouseci/" + f, "utf8")); const a = d.audits;
+              const m = (id) => Math.round(a[id].numericValue);
+              console.log(Object.entries(d.categories).map(([k, v]) => k + "=" + v.score).join(" "), "FCP", m("first-contentful-paint"), "LCP", m("largest-contentful-paint"), "SI", m("speed-index"), "TBT", m("total-blocking-time"), "CLS", a["cumulative-layout-shift"].numericValue.toFixed(4));
+            }'

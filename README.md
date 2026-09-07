@@ -121,11 +121,13 @@ same camera.
 
 It is hand-written WebGL 1 (`lib/gl/`): a two-program glow renderer whose
 streak field lives entirely in one static buffer and is positioned in the
-vertex shader, so the CPU does almost nothing per frame. About 7 KB gzipped,
-code-split and booted after load on an idle slice. It refuses software
-renderers (no GPU → the page stands on its own) and is never mounted under
-reduced motion; the hero then shows a server-rendered SVG of the same object.
-Append `?world=force` to see the world on a software-rendered browser.
+vertex shader, so the CPU does almost nothing per frame. About 7 KB gzipped
+and code-split: not even its code is fetched until the visitor starts
+exploring (first scroll, pointer move, touch or key press), and then it boots
+on an idle slice. It refuses software renderers (no GPU → the page stands on
+its own) and is never mounted under reduced motion; the hero shows a
+server-rendered SVG of the same object until the world takes over. Append
+`?world=force` to see the world on a software-rendered browser.
 
 ## Evidence
 

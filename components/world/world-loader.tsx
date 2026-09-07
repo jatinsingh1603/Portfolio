@@ -8,24 +8,26 @@ type World = ComponentType<{ labels: WorldLabel[] }>;
 
 /**
  * The world is a progressive enhancement, so not even its code is fetched
- * until there is a person to enhance for: the first scroll or pointer move,
- * or 2.5 s after load, whichever comes first. The page is complete before
- * then and stays complete if the chunk never arrives. Nothing is fetched
- * under reduced motion.
+ * until there is a person to enhance for: the first scroll, pointer move,
+ * touch or key press after load. It starts the moment someone starts
+ * exploring, never on a timer — an automated audit or a visitor who only
+ * reads the hero gets the complete page as delivered, with the static image.
+ * Nothing is fetched under reduced motion.
  */
 export function WorldLoader({ labels }: { labels: WorldLabel[] }) {
   const [World, setWorld] = useState<World | null>(null);
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    let timer = 0;
+    const events = ["scroll", "pointermove", "touchstart", "keydown"] as const;
     let done = false;
+    const off = () => {
+      for (const e of events) window.removeEventListener(e, load);
+    };
     const load = () => {
       if (done) return;
       done = true;
-      window.clearTimeout(timer);
-      window.removeEventListener("scroll", load);
-      window.removeEventListener("pointermove", load);
+      off();
       import("./world-canvas")
         .then((m) => setWorld(() => m.WorldCanvas))
         .catch(() => {
@@ -33,12 +35,8 @@ export function WorldLoader({ labels }: { labels: WorldLabel[] }) {
         });
     };
     const arm = () => {
-      window.addEventListener("scroll", load, { passive: true, once: true });
-      window.addEventListener("pointermove", load, {
-        passive: true,
-        once: true,
-      });
-      timer = window.setTimeout(load, 2500);
+      for (const e of events)
+        window.addEventListener(e, load, { passive: true, once: true });
     };
     let onLoad: (() => void) | null = null;
     if (document.readyState === "complete") arm();
@@ -48,10 +46,8 @@ export function WorldLoader({ labels }: { labels: WorldLabel[] }) {
     }
     return () => {
       done = true;
-      window.clearTimeout(timer);
       if (onLoad) window.removeEventListener("load", onLoad);
-      window.removeEventListener("scroll", load);
-      window.removeEventListener("pointermove", load);
+      off();
     };
   }, []);
 
