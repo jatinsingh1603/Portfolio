@@ -4,6 +4,7 @@ import {
   IBM_Plex_Mono,
   IBM_Plex_Sans,
 } from "next/font/google";
+import { Interactions } from "@/components/interactions";
 import { Rail } from "@/components/rail";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
@@ -104,6 +105,7 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
+        <Interactions />
         <Rail />
         <SiteHeader />
         {children}

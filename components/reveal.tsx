@@ -1,16 +1,13 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
 /**
- * The site's entrance animation: opacity 0→1 with a 24px rise (planes also tip
- * back from 6°), fired once when the element leads into view. Hand-rolled: the
- * whole behaviour is ~30 lines and an animation library would be the largest
- * dependency on a page with a 120 KB budget.
+ * The site's entrance animation: opacity 0→1 with a 24px rise (planes also
+ * tip back from 6°), fired once when the element leads into view. This is a
+ * plain server-rendered element; a single client controller
+ * (components/interactions.tsx) observes every `[data-reveal]` on the page,
+ * so a page with sixty reveals hydrates one component, not sixty.
  *
- * Reduced motion is handled here and in CSS, so it cannot be forgotten: the
- * observer is skipped and content renders visible immediately.
+ * Reduced motion and no-JS are handled in CSS: content is always visible.
  */
 export function Reveal({
   children,
@@ -26,32 +23,9 @@ export function Reveal({
   className?: string;
   style?: CSSProperties;
 }) {
-  const ref = useRef<HTMLElement>(null);
-  const [shown, setShown] = useState(false);
-
-  useEffect(() => {
-    const node = ref.current;
-    if (!node) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setShown(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry?.isIntersecting) return;
-        setShown(true);
-        observer.disconnect();
-      },
-      { threshold: 0.01, rootMargin: "0px 0px -6% 0px" },
-    );
-    observer.observe(node);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <Tag
-      ref={ref as React.Ref<never>}
-      data-reveal={shown ? "in" : "out"}
+      data-reveal="out"
       style={{ ...(delay ? { transitionDelay: `${delay}ms` } : {}), ...style }}
       className={className}
     >

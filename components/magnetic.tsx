@@ -1,8 +1,7 @@
-"use client";
-
-import { useMagnetic } from "@/lib/hooks/use-magnetic";
-
-/** Wraps a control so it drifts toward a fine pointer and springs back. */
+/**
+ * Wraps a control so it drifts toward a fine pointer and springs back. The
+ * behaviour lives in components/interactions.tsx; this is only the marker.
+ */
 export function Magnetic({
   children,
   className = "",
@@ -10,12 +9,9 @@ export function Magnetic({
   children: React.ReactNode;
   className?: string;
 }) {
-  const { ref, handlers } = useMagnetic(0.22, 8);
   return (
     <span
-      ref={ref as React.Ref<HTMLSpanElement>}
-      className={`inline-flex transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] ${className}`}
-      {...handlers}
+      className={`magnetic inline-flex transition-transform duration-[var(--dur-fast)] ease-[var(--ease-out)] ${className}`}
     >
       {children}
     </span>

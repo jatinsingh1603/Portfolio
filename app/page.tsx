@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { About } from "@/components/sections/about";
 import { Achievements } from "@/components/sections/achievements";
 import { AiLab } from "@/components/sections/ai-lab";
@@ -12,9 +13,12 @@ import { brand } from "@/content/brand";
 import { fetchGithubStats } from "@/lib/github";
 
 /**
- * Eleven stations, in the order the rail counts them. The only data fetched
- * anywhere on the site is the optional GitHub repository count, resolved at
- * build time with a verified static fallback.
+ * Nine stations, in the order the rail counts them. Each sits in its own
+ * Suspense boundary: the HTML is complete either way, but on the client React
+ * then hydrates the stations as separate tasks that yield to the main thread,
+ * instead of one long task — which is what a slow device feels at load. The
+ * only data fetched anywhere on the site is the optional GitHub repository
+ * count, resolved at build time with a verified static fallback.
  */
 export default async function Home() {
   const github = await fetchGithubStats();
@@ -23,15 +27,33 @@ export default async function Home() {
     <>
       <WorldLoader labels={labels} />
       <main id="main">
-        <Hero />
-        <About />
-        <Work />
-        <Research />
-        <CyberLab />
-        <AiLab />
-        <Skills />
-        <Achievements />
-        <Contact github={github} />
+        <Suspense fallback={null}>
+          <Hero />
+        </Suspense>
+        <Suspense fallback={null}>
+          <About />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Work />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Research />
+        </Suspense>
+        <Suspense fallback={null}>
+          <CyberLab />
+        </Suspense>
+        <Suspense fallback={null}>
+          <AiLab />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Skills />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Achievements />
+        </Suspense>
+        <Suspense fallback={null}>
+          <Contact github={github} />
+        </Suspense>
       </main>
     </>
   );

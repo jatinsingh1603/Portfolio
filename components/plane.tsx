@@ -1,13 +1,10 @@
-"use client";
-
 import Link from "next/link";
-import { usePointerTilt } from "@/lib/hooks/use-pointer-tilt";
 
 /**
  * A panel that lives in perspective: it tilts toward the pointer inside a
- * `.perspective` parent and carries a specular that follows it. Renders as a
- * link when `href` is given (internal → next/link, external → new tab).
- * Nothing happens on touch or under reduced motion; the hook returns early.
+ * `.perspective` parent and carries a specular that follows it. The tilt is
+ * driven by one delegated pointer handler in components/interactions.tsx, so
+ * this stays a server component. Renders as a link when `href` is given.
  */
 export function Plane({
   href,
@@ -23,20 +20,16 @@ export function Plane({
   className?: string;
   children: React.ReactNode;
 }) {
-  const { ref, handlers, style } = usePointerTilt(5);
   const cls = `plane panel ${raised ? "panel--raised" : ""} block ${className}`;
 
   if (href?.startsWith("http")) {
     return (
       <a
-        ref={ref as React.Ref<HTMLAnchorElement>}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={label ? `${label} (opens in a new tab)` : undefined}
         className={cls}
-        style={style}
-        {...handlers}
       >
         {children}
       </a>
@@ -44,26 +37,10 @@ export function Plane({
   }
   if (href) {
     return (
-      <Link
-        ref={ref as React.Ref<HTMLAnchorElement>}
-        href={href}
-        aria-label={label}
-        className={cls}
-        style={style}
-        {...handlers}
-      >
+      <Link href={href} aria-label={label} className={cls}>
         {children}
       </Link>
     );
   }
-  return (
-    <div
-      ref={ref as React.Ref<HTMLDivElement>}
-      className={cls}
-      style={style}
-      {...handlers}
-    >
-      {children}
-    </div>
-  );
+  return <div className={cls}>{children}</div>;
 }
