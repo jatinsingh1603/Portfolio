@@ -150,9 +150,23 @@ export class Engine {
       premultipliedAlpha: true,
       preserveDrawingBuffer: false,
       powerPreference: "low-power",
-      failIfMajorPerformanceCaveat: false,
+      // Software rendering (no GPU, or a blocklisted one) would burn the main
+      // thread every frame for a decoration. Chrome returns null here in that
+      // case, the constructor throws, and the server-rendered SVG stays.
+      failIfMajorPerformanceCaveat: true,
     });
     if (!gl) throw new Error("webgl");
+    // The caveat flag no longer catches SwiftShader in current Chrome, so ask
+    // the driver directly. A CPU rasteriser would spend the main thread on a
+    // decoration; the static SVG is the right hero for that machine.
+    const debug = gl.getExtension("WEBGL_debug_renderer_info");
+    const renderer = debug
+      ? String(gl.getParameter(debug.UNMASKED_RENDERER_WEBGL))
+      : "";
+    if (/swiftshader|llvmpipe|software|mesa offscreen/i.test(renderer)) {
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
+      throw new Error("software-gl");
+    }
     this.gl = gl;
     this.points = link(
       gl,

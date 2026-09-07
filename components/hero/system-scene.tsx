@@ -334,11 +334,22 @@ export function SystemScene({
       requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
-    if (w.requestIdleCallback)
-      idle = w.requestIdleCallback(start, { timeout: 1500 });
-    else timer = window.setTimeout(start, 250);
+    // Boot only after the page has fully loaded, then on an idle slice, so the
+    // scene never competes with hydration or the largest paint.
+    const boot = () => {
+      if (w.requestIdleCallback)
+        idle = w.requestIdleCallback(start, { timeout: 2000 });
+      else timer = window.setTimeout(start, 300);
+    };
+    let onLoad: (() => void) | null = null;
+    if (document.readyState === "complete") boot();
+    else {
+      onLoad = () => boot();
+      window.addEventListener("load", onLoad, { once: true });
+    }
 
     return () => {
+      if (onLoad) window.removeEventListener("load", onLoad);
       if (idle) w.cancelIdleCallback?.(idle);
       window.clearTimeout(timer);
       pause();
