@@ -175,7 +175,13 @@ body {
    for every register label. Letter-spacing tightens as size grows. */
 .t-display {
   font-family: var(--font-display), var(--font-ui), system-ui, sans-serif;
-  font-size: clamp(2.5rem, 5.2vw, 4.75rem);
+  /* The longest headline line is ~8 em wide; the second term guarantees it
+     fits the viewport, so the lines never wrap and font metrics cannot move
+     the layout when the display face swaps in. */
+  font-size: min(
+    clamp(2.5rem, 5.2vw, 4.75rem),
+    calc((100vw - 2 * var(--gutter)) / 8.2)
+  );
   font-weight: 600;
   line-height: 0.98;
   letter-spacing: -0.035em;
@@ -981,6 +987,9 @@ footer {
 .rise {
   animation: rise 700ms var(--ease-out) both;
   animation-delay: 120ms;
+}
+.rise > span {
+  white-space: nowrap;
 }
 @keyframes rise {
   from {

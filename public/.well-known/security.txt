@@ -2,7 +2,7 @@
 # RFC 9116
 
 Contact: mailto:singhjatin1603@gmail.com
-Expires: 2027-09-07T09:40:10Z
+Expires: 2027-09-07T09:52:23Z
 Preferred-Languages: en, hi
 Canonical: https://jatinkumarsingh.com/.well-known/security.txt
 Policy: https://jatinkumarsingh.com/security
