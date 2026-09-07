@@ -1,119 +1,159 @@
 import Link from "next/link";
-import { Chip, Container, SectionHeader } from "@/components/primitives";
+import {
+  Button,
+  Panel,
+  Reveal,
+  SeverityTag,
+  Station,
+} from "@/components/primitives";
 import { publicFindings, withheldCount } from "@/content/findings";
+import type { Finding } from "@/content/schema";
 import { disclosurePolicy } from "@/content/site";
 
+/** UI labels for the disclosure basis — never a fact about the person. */
+function basisLabel(disclosure: Finding["disclosure"]): string {
+  if (!disclosure.public) return "";
+  switch (disclosure.basis) {
+    case "program-permitted":
+      return "Programme permits";
+    case "vendor-approved":
+      return "Vendor approved";
+    case "publicly-acknowledged":
+      return "Publicly acknowledged";
+  }
+}
+
+/** A bounty value when one was awarded; otherwise an em dash read as "none". */
+function Bounty({ bounty }: { bounty?: string }) {
+  if (bounty) return <>{bounty}</>;
+  return (
+    <>
+      <span aria-hidden="true">—</span>
+      <span className="sr-only">none</span>
+    </>
+  );
+}
+
+/** The reference cell links to the finding sheet when a cleared writeup exists. */
+function RefCell({ id, slug }: { id: string; slug?: string }) {
+  if (slug) {
+    return (
+      <Link
+        href={`/security/${slug}`}
+        className="t-data text-[var(--accent)] underline-offset-4 hover:underline"
+      >
+        {id}
+      </Link>
+    );
+  }
+  return <span className="t-data">{id}</span>;
+}
+
 /**
- * A real table, not a div grid — the data is genuinely tabular and a screen
- * reader user should be able to navigate it by column. Density is the point:
- * this is the section that has to read as substantive.
+ * Station 04. The disclosure ledger: only publicFindings ever render, and only
+ * organisation / class / severity / status / basis / bounty — never an
+ * endpoint, payload or reproduction step. A table on desktop, stacked cards on
+ * phones, both driven off the same governance-gated list.
  */
 export function Research() {
   return (
-    <section
+    <Station
+      index={4}
       id="research"
-      aria-labelledby="research-heading"
-      className="ground-raised py-[var(--section-y)]"
+      eyebrow="Security research"
+      title="The disclosure ledger."
+      lede={disclosurePolicy}
+      zone="teal"
     >
-      <Container width="wide">
-        <SectionHeader
-          id="research-heading"
-          eyebrow="Security research"
-          title={
-            <>
-              Reported through the vendor&rsquo;s channel, or a national CERT.
-            </>
-          }
-          intro="Organisation, class and status. Reproduction detail is withheld wherever a programme requires it or a fix is not confirmed deployed."
-        />
+      <div className="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-[var(--border-strong)] pb-4">
+        <p className="t-label">Details withheld per programme terms</p>
+        <p className="t-data text-[var(--text-tertiary)]">
+          {publicFindings.length} records <span aria-hidden="true">·</span>{" "}
+          {withheldCount} withheld
+        </p>
+      </div>
 
-        <div className="mt-20 overflow-x-auto">
-          <table className="w-full border-collapse text-left">
-            <caption className="sr-only">
-              Disclosure record: organisation, vulnerability class, severity and
-              current status for each publicly listed finding.
-            </caption>
-            <thead>
-              <tr className="border-b border-[var(--border-strong)]">
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Ref
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Organisation
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Class
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Severity
-                </th>
-                <th scope="col" className="t-caption py-3 font-medium">
-                  Status
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {publicFindings.map((finding) => (
-                <tr
-                  key={finding.id}
-                  className="relative border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_4%,transparent)]"
-                >
-                  <th
-                    scope="row"
-                    className="t-mono py-5 pr-6 align-top font-normal whitespace-nowrap text-[var(--text-tertiary)]"
-                  >
-                    {finding.id}
-                  </th>
-                  <td className="py-5 pr-6 align-top font-medium whitespace-nowrap">
-                    {finding.slug ? (
-                      <Link
-                        href={`/security/${finding.slug}`}
-                        /* The anchor covers the row via ::after, so the whole
-                           row is the target while the accessible name stays
-                           just the organisation. */
-                        className="after:absolute after:inset-0 after:content-['']"
-                      >
-                        {finding.org}
-                      </Link>
-                    ) : (
-                      finding.org
-                    )}
-                  </td>
-                  <td className="t-small max-w-[36ch] py-5 pr-6 align-top text-[var(--text-secondary)]">
-                    {finding.class}
-                  </td>
-                  <td className="py-5 pr-6 align-top">
-                    <Chip tone={finding.severity}>{finding.severity}</Chip>
-                  </td>
-                  <td className="t-small py-5 align-top">
-                    {finding.status}
-                    {finding.bounty ? (
-                      <span className="mt-1 block font-medium">
-                        {finding.bounty}
-                      </span>
-                    ) : null}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+      {/* Desktop: the ledger table, scrolling within itself on narrow desktops. */}
+      <div className="scroll-x mt-6 hidden md:block">
+        <table className="ledger w-full">
+          <caption className="sr-only">
+            Public security disclosure records
+          </caption>
+          <thead>
+            <tr>
+              <th scope="col">Ref</th>
+              <th scope="col">Organisation</th>
+              <th scope="col">Class</th>
+              <th scope="col">Severity</th>
+              <th scope="col">Status</th>
+              <th scope="col">Basis</th>
+              <th scope="col">Bounty</th>
+            </tr>
+          </thead>
+          <tbody>
+            {publicFindings.map((f, i) => (
+              <Reveal as="tr" key={f.id} delay={Math.min(i, 5) * 60}>
+                <td>
+                  <RefCell id={f.id} slug={f.slug} />
+                </td>
+                <td className="t-small">{f.org}</td>
+                <td className="t-small text-secondary">{f.class}</td>
+                <td>
+                  <SeverityTag severity={f.severity} />
+                </td>
+                <td className="t-small">{f.status}</td>
+                <td className="t-small">{basisLabel(f.disclosure)}</td>
+                <td className="t-data">
+                  <Bounty bounty={f.bounty} />
+                </td>
+              </Reveal>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        {/* Body type, not a warning box. The restraint is the credibility. */}
-        <div className="mx-auto mt-16 max-w-[var(--container-text)] text-center">
-          <h3 className="t-h3">Disclosure policy</h3>
-          <p className="t-body mt-3 text-[var(--text-secondary)]">
-            {disclosurePolicy}
-          </p>
-          {withheldCount > 0 ? (
-            <p className="t-small mt-4 text-[var(--text-tertiary)]">
-              {withheldCount} further{" "}
-              {withheldCount === 1 ? "finding is" : "findings are"} held back
-              from this list pending authorisation or disclosure approval.
-            </p>
-          ) : null}
-        </div>
-      </Container>
-    </section>
+      {/* Mobile: the same fields as stacked cards. */}
+      <ul className="perspective mt-6 grid gap-4 md:hidden">
+        {publicFindings.map((f, i) => (
+          <Reveal
+            as="li"
+            key={f.id}
+            delay={Math.min(i, 5) * 60}
+            className="reveal-rotate"
+          >
+            <Panel className="p-5">
+              <div className="flex items-center justify-between gap-3">
+                <RefCell id={f.id} slug={f.slug} />
+                <SeverityTag severity={f.severity} />
+              </div>
+              <h3 className="t-h3 mt-3">{f.org}</h3>
+              <p className="t-small text-secondary mt-1">{f.class}</p>
+              <dl className="register mt-4">
+                <div>
+                  <dt className="t-label pt-0.5">Status</dt>
+                  <dd className="t-small">{f.status}</dd>
+                </div>
+                <div>
+                  <dt className="t-label pt-0.5">Basis</dt>
+                  <dd className="t-small">{basisLabel(f.disclosure)}</dd>
+                </div>
+                {f.bounty ? (
+                  <div>
+                    <dt className="t-label pt-0.5">Bounty</dt>
+                    <dd className="t-small">{f.bounty}</dd>
+                  </div>
+                ) : null}
+              </dl>
+            </Panel>
+          </Reveal>
+        ))}
+      </ul>
+
+      <div className="mt-10">
+        <Button href="/security" variant="ghost">
+          Full record and policy
+        </Button>
+      </div>
+    </Station>
   );
 }

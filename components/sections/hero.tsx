@@ -1,182 +1,134 @@
-import { existsSync } from "node:fs";
-import path from "node:path";
-import Image from "next/image";
-import { ArrowDown, Download } from "lucide-react";
-import { Button, Chip, Container, ExternalLink } from "@/components/primitives";
-import { RotatingWord } from "@/components/rotating-word";
-import { awards } from "@/content/career";
-import { publicFindings } from "@/content/findings";
-import { profiles } from "@/content/profiles";
-import { credibilityChips, identity, positioning } from "@/content/site";
+import Link from "next/link";
+import { ArrowDown } from "lucide-react";
+import { SceneLoader } from "@/components/hero/scene-loader";
+import { SystemSvg } from "@/components/hero/system-svg";
+import { Button, Container } from "@/components/primitives";
+import { brand } from "@/content/brand";
+import { identity, positioning } from "@/content/site";
 
 /**
- * Evaluated at build time. If the headshot has not been added yet the hero
- * renders as a single full-measure column — a legitimate layout rather than a
- * broken image — and picks up the 7/5 split automatically once the file lands.
+ * Station 01. The text column argues; the object to its right is the argument
+ * rendered: the five stations of the system in real depth, with data moving
+ * through the authorisation gate. On phones the object sits above the words.
  */
-const hasHeadshot = existsSync(
-  path.join(process.cwd(), "public", identity.headshot.replace(/^\//, "")),
-);
-
-/** The three a recruiter actually opens next, in that order. */
-const HERO_PROFILE_PLATFORMS = ["GitHub", "LinkedIn", "X"];
-const heroProfiles = HERO_PROFILE_PLATFORMS.map((name) =>
-  profiles.find((p) => p.platform === name),
-).filter((p) => p !== undefined);
-
-/**
- * Derived from the content layer, never typed in — so the hero can never claim
- * a number the rest of the page does not substantiate. If a finding is
- * withheld, this count drops with it.
- */
-const stats = [
-  { value: publicFindings.length, label: "findings reported" },
-  {
-    value: new Set(publicFindings.map((f) => f.org)).size,
-    label: "organisations",
-  },
-  { value: awards.length, label: "competition placements" },
-];
-
 export function Hero() {
+  const labels = brand.system.map((s) => ({ id: s.id, label: s.label }));
   return (
     <section
-      aria-labelledby="hero-heading"
-      /* 88vh, not 100vh: the fold should promise a next section, not hide it. */
-      /* No entrance animation. A fade here costs its own duration in LCP,
-         because Chrome will not count text as painted while it is transparent —
-         and the hero is the largest contentful paint on every viewport. */
-      className="ground-hero flex min-h-[88vh] items-center py-24"
+      id="hero"
+      aria-labelledby="hero-title"
+      data-station={1}
+      data-station-label="Hero"
+      data-zone="teal"
+      className="relative flex min-h-[100svh] flex-col-reverse justify-end overflow-hidden pt-24 pb-16 md:pt-32 lg:flex-row lg:items-center lg:justify-start"
     >
-      <Container width="wide">
-        <div
-          className={
-            hasHeadshot
-              ? "grid items-center gap-16 lg:grid-cols-12"
-              : "grid gap-16"
-          }
-        >
-          {/* With a portrait the 7/5 split is balanced. Without one, the same
-              left-aligned column leaves half the viewport empty and the page
-              reads as if it is falling off the left edge — so it centres. */}
-          <div className={hasHeadshot ? "lg:col-span-7" : "text-center"}>
-            <p className="t-caption">
-              {identity.title} · {identity.location}
+      <Container width="wide" className="relative w-full">
+        <div className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-7">
+            <p className="t-label">
+              <span className="text-[var(--text)]">{identity.name}</span>
+              <span aria-hidden="true"> · </span>
+              {identity.title}
+              <span aria-hidden="true"> · </span>
+              {identity.location}
             </p>
 
-            <h1 id="hero-heading" className="t-display mt-5">
-              {/* The rotation is decorative repetition of one word, so assistive
-                  tech gets the sentence once, statically, and never hears it
-                  swap. */}
-              <span className="sr-only">Break the control. Prove the fix.</span>
-              {/* The rotating word sits inline so the line still reads as the
-                  sentence it is: "Break the control." — not as three fragments
-                  stacked on top of each other. */}
-              <span aria-hidden="true" className="block">
-                <span className="block">
-                  Break the{" "}
-                  <RotatingWord
-                    words={positioning.headlineRotating}
-                    suffix="."
-                  />
+            <h1 id="hero-title" className="t-display mt-6">
+              {brand.headline.map((line, i) => (
+                <span key={line} className="rise">
+                  <span
+                    style={{ ["--rise-delay" as string]: `${120 + i * 90}ms` }}
+                  >
+                    {line}
+                  </span>
                 </span>
-                <span className="block">Prove the fix.</span>
-              </span>
+              ))}
             </h1>
 
-            <p className={`t-intro mt-7 ${hasHeadshot ? "" : "mx-auto"}`}>
-              {positioning.intro}
-            </p>
+            <p className="t-lede mt-7">{positioning.intro}</p>
 
-            <ul
-              className={`mt-9 flex flex-wrap gap-2 ${hasHeadshot ? "" : "justify-center"}`}
-            >
-              {credibilityChips.map((chip) => (
-                <li key={chip}>
-                  <Chip>{chip}</Chip>
+            <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Button
+                href={brand.ctas.work.href}
+                magnetic
+                className="w-full sm:w-auto"
+              >
+                {brand.ctas.work.label}
+              </Button>
+              <Button
+                href={brand.ctas.github.href}
+                variant="ghost"
+                external
+                magnetic
+                className="w-full sm:w-auto"
+              >
+                {brand.ctas.github.label}
+              </Button>
+              <Button
+                href={brand.ctas.contact.href}
+                variant="ghost"
+                magnetic
+                className="w-full sm:w-auto"
+              >
+                {brand.ctas.contact.label}
+              </Button>
+            </div>
+
+            <ul className="mt-10 flex flex-wrap gap-2" aria-label="Credibility">
+              {brand.credibility.map((chip) => (
+                <li key={chip.label}>
+                  <Link
+                    href={chip.href}
+                    className="chip transition-colors duration-[var(--dur-micro)] hover:border-[var(--accent)] hover:text-[var(--text)]"
+                  >
+                    {chip.label}
+                  </Link>
                 </li>
               ))}
             </ul>
 
             <div
-              className={`mt-10 flex flex-wrap gap-3 ${hasHeadshot ? "" : "justify-center"}`}
+              className="mt-14 hidden items-center gap-4 lg:flex"
+              aria-hidden="true"
             >
-              <Button href="#research">
-                View security research
-                <ArrowDown size={18} strokeWidth={1.5} aria-hidden="true" />
-              </Button>
-              <Button href={identity.resumePdf} variant="secondary" download>
-                <Download size={18} strokeWidth={1.5} aria-hidden="true" />
-                Download résumé
-              </Button>
+              <span className="scroll-cue" />
+              <span className="t-label inline-flex items-center gap-2">
+                Scroll <ArrowDown size={12} strokeWidth={1.5} />
+              </span>
             </div>
-
-            {/* A recruiter's second click is almost always the GitHub or
-                LinkedIn profile. Burying them at the bottom of the page costs a
-                scroll for no reason. */}
-            <ul
-              className={`mt-8 flex flex-wrap items-center gap-x-6 gap-y-2 ${hasHeadshot ? "" : "justify-center"}`}
-            >
-              {heroProfiles.map((profile) => (
-                <li key={profile.url}>
-                  <ExternalLink
-                    href={profile.url}
-                    label={`${profile.platform} profile`}
-                    className="t-small !text-[var(--text-secondary)] hover:!text-[var(--text)]"
-                  >
-                    {profile.platform}
-                  </ExternalLink>
-                </li>
-              ))}
-            </ul>
-
-            {/* Fills the lower hero with something verifiable rather than
-                decoration. Each figure is counted from the data that renders
-                further down the page. */}
-            <dl
-              className={`mt-16 flex flex-wrap gap-x-12 gap-y-6 ${hasHeadshot ? "" : "justify-center"}`}
-            >
-              {stats.map((stat) => (
-                <div key={stat.label}>
-                  <dt className="sr-only">{stat.label}</dt>
-                  <dd>
-                    <span className="t-h2 block">{stat.value}</span>
-                    <span
-                      className="t-caption mt-1 block tracking-[0.08em] uppercase"
-                      aria-hidden="true"
-                    >
-                      {stat.label}
-                    </span>
-                  </dd>
-                </div>
-              ))}
-            </dl>
           </div>
-
-          {hasHeadshot ? (
-            <div className="lg:col-span-5">
-              {/* The offset plate is the only compositional flourish on the
-                  page: a subtle wash rectangle behind the portrait, not a ring,
-                  glow or gradient. */}
-              <div className="relative mx-auto w-full max-w-[420px]">
-                <div
-                  aria-hidden="true"
-                  className="absolute inset-0 translate-x-6 translate-y-6 rounded-[var(--radius-surface)] bg-[var(--bg-subtle)]"
-                />
-                <Image
-                  src={identity.headshot}
-                  alt={identity.headshotAlt}
-                  width={1254}
-                  height={1254}
-                  priority
-                  sizes="(min-width: 1024px) 420px, (min-width: 640px) 60vw, 90vw"
-                  className="relative rounded-[var(--radius-surface)] border border-[var(--border)]"
-                />
-              </div>
-            </div>
-          ) : null}
         </div>
       </Container>
+      {/* The object comes AFTER the words in the DOM so the headline is parsed
+          and painted first; on phones it is shown above them with CSS order. */}
+      <div className="hero-stage">
+        <div className="hero-stage__inner">
+          <div
+            className="system-scene"
+            role="img"
+            aria-label={`System diagram: ${brand.system.map((s) => s.label).join(", then ")}.`}
+          >
+            <SystemSvg className="system-scene__svg" labels={labels} />
+            <SceneLoader labels={labels} />
+          </div>
+          <ol
+            className="t-label mt-2 flex flex-wrap gap-x-3 gap-y-1 lg:hidden"
+            aria-hidden="true"
+          >
+            {brand.system.map((s, i) => (
+              <li key={s.id} className="inline-flex items-center gap-2">
+                <span className="text-[var(--text-tertiary)]">
+                  {String(i + 1).padStart(2, "0")}
+                </span>
+                <span className="text-[var(--text-secondary)]">{s.label}</span>
+                {i < brand.system.length - 1 ? (
+                  <span aria-hidden="true">→</span>
+                ) : null}
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
     </section>
   );
 }

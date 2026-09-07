@@ -4,9 +4,12 @@ import { expect, test } from "@playwright/test";
 const routes = [
   "/",
   "/security",
+  "/security/irctc-dom-xss",
   "/resume",
   "/contact",
   "/projects/swiftpentest",
+  "/projects/tprm-platform",
+  "/styleguide",
 ];
 
 // Reduced motion is emulated for the scans: mid-transition elements sit at a

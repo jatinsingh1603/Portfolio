@@ -1,92 +1,88 @@
 @import "tailwindcss";
 
 /* Theme is driven by a data attribute set pre-paint, never by the media query
-   alone — the toggle has to be able to override the OS in both directions. */
+   alone — the toggle has to be able to override the OS in both directions.
+   Dark is the canonical design; light is a real, audited alternative. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ── Colour ──────────────────────────────────────────────────────────────
    Raw values live here as plain custom properties so `[data-theme]` can swap
-   them; `@theme inline` below only aliases them into Tailwind's utility
-   namespace. One accent. Everything else is greyscale. */
+   them; `@theme inline` below only aliases them into Tailwind's namespace.
+   The two colour blocks are GENERATED from lib/tokens.ts and audited by
+   tests/unit/contrast.test.ts. Edit the TS, then regenerate.
+
+   Colour is a law on this site: --accent (teal) is the security signal,
+   --accent-2 (amber) is machine reasoning. Severity hues appear only on the
+   ledger, always beside a word and a shape. */
 :root {
-  --bg: #ffffff;
-  --bg-subtle: #f5f5f7; /* Apple's section wash */
-  --surface: #fbfbfd;
-  --text: #1d1d1f;
-  /* Apple ships #6e6e73/#86868b as its secondary/tertiary greys, but #86868b
-     is 3.33:1 on the #f5f5f7 wash — a fail at our 13px caption size. The scale
-     is shifted down one step instead of dropped: #6e6e73 becomes tertiary
-     (4.66:1) and secondary darkens, which keeps three visibly distinct levels
-     and clears 4.5:1 on both grounds. Verified in tests/unit/contrast.test.ts. */
-  --text-secondary: #55555a;
-  --text-tertiary: #6e6e73;
-  --border: rgba(0, 0, 0, 0.08);
-  --border-strong: rgba(0, 0, 0, 0.16);
-  /* Burnt orange, not a bright one: #ff9500 is 2.2:1 on white and unusable for
-     link text. This clears 5.02:1 on the page and 4.61:1 on the wash. */
-  --accent: #b4530a;
-  --accent-hover: #8f4108;
-  /* Foreground for text sitting ON an accent fill. Light mode's accent is dark
-     enough for white (5.57:1); dark mode's is deliberately bright so links
-     stay legible on black, which makes white-on-accent fail at 3.01:1 — so the
-     filled button flips to near-black text there instead of dimming the accent. */
+  --bg: #f5f7f9;
+  --bg-subtle: #edf0f3;
+  --surface: #ffffff;
+  --surface-raised: #fbfcfd;
+  --text: #0e141a;
+  --text-secondary: #41505c;
+  --text-tertiary: #5c6b77;
+  --accent: #0a7263;
+  --accent-hover: #085a4e;
   --accent-on: #ffffff;
-  --focus: #b4530a;
-
-  /* Severity — the only additional hues on the site. Carried by a 6px dot with
-     neutral text beside it: tinting the text itself would make a "high" chip
-     read as a link now that the accent is orange. */
-  --sev-critical: #b3261e;
-  --sev-high: #c2410c;
-  --sev-medium: #a16207;
-  --sev-low: #4d7c0f;
-  --sev-info: #6e6e73;
-
-  /* Two shadows, both neutral. Dark mode drops them for a hairline instead. */
-  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06), 0 12px 32px rgba(0, 0, 0, 0.06);
+  --accent-2: #9a5b00;
+  --focus: #0a7263;
+  --sev-critical: #c0392b;
+  --sev-high: #9c5000;
+  --sev-medium: #8a6d00;
+  --sev-low: #1e7a54;
+  --sev-info: #2a5da8;
+  --border: rgba(0, 0, 0, 0.12);
+  --border-strong: rgba(0, 0, 0, 0.2);
+  --shadow-panel:
+    0 1px 2px rgba(10, 14, 19, 0.06), 0 12px 40px rgba(10, 14, 19, 0.08);
+  --highlight: rgba(255, 255, 255, 0.9);
+  --grid-line: rgba(14, 20, 26, 0.06);
+  --scrim: rgba(20, 26, 32, 0.55);
 }
 
 [data-theme="dark"] {
-  --bg: #000000;
-  --bg-subtle: #0a0a0b;
-  --surface: #131315;
-  --text: #f5f5f7;
-  --text-secondary: #a1a1a6;
-  --text-tertiary: #86868b;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --accent: #ff9f0a; /* 10.2:1 on black; the dark ground can carry a bright hue */
-  --accent-hover: #ffb340;
-  --accent-on: #1d1d1f; /* 5.58:1 on the accent fill */
-  --focus: #ff9f0a;
-
-  /* Severity hues re-tuned for a dark ground; same semantic order. */
-  --sev-critical: #ff6b61;
+  --bg: #0a0e13;
+  --bg-subtle: #10151b;
+  --surface: #141a21;
+  --surface-raised: #1b222b;
+  --text: #e6ebf0;
+  --text-secondary: #a2aeb9;
+  --text-tertiary: #78838e;
+  --accent: #38d9c0;
+  --accent-hover: #5fe3ce;
+  --accent-on: #04120f;
+  --accent-2: #f2b441;
+  --focus: #7fe9da;
+  --sev-critical: #ff6b6b;
   --sev-high: #ff9f5a;
-  --sev-medium: #e0b341;
-  --sev-low: #9ccc5a;
-  --sev-info: #a1a1a6;
-
-  /* Elevation by hairline, not by glow. */
-  --shadow-sm: none;
-  --shadow-md: none;
+  --sev-medium: #f2c94c;
+  --sev-low: #56cc9d;
+  --sev-info: #7fa8e0;
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --shadow-panel:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px rgba(0, 0, 0, 0.45);
+  --highlight: rgba(255, 255, 255, 0.07);
+  --grid-line: rgba(230, 235, 240, 0.045);
+  --scrim: rgba(6, 9, 13, 0.72);
 }
 
 @theme inline {
   --color-bg: var(--bg);
   --color-bg-subtle: var(--bg-subtle);
   --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
   --color-text: var(--text);
-  --color-text-secondary: var(--text-secondary);
-  --color-text-tertiary: var(--text-tertiary);
+  --color-secondary: var(--text-secondary);
+  --color-tertiary: var(--text-tertiary);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-on: var(--accent-on);
+  --color-accent-2: var(--accent-2);
   --color-focus: var(--focus);
-
   --color-critical: var(--sev-critical);
   --color-high: var(--sev-high);
   --color-medium: var(--sev-medium);
@@ -94,10 +90,9 @@
   --color-info: var(--sev-info);
 
   --font-sans: var(--font-ui);
+  --font-display: var(--font-display);
   --font-mono: var(--font-code);
 
-  /* ── Space ────────────────────────────────────────────────────────────
-     Every vertical value on the site comes from this scale. */
   --spacing-1: 4px;
   --spacing-2: 8px;
   --spacing-3: 12px;
@@ -111,326 +106,746 @@
   --spacing-20: 80px;
   --spacing-24: 96px;
   --spacing-32: 128px;
-  --spacing-40: 160px;
-  --spacing-50: 200px;
 
   --radius-chip: 6px;
-  --radius-card: 12px;
-  --radius-surface: 18px;
+  --radius-panel: 14px;
+  --radius-plane: 18px;
 
-  --shadow-sm: var(--shadow-sm);
-  --shadow-md: var(--shadow-md);
-
-  /* ── Motion ───────────────────────────────────────────────────────── */
-  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* Material 3 standard */
-  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1); /* Material 3 emphasized */
-  --ease-out-soft: cubic-bezier(0.16, 1, 0.3, 1); /* long-tail settle */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 :root {
-  /* 980px is Apple's actual content column; wider immediately reads template. */
-  --container-text: 692px;
-  --container: 980px;
-  --container-wide: 1240px;
-  --gutter: clamp(20px, 5vw, 40px);
-  /* Applies top and bottom. Generous on purpose: one idea per screen. */
-  --section-y: clamp(88px, 13vh, 168px);
+  --container-text: 65ch;
+  --container: 1120px;
+  --container-wide: 1280px;
+  --gutter: clamp(20px, 5vw, 48px);
+  --rail: 0px;
+  --section-y: clamp(96px, 12vh, 176px);
 
-  --dur-micro: 150ms; /* hover, focus, colour */
-  --dur-fast: 250ms; /* toggles, chips, small position */
-  --dur-base: 400ms; /* entrance, disclosure */
-  --dur-slow: 600ms; /* full-width surface transitions */
+  --dur-micro: 120ms;
+  --dur-fast: 320ms;
+  --dur-base: 520ms;
+  --dur-slow: 800ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* The current station's hue, mixed faintly into the ground. Set by the rail. */
+  --zone: var(--accent);
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --rail: 56px;
+  }
 }
 
 /* ── Base ──────────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
-  /* Sticky nav is 48px; anchored sections must not land under it. */
-  scroll-padding-top: 72px;
+  scroll-padding-top: 88px;
   -webkit-text-size-adjust: 100%;
+  color-scheme: dark;
+}
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-ui), system-ui, sans-serif;
-  font-size: 1.0625rem; /* 17px body */
+  font-size: 1.0625rem;
   line-height: 1.62;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
+  padding-left: var(--rail);
+  overflow-x: clip;
 }
 
-/* Letter-spacing tightens as size grows — most of what reads as "designed". */
+/* A faint, slow zone tint behind everything — the camera moving between rooms. */
+.ground {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image: radial-gradient(
+    90% 60% at 70% 10%,
+    color-mix(in oklab, var(--zone) 7%, transparent) 0%,
+    transparent 70%
+  );
+  transition: background-image var(--dur-slow) var(--ease-inout);
+}
+
+/* Grain: kills banding on the deep ground. One SVG, 3% — you should not be able
+   to point at it. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.028;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="light"] .grain {
+  opacity: 0.04;
+}
+
+/* ── Type ─────────────────────────────────────────────────────────────────
+   Bricolage Grotesque for display, IBM Plex Sans for reading, IBM Plex Mono
+   for every register label. Letter-spacing tightens as size grows. */
 .t-display {
-  font-size: clamp(2.5rem, 6vw, 5rem);
+  font-family: var(--font-display), var(--font-ui), system-ui, sans-serif;
+  font-size: clamp(2.5rem, 5.2vw, 4.75rem);
   font-weight: 600;
-  line-height: 1.05;
+  line-height: 0.98;
   letter-spacing: -0.035em;
+  text-wrap: balance;
 }
 .t-h1 {
-  text-wrap: balance;
-  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-family: var(--font-display), var(--font-ui), system-ui, sans-serif;
+  font-size: clamp(2.125rem, 4.4vw, 3.5rem);
   font-weight: 600;
-  line-height: 1.08;
-  letter-spacing: -0.028em;
+  line-height: 1.02;
+  letter-spacing: -0.024em;
+  text-wrap: balance;
 }
 .t-h2 {
-  /* Evens out the last line rather than leaving one orphaned word. */
-  text-wrap: balance;
-  font-size: clamp(1.625rem, 3vw, 2.5rem);
+  font-family: var(--font-display), var(--font-ui), system-ui, sans-serif;
+  font-size: clamp(1.75rem, 3.2vw, 2.75rem);
   font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.022em;
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
 }
 .t-h3 {
-  font-size: 1.3125rem;
+  font-family: var(--font-display), var(--font-ui), system-ui, sans-serif;
+  font-size: clamp(1.25rem, 1.8vw, 1.5rem);
   font-weight: 600;
-  line-height: 1.24;
+  line-height: 1.16;
   letter-spacing: -0.012em;
 }
-.t-intro {
-  font-size: clamp(1.125rem, 2vw, 1.3125rem);
+.t-lede {
+  font-size: clamp(1.125rem, 1.6vw, 1.375rem);
   font-weight: 400;
   line-height: 1.5;
-  letter-spacing: -0.008em;
+  letter-spacing: -0.006em;
   color: var(--text-secondary);
-  max-width: 58ch;
+  max-width: 62ch;
+  text-wrap: pretty;
 }
 .t-body {
   font-size: 1.0625rem;
-  font-weight: 400;
   line-height: 1.62;
-  letter-spacing: 0;
   max-width: 68ch;
+  text-wrap: pretty;
 }
 .t-small {
   font-size: 0.9375rem;
-  font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.55;
 }
 .t-caption {
   font-size: 0.8125rem;
-  font-weight: 500;
+  line-height: 1.45;
+  color: var(--text-tertiary);
+}
+.t-label {
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+}
+.t-data {
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.8125rem;
   line-height: 1.45;
   letter-spacing: 0.01em;
-  color: var(--text-tertiary);
+  font-variant-numeric: tabular-nums;
 }
 .t-mono {
   font-family: var(--font-code), ui-monospace, monospace;
   font-size: 0.875rem;
-  font-weight: 400;
   line-height: 1.55;
-  letter-spacing: -0.01em;
 }
 
-/* ── Hero ground ──────────────────────────────────────────────────────────
-   A single-hue radial wash, accent-tinted at 7%, anchored above the fold. It
-   gives the hero somewhere to sit without becoming "a gradient": one hue, no
-   hard stop, and it resolves to the page colour well before the first band.
-   Not a mesh, not animated, not multi-hue — those are the tells this whole
-   design is trying to avoid. */
-.ground-hero {
-  background-color: var(--bg);
-  background-image: radial-gradient(
-    120% 80% at 50% 0%,
-    color-mix(in oklab, var(--accent) 7%, var(--bg)) 0%,
-    var(--bg) 62%
-  );
-}
-
-/* ── Section grounds ──────────────────────────────────────────────────────
-   Four distinct grounds so consecutive sections never read as one continuous
-   document. Gradients are single-hue and under a 4% luminance delta — enough to
-   give a band depth at the top edge, not enough to be seen as "a gradient". */
-.ground-page {
-  background-color: var(--bg);
-}
-
-.ground-wash {
-  background-image: linear-gradient(
-    to bottom,
-    var(--bg-subtle) 0%,
-    color-mix(in oklab, var(--bg-subtle) 55%, var(--bg)) 100%
-  );
-}
-
-.ground-raised {
-  background-image: linear-gradient(
-    to bottom,
-    color-mix(in oklab, var(--bg-subtle) 60%, var(--bg)) 0%,
-    var(--bg-subtle) 100%
-  );
-}
-
-/* The one inverted band on the page. Apple alternates light and dark full-bleed
-   sections for exactly this reason: it segments a long scroll far more clearly
-   than any amount of whitespace can. Sets the theme tokens locally so every
-   child — chips, hairlines, secondary text — re-tunes without a single override. */
-.ground-invert {
-  --bg: #000000;
-  --bg-subtle: #0a0a0b;
-  --surface: #131315;
-  --text: #f5f5f7;
-  --text-secondary: #a1a1a6;
-  --text-tertiary: #86868b;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --accent: #ff9f0a;
-  --accent-hover: #ffb340;
-  --accent-on: #1d1d1f;
-  --focus: #ff9f0a;
-  --sev-critical: #ff6b61;
-  --sev-high: #ff9f5a;
-  --sev-medium: #e0b341;
-  --sev-low: #9ccc5a;
-  --sev-info: #a1a1a6;
-  --shadow-sm: none;
-  --shadow-md: none;
-  background-color: var(--bg);
-  color: var(--text);
-}
-
-/* In dark mode an inverted band would be black on black and stop separating
-   anything. It lifts to the raised surface instead, so the band still reads as
-   a distinct segment in both themes. */
-[data-theme="dark"] .ground-invert {
-  --bg: #131315;
-  --bg-subtle: #1b1b1e;
-  --surface: #202024;
-  background-color: var(--bg);
-}
-
-/* A hairline that fades out at both ends — a full-width rule reads as a table
-   border, this reads as a seam. */
-.seam {
+/* ── Rules ────────────────────────────────────────────────────────────────
+   A hairline that fades at both ends, and a ticked variant used under every
+   station header. The ticked rule draws in when its section is revealed. */
+.rule {
   border: 0;
   height: 1px;
   background-image: linear-gradient(
     to right,
     transparent,
-    var(--border-strong) 20%,
-    var(--border-strong) 80%,
+    var(--border-strong) 12%,
+    var(--border-strong) 88%,
     transparent
   );
 }
-
-/* Word swap: a short rise and fade, keyed on the word so React remounts it and
-   the animation restarts. No typewriter, no character stagger. */
-.word-swap {
-  animation: word-swap var(--dur-fast) var(--ease-out-soft);
+.rule--ticked {
+  height: 8px;
+  background-image:
+    repeating-linear-gradient(
+      to right,
+      var(--border-strong) 0 1px,
+      transparent 1px 80px
+    ),
+    linear-gradient(to right, var(--border-strong), var(--border-strong));
+  background-size:
+    100% 5px,
+    100% 1px;
+  background-position:
+    0 0,
+    0 7px;
+  background-repeat: no-repeat;
+  transform-origin: left center;
+}
+[data-reveal="out"] .rule--ticked {
+  transform: scaleX(0);
+}
+[data-reveal="in"] .rule--ticked {
+  transform: scaleX(1);
+  transition: transform 480ms var(--ease-out) 80ms;
 }
 
-@keyframes word-swap {
-  from {
-    opacity: 0;
-    transform: translateY(0.1em);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .word-swap {
-    animation: none;
-  }
-}
-
-/* ── Diagram motion ───────────────────────────────────────────────────────
-   Stages draw themselves in sequence once the diagram is on screen: the nodes
-   fade up, the connectors draw downward. It communicates that the thing is a
-   pipeline with an order, which a static diagram has to state in words.
-   Runs once, and only under the reveal that already gates it. */
-[data-reveal="in"] .stage {
-  animation: stage-in var(--dur-base) var(--ease-out-soft) backwards;
-}
-
-@keyframes stage-in {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  [data-reveal="in"] .stage {
-    animation: none;
-  }
-}
-
-/* Photo lightbox. The <dialog> element handles the top layer and Escape; this
-   only supplies the ground and the scrim. */
-.photo-dialog {
-  margin: auto;
-  max-width: none;
-  max-height: none;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  overflow: visible;
-}
-.photo-dialog::backdrop {
-  background-color: rgba(0, 0, 0, 0.72);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-/* ── Material ─────────────────────────────────────────────────────────────
-   The macOS/iOS surface material: a translucent ground that picks up what sits
-   behind it, a real blur, and a hairline to define the edge. Deliberately not
-   "glassmorphism" — no saturation pump, no coloured tint, no glow border. The
-   translucency is 12–18%, which reads as depth rather than as an effect.
-   Falls back to an opaque surface where backdrop-filter is unsupported. */
-.material {
+/* ── Panels and planes ────────────────────────────────────────────────────
+   Two elevation planes, separated by a hairline and an inset highlight, never
+   a heavy shadow. A plane is a panel that lives in perspective: it tilts toward
+   the pointer and carries a specular that follows it. */
+.panel {
   background-color: var(--surface);
   border: 1px solid var(--border);
+  border-radius: var(--radius-panel);
+  box-shadow: inset 0 1px 0 var(--highlight);
+}
+.panel--raised {
+  background-color: var(--surface-raised);
+  border-color: var(--border-strong);
+  /* The token rule, enforced structurally: tertiary text measures 4.15:1 on
+     the raised ground in dark, so inside a raised panel it becomes secondary. */
+  --text-tertiary: var(--text-secondary);
 }
 
-@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
-  .material {
-    background-color: color-mix(in oklab, var(--surface) 82%, transparent);
-    -webkit-backdrop-filter: blur(24px) saturate(160%);
-    backdrop-filter: blur(24px) saturate(160%);
+.perspective {
+  perspective: 1400px;
+}
+.plane {
+  --tilt: rotateX(0deg) rotateY(0deg);
+  --mx: 0.5;
+  --my: 0.5;
+  position: relative;
+  transform: var(--tilt);
+  transform-style: preserve-3d;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    border-color var(--dur-micro) linear;
+  will-change: transform;
+}
+.plane::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    420px circle at calc(var(--mx) * 100%) calc(var(--my) * 100%),
+    color-mix(in oklab, var(--accent) 9%, transparent),
+    transparent 60%
+  );
+  transition: opacity var(--dur-fast) var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .plane:hover {
+    border-color: var(--border-strong);
+  }
+  .plane:hover::after {
+    opacity: 1;
   }
 }
 
-/* Surfaces that lift on hover: colour and 2px of travel, nothing more. */
-.lift {
+/* ── Buttons, chips, tags ─────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 0 22px;
+  border-radius: 999px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  letter-spacing: 0.005em;
   transition:
-    transform var(--dur-fast) var(--ease-out-soft),
-    border-color var(--dur-micro) var(--ease-standard),
-    background-color var(--dur-micro) var(--ease-standard);
+    background-color var(--dur-micro) linear,
+    border-color var(--dur-micro) linear,
+    color var(--dur-micro) linear,
+    transform var(--dur-fast) var(--ease-out);
+  white-space: nowrap;
+}
+.btn--primary {
+  background-color: var(--accent);
+  color: var(--accent-on);
+}
+.btn--primary:hover {
+  background-color: var(--accent-hover);
+}
+.btn--ghost {
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+}
+.btn--ghost:hover {
+  background-color: var(--surface);
+  border-color: var(--text-tertiary);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 30px;
+  padding: 3px 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-chip);
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+@media (max-width: 400px) {
+  .chip {
+    white-space: normal;
+    text-align: left;
+  }
+}
+.chip--xref::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--accent);
+  flex: none;
+}
+
+/* Severity: word + dot + shape, so it never relies on hue. */
+.sev {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sev, var(--text-secondary));
+}
+.sev__mark {
+  width: 9px;
+  height: 9px;
+  flex: none;
+  background-color: currentColor;
+}
+.sev--critical .sev__mark {
+  border-radius: 0;
+}
+.sev--high .sev__mark {
+  transform: rotate(45deg) scale(0.85);
+}
+.sev--medium .sev__mark {
+  border-radius: 50%;
+}
+.sev--low .sev__mark {
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+.sev--info .sev__mark {
+  height: 2px;
+}
+
+/* ── Rail: the depth gauge ────────────────────────────────────────────── */
+.rail {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: var(--rail);
+  z-index: 40;
+  display: none;
+  border-right: 1px solid var(--border);
+  background-color: color-mix(in oklab, var(--bg) 88%, transparent);
+}
+@media (min-width: 1024px) {
+  .rail {
+    display: block;
+  }
+}
+.rail__track {
+  position: absolute;
+  top: 96px;
+  bottom: 40px;
+  left: 50%;
+  width: 1px;
+  background-color: var(--border-strong);
+}
+.rail__fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background-color: var(--accent);
+  transform-origin: top;
+  transform: scaleY(var(--progress, 0));
+  transition: transform 120ms linear;
+}
+.rail__tick {
+  position: absolute;
+  left: 50%;
+  display: flex;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+  background-color: var(--bg);
+  padding: 2px 6px;
+  transition: color var(--dur-fast) linear;
+}
+.rail__tick[aria-current="true"] {
+  color: var(--text);
+}
+.rail__tick[aria-current="true"]::after {
+  content: "";
+  position: absolute;
+  right: -14px;
+  top: 50%;
+  width: 8px;
+  height: 1px;
+  background-color: var(--accent);
+}
+
+/* Mobile: a 2px progress bar and a small station readout. */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: 100%;
+  z-index: 70;
+  background-color: var(--accent);
+  transform-origin: left;
+  transform: scaleX(var(--progress, 0));
+  pointer-events: none;
+}
+
+/* ── Header material ──────────────────────────────────────────────────── */
+.header-bar {
+  transition:
+    background-color var(--dur-fast) linear,
+    border-color var(--dur-fast) linear;
+  border-bottom: 1px solid transparent;
+}
+.header-bar.is-scrolled {
+  background-color: color-mix(in oklab, var(--bg) 76%, transparent);
+  border-color: var(--border);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .header-bar.is-scrolled,
+  .sheet {
+    -webkit-backdrop-filter: blur(14px) saturate(1.2);
+    backdrop-filter: blur(14px) saturate(1.2);
+  }
+}
+.sheet {
+  background-color: color-mix(in oklab, var(--bg) 92%, transparent);
+  animation: sheet-in var(--dur-fast) var(--ease-out);
+}
+@keyframes sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+}
+.nameplate {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  padding: 0 9px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.16em;
+  font-weight: 400;
+}
+
+/* ── Hero scene ───────────────────────────────────────────────────────── */
+.system-scene {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  -webkit-mask-image: radial-gradient(
+    ellipse at 50% 50%,
+    black 50%,
+    transparent 98%
+  );
+  mask-image: radial-gradient(ellipse at 50% 50%, black 50%, transparent 98%);
+}
+@media (max-width: 767px) {
+  /* Phones get a legend under the band instead of projected labels, which
+     collide in the far cluster at this size. */
+  .system-scene__labels,
+  .system-scene__svg text {
+    display: none;
+  }
+}
+@media (min-width: 768px) {
+  .system-scene {
+    aspect-ratio: 16 / 10;
+  }
+}
+/* Phones: the object is a band above the words (the section is a reversed
+   column) inside the page gutter. Wide screens: it sits behind and to the
+   right of the words at full hero height, fading toward the text. */
+.hero-stage__inner {
+  width: 100%;
+  max-width: var(--container-wide);
+  margin: 0 auto;
+  padding: 0 var(--gutter) 40px;
+}
+@media (min-width: 1024px) {
+  .hero-stage {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 38%;
+    pointer-events: none;
+  }
+  .hero-stage__inner {
+    position: absolute;
+    inset: 0;
+    max-width: none;
+    padding: 0;
+  }
+  .hero-stage .system-scene {
+    position: absolute;
+    inset: 0;
+    aspect-ratio: auto;
+    pointer-events: auto;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 22%,
+      black 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0%,
+      black 22%,
+      black 100%
+    );
+  }
+}
+.system-scene__svg,
+.system-scene__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  transition: opacity var(--dur-slow) var(--ease-inout);
+}
+.system-scene__canvas {
+  opacity: 0;
+}
+.system-scene.is-live .system-scene__canvas {
+  opacity: 1;
+}
+.system-scene.is-live .system-scene__svg {
+  opacity: 0;
+}
+.system-scene__labels {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-inout);
+}
+.system-scene.is-live .system-scene__labels {
+  opacity: 1;
+}
+.system-scene__label {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: -34px 0 0 14px;
+  padding: 3px 8px;
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  background-color: color-mix(in oklab, var(--bg) 70%, transparent);
+  border-left: 1px solid var(--border-strong);
+  will-change: transform, opacity;
+  white-space: nowrap;
+  transition: color var(--dur-micro) linear;
+}
+.system-scene__label[data-tone="accent"].is-flash {
+  color: var(--accent);
+  border-left-color: var(--accent);
+}
+.system-scene__index {
+  color: var(--text-tertiary);
+}
+
+/* ── Tabs (the labs) ──────────────────────────────────────────────────── */
+.tab {
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    opacity var(--dur-fast) var(--ease-out),
+    border-color var(--dur-micro) linear;
+}
+/* Inactive tabs recede by colour and border, never by opacity — opacity on
+   text drops a 12px label below 4.5:1 against the panel. */
+.tab[aria-selected="false"] {
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+.tab[aria-selected="false"] .tab__index {
+  color: var(--text-tertiary);
+}
+.tab[aria-selected="true"] {
+  color: var(--text);
+  border-color: var(--accent);
+}
+.tab[aria-selected="true"] .tab__index {
+  color: var(--accent);
 }
 @media (hover: hover) {
-  .lift:hover {
-    transform: translateY(-2px);
+  .tab[aria-selected="false"]:hover {
+    color: var(--text);
     border-color: var(--border-strong);
   }
 }
-@media (prefers-reduced-motion: reduce) {
-  .lift:hover {
-    transform: none;
+.tab--amber[aria-selected="true"] {
+  border-color: var(--accent-2);
+}
+.tab--amber[aria-selected="true"] .tab__index {
+  color: var(--accent-2);
+}
+
+/* The pulse that travels a chain once when it is revealed. */
+.pulse-track {
+  position: relative;
+  height: 1px;
+  background-color: var(--border-strong);
+  overflow: hidden;
+}
+.pulse-track::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 18%;
+  height: 100%;
+  background-image: linear-gradient(
+    to right,
+    transparent,
+    var(--accent-2),
+    transparent
+  );
+  transform: translateX(-100%);
+}
+[data-reveal="in"] .pulse-track::after {
+  animation: pulse-run 1600ms var(--ease-inout) 200ms forwards;
+}
+@keyframes pulse-run {
+  to {
+    transform: translateX(560%);
   }
 }
 
-/* Appearance changes animate on macOS rather than snapping. Scoped to the
-   properties that actually change, and only while the toggle is switching, so
-   it never interferes with paint on first load. */
-.theme-switching,
-.theme-switching *:not([data-reveal]) {
-  transition:
-    background-color var(--dur-fast) var(--ease-standard),
-    border-color var(--dur-fast) var(--ease-standard),
-    color var(--dur-fast) var(--ease-standard) !important;
+/* ── Ledger ───────────────────────────────────────────────────────────── */
+.ledger th {
+  font-family: var(--font-code), ui-monospace, monospace;
+  font-size: 0.6875rem;
+  font-weight: 400;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  text-align: left;
+  padding: 12px 16px 12px 0;
+  border-bottom: 1px solid var(--border-strong);
+  white-space: nowrap;
+}
+.ledger td {
+  padding: 16px 16px 16px 0;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+}
+.ledger tr:last-child td {
+  border-bottom: 0;
+}
+.ledger tbody tr {
+  transition: background-color var(--dur-micro) linear;
+}
+@media (hover: hover) {
+  .ledger tbody tr:hover {
+    background-color: color-mix(in oklab, var(--surface) 70%, transparent);
+  }
 }
 
-/* An inline link inside a paragraph cannot be distinguished by colour alone
-   (WCAG 1.4.1): the accent is only 1.33:1 against secondary body grey. Prose
-   links are underlined always; standalone links in lists and nav are not, since
-   there is no surrounding text to be confused with. */
+/* ── Links ────────────────────────────────────────────────────────────── */
 .t-body a,
 .t-small a,
-.t-intro a {
+.t-lede a {
   text-decoration: underline;
   text-underline-offset: 0.2em;
   text-decoration-thickness: from-font;
+}
+.link-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 0;
+  border-top: 1px solid var(--border);
+  transition: padding-left var(--dur-fast) var(--ease-out);
+}
+.link-row:last-child {
+  border-bottom: 1px solid var(--border);
+}
+@media (hover: hover) {
+  .link-row:hover {
+    padding-left: 8px;
+  }
+}
+
+/* ── Register (definition lists) ──────────────────────────────────────── */
+.register > div {
+  display: grid;
+  grid-template-columns: minmax(120px, 1fr) 2fr;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+}
+.register > div:first-child {
+  border-top: 0;
+  padding-top: 0;
 }
 
 /* ── Focus ─────────────────────────────────────────────────────────────── */
@@ -442,21 +857,117 @@ body {
 
 .skip-link {
   position: absolute;
-  left: var(--gutter);
-  top: 8px;
+  left: calc(var(--rail) + var(--gutter));
+  top: 12px;
   z-index: 100;
   padding: 10px 16px;
   border-radius: 8px;
-  background-color: var(--bg);
+  background-color: var(--surface-raised);
   border: 1px solid var(--border-strong);
   font-size: 0.9375rem;
   transform: translateY(-200%);
-  transition: transform var(--dur-fast) var(--ease-emphasized);
+  transition: transform var(--dur-fast) var(--ease-out);
 }
 .skip-link:focus-visible {
   transform: translateY(0);
 }
 
+.theme-switching,
+.theme-switching *:not([data-reveal]) {
+  transition:
+    background-color var(--dur-fast) linear,
+    border-color var(--dur-fast) linear,
+    color var(--dur-fast) linear !important;
+}
+
+/* ── Reveal ───────────────────────────────────────────────────────────────
+   Paired with components/reveal.tsx. Opacity and a 24px rise; the rotate
+   variant tips a plane back into place. Runs on the compositor. */
+[data-reveal] {
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-base) var(--ease-out);
+}
+[data-reveal="out"] {
+  opacity: 0;
+  transform: translateY(24px);
+}
+[data-reveal="out"].reveal-rotate {
+  transform: translateY(24px) rotateX(6deg);
+}
+[data-reveal="in"] {
+  opacity: 1;
+  transform: none;
+}
+
+/* Headline lines settle into place on load. They are fully painted from the
+   first frame — a clipped, translated-out reveal would hide the largest text
+   on the page from Largest Contentful Paint until the animation finished. */
+.rise {
+  display: block;
+}
+.rise > span {
+  display: block;
+  animation: rise 700ms var(--ease-out) both;
+  animation-delay: var(--rise-delay, 0ms);
+}
+@keyframes rise {
+  from {
+    transform: translateY(0.22em);
+  }
+}
+
+/* Scroll cue: a line that draws down on a loop. */
+.scroll-cue {
+  position: relative;
+  width: 1px;
+  height: 44px;
+  background-color: var(--border-strong);
+  overflow: hidden;
+}
+.scroll-cue::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--accent);
+  transform-origin: top;
+  animation: cue 2200ms var(--ease-inout) infinite;
+}
+@keyframes cue {
+  0% {
+    transform: scaleY(0);
+    transform-origin: top;
+  }
+  45% {
+    transform: scaleY(1);
+    transform-origin: top;
+  }
+  55% {
+    transform: scaleY(1);
+    transform-origin: bottom;
+  }
+  100% {
+    transform: scaleY(0);
+    transform-origin: bottom;
+  }
+}
+
+/* Journey spine node. */
+.beat::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 10px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  border: 1px solid var(--accent);
+  background-color: var(--bg);
+}
+
+/* ── Reduced motion ───────────────────────────────────────────────────────
+   Everything visible, nothing moving. Server-rendered HTML must be readable
+   before hydration and for anyone with JS disabled. */
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -469,42 +980,135 @@ body {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
-
-/* ── Reveal ───────────────────────────────────────────────────────────────
-   Paired with components/reveal.tsx. Kept in CSS so the transition runs on the
-   compositor and costs no JavaScript beyond the observer itself. */
-[data-reveal] {
-  transition:
-    opacity var(--dur-base) var(--ease-out-soft),
-    transform var(--dur-base) var(--ease-out-soft);
-}
-[data-reveal="out"] {
-  opacity: 0;
-  transform: translateY(12px);
-}
-[data-reveal="in"] {
-  opacity: 1;
-  transform: none;
-}
-
-/* Server-rendered HTML must be readable before hydration and for anyone with
-   JS disabled — without this, a no-JS visitor sees a blank page. */
-@media (prefers-reduced-motion: reduce) {
   [data-reveal] {
     opacity: 1 !important;
     transform: none !important;
   }
+  .rule--ticked {
+    transform: none !important;
+  }
+  .rise > span {
+    animation: none;
+  }
+  .plane {
+    transform: none !important;
+  }
+  .scroll-cue::after {
+    animation: none;
+    transform: scaleY(1);
+  }
 }
 
-/* Mobile nav sheet: fade + 8px settle, no hamburger theatrics. */
-@keyframes sheet-in {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
+@media (max-width: 767px) {
+  .plane {
+    transform: none !important;
   }
-  to {
-    opacity: 1;
-    transform: none;
+}
+
+/* Anything wide scrolls inside itself, never the page. */
+.scroll-x {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* ── Pipeline diagram ─────────────────────────────────────────────────────
+   Stages connect by a hairline drawn with pseudo-elements; the connector into
+   a gate is dashed. Horizontal ≥768px inside its own scroll container. */
+.pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: stage;
+}
+.pipeline__stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 16px 14px 22px;
+  border-left: 1px solid var(--border-strong);
+  transition: transform var(--dur-fast) var(--ease-out);
+}
+.pipeline__stage::before {
+  content: "";
+  position: absolute;
+  left: -5px;
+  top: 20px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background-color: var(--bg);
+  border: 1px solid var(--text-tertiary);
+}
+.pipeline__stage[data-gate]::before {
+  border-color: var(--accent);
+  background-color: var(--accent);
+}
+.pipeline__stage[data-gate] {
+  border-left-style: dashed;
+}
+.pipeline__index {
+  color: var(--text-tertiary);
+}
+.pipeline__gate {
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.6875rem;
+}
+.pipeline__label {
+  font-weight: 500;
+  letter-spacing: -0.005em;
+}
+.pipeline__note {
+  font-size: 0.8125rem;
+  line-height: 1.45;
+  color: var(--text-secondary);
+  max-width: 34ch;
+}
+@media (hover: hover) {
+  .pipeline__stage:hover {
+    transform: translateX(4px);
+  }
+}
+.pipeline-scroll {
+  border-radius: 8px;
+}
+@media (min-width: 768px) {
+  .pipeline-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    padding-bottom: 8px;
+  }
+  .pipeline {
+    flex-direction: row;
+    min-width: max-content;
+  }
+  .pipeline__stage {
+    flex: 1 0 168px;
+    min-width: 168px;
+    border-left: 0;
+    border-top: 1px solid var(--border-strong);
+    padding: 22px 18px 6px 0;
+  }
+  .pipeline__stage::before {
+    left: 0;
+    top: -5px;
+  }
+  .pipeline__stage[data-gate] {
+    border-top-style: dashed;
+  }
+  .pipeline--compact .pipeline__stage {
+    flex-basis: 132px;
+    min-width: 132px;
+  }
+  .pipeline__stage:hover {
+    transform: translateY(-3px);
   }
 }

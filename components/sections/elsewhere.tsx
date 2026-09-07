@@ -1,57 +1,77 @@
 import { ArrowUpRight } from "lucide-react";
-import { Container, SectionHeader } from "@/components/primitives";
+import { Reveal, Station } from "@/components/primitives";
 import { profiles } from "@/content/profiles";
+import type { GithubStats } from "@/lib/github";
 
 /**
- * Rows, not cards. A metric renders only when it was verified — a profile with
- * no number simply shows no number, which is the honest state and reads better
- * than a padded stat.
+ * Station 10. The rest of the footprint as honest link rows: a metric appears
+ * only where it was verified in writing or at build time; every other row is a
+ * plain link, never an estimate. The GitHub row prefers the build-time repo
+ * count when a fetch succeeded, and falls back to the verified static metric.
  */
-export function Elsewhere() {
+export function Elsewhere({ github }: { github: GithubStats | null }) {
   return (
-    <section
+    <Station
+      index={10}
       id="elsewhere"
-      aria-labelledby="elsewhere-heading"
-      className="ground-wash py-[var(--section-y)]"
+      eyebrow="Elsewhere"
+      title="Where the rest of it lives."
+      lede="A metric appears only where it was verified; rows without one are links, not estimates."
+      zone="teal"
     >
-      <Container width="wide">
-        <SectionHeader
-          id="elsewhere-heading"
-          eyebrow="Elsewhere"
-          title="Where the work is."
-          intro="A metric appears only where it was verified. Rows without one are links, not estimates."
-        />
+      <ul className="mx-auto max-w-[46rem]">
+        {profiles.map((profile, i) => {
+          const isGithub = profile.platform === "GitHub";
+          const metric =
+            isGithub && github
+              ? `${github.publicRepos} public repositories`
+              : profile.metric;
+          const caption = isGithub
+            ? github
+              ? "verified at build"
+              : profile.metric
+                ? "verified"
+                : undefined
+            : undefined;
 
-        <ul className="mx-auto mt-20 max-w-[var(--container)]">
-          {profiles.map((profile) => (
-            <li key={profile.url}>
+          return (
+            <Reveal as="li" key={profile.url} delay={Math.min(i, 5) * 60}>
               <a
                 href={profile.url}
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${profile.platform} profile (opens in a new tab)`}
-                className="group flex min-h-[44px] items-center gap-6 border-b border-[var(--border)] py-5 transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_3%,transparent)]"
+                className="link-row group"
               >
-                <span className="w-[10rem] shrink-0 font-medium">
-                  {profile.platform}
+                <span className="min-w-0">
+                  <span className="t-h3 block !text-[1.125rem]">
+                    {profile.platform}
+                  </span>
+                  <span className="t-data block text-[var(--text-secondary)]">
+                    {profile.handle}
+                  </span>
                 </span>
-                <span className="t-mono truncate text-[var(--text-secondary)]">
-                  {profile.handle}
+                <span className="flex shrink-0 items-center gap-3 text-right">
+                  {metric ? (
+                    <span className="min-w-0">
+                      <span className="t-data block">{metric}</span>
+                      {caption ? (
+                        <span className="t-caption block">{caption}</span>
+                      ) : null}
+                    </span>
+                  ) : null}
+                  <ArrowUpRight
+                    size={18}
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                    className="shrink-0 text-[var(--text-tertiary)] transition-colors duration-[var(--dur-micro)] group-hover:text-[var(--accent)]"
+                  />
                 </span>
-                <span className="t-caption ml-auto hidden text-right sm:block">
-                  {profile.metric ?? ""}
-                </span>
-                <ArrowUpRight
-                  size={18}
-                  strokeWidth={1.5}
-                  aria-hidden="true"
-                  className="shrink-0 text-[var(--text-tertiary)] transition-colors duration-[var(--dur-micro)] group-hover:text-[var(--text)]"
-                />
               </a>
-            </li>
-          ))}
-        </ul>
-      </Container>
-    </section>
+            </Reveal>
+          );
+        })}
+      </ul>
+    </Station>
   );
 }

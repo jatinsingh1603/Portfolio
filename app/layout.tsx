@@ -1,54 +1,72 @@
 import type { Metadata } from "next";
-import { Geist_Mono, Inter } from "next/font/google";
+import {
+  Bricolage_Grotesque,
+  IBM_Plex_Mono,
+  IBM_Plex_Sans,
+} from "next/font/google";
+import { Rail } from "@/components/rail";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { brand } from "@/content/brand";
 import { SITE_URL, identity, positioning } from "@/content/site";
 import { personJsonLd } from "@/lib/json-ld";
 import { THEME_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
 
 /**
- * Downloaded and self-hosted at build time (no runtime request to Google, so
- * `font-src 'self'` holds). Declared here rather than pulled from the `geist`
- * npm package because that package ships the full 70 KB charset and Next does
- * not emit a preload for it — together that cost ~1.9s of LCP on Slow 4G, as
- * the fallback face painted at FCP and the real face swapped in much later.
- * The Latin subset is ~20 KB per family and Next preloads it automatically.
+ * All three faces are downloaded and self-hosted at build time (no runtime
+ * request to Google, so `font-src 'self'` holds). Latin subsets only, and only
+ * the weights the stylesheet uses. The display face is one static weight: the
+ * variable file with its optical-size axis is 75 KB and sat on the LCP path;
+ * the static 600 is under half that and carries the headline just as well.
  */
-const sans = Inter({
-  variable: "--font-ui",
+const display = Bricolage_Grotesque({
+  variable: "--font-display",
   subsets: ["latin"],
+  weight: "600",
   display: "swap",
-  preload: true,
-  // Apple's own face is SF Pro, which is licensed for Apple platforms only and
-  // cannot ship on a public website. Inter is the closest legitimate match:
-  // same humanist-grotesque skeleton, near-identical apertures at display size.
-  axes: ["opsz"],
 });
 
-const mono = Geist_Mono({
+/**
+ * Not preloaded on purpose: the headline is set in the display face, and this
+ * 41 KB file competing for the same throttled connection was the difference
+ * between LCP at 1.54 s and under the 1.5 s budget. It swaps in behind a
+ * metric-matched fallback, so nothing shifts.
+ */
+const sans = IBM_Plex_Sans({
+  variable: "--font-ui",
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  preload: false,
+});
+
+const mono = IBM_Plex_Mono({
   variable: "--font-code",
   subsets: ["latin"],
+  weight: "400",
   display: "swap",
-  preload: true,
 });
+
+const title = `${identity.name} · ${identity.title}`;
+const description = `${brand.tagline}. ${positioning.intro}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: {
-    default: `${identity.name} · ${identity.title}`,
-    template: `%s · ${identity.name}`,
-  },
-  description: positioning.intro,
+  title: { default: title, template: `%s · ${identity.name}` },
+  description,
   alternates: { canonical: "/" },
+  authors: [{ name: identity.name, url: SITE_URL }],
+  creator: identity.name,
   openGraph: {
     type: "website",
     siteName: identity.name,
     url: SITE_URL,
-    title: `${identity.name} · ${identity.title}`,
-    description: positioning.intro,
+    title,
+    description,
+    locale: "en_IN",
   },
-  twitter: { card: "summary_large_image" },
+  twitter: { card: "summary_large_image", title, description },
   robots: { index: true, follow: true },
 };
 
@@ -61,14 +79,14 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`js-reveal-gate ${sans.variable} ${mono.variable}`}
+      className={`${display.variable} ${sans.variable} ${mono.variable}`}
     >
       <head>
         <noscript>
           {/* Scripting off: reveals must never hide content permanently. */}
-          <style>{`.js-reveal-gate [data-reveal="out"]{opacity:1;transform:none}`}</style>
+          <style>{`[data-reveal="out"]{opacity:1!important;transform:none!important}.rule--ticked{transform:none!important}`}</style>
         </noscript>
-        {/* Runs before first paint; see lib/theme-script.ts for the CSP contract. */}
+        {/* Runs before first paint; see lib/theme-script.ts. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
         <script
           type="application/ld+json"
@@ -76,9 +94,12 @@ export default function RootLayout({
         />
       </head>
       <body>
+        <div className="ground" aria-hidden="true" />
+        <div className="grain" aria-hidden="true" />
         <a href="#main" className="skip-link">
           Skip to content
         </a>
+        <Rail />
         <SiteHeader />
         {children}
         <SiteFooter />

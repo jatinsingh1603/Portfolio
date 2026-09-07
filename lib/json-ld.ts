@@ -1,4 +1,10 @@
-import { capabilities, credentials, education, roles } from "../content/career";
+import {
+  awards,
+  capabilities,
+  credentials,
+  education,
+  roles,
+} from "../content/career";
 import { sameAs } from "../content/profiles";
 import { SITE_URL, identity } from "../content/site";
 
@@ -34,5 +40,9 @@ export const personJsonLd = JSON.stringify({
     credentialCategory: "certification",
     recognizedBy: { "@type": "Organization", name: credential.issuer },
   })),
+  award: awards.map(
+    (a) =>
+      `${a.placement}, ${a.event} (${a.organiser}${a.venue ? `, ${a.venue}` : ""})`,
+  ),
   sameAs,
 });

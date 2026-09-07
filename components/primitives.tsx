@@ -1,5 +1,13 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
+import type { Severity } from "@/content/schema";
+import { STATION_COUNT } from "@/lib/stations";
+import { Magnetic } from "./magnetic";
+import { Reveal } from "./reveal";
+
+export { Plane } from "./plane";
+export { Reveal } from "./reveal";
+export { Magnetic } from "./magnetic";
 
 type Width = "text" | "default" | "wide";
 
@@ -29,24 +37,30 @@ export function Container({
   );
 }
 
+export { STATION_COUNT };
+
 /**
- * One idea per viewport. `wash` paints the full-bleed band; the container
- * inside keeps the optical left edge identical across every section, which is
- * most of what makes a long page read as one document.
+ * A station: one section of the volume. Carries the mono index the rail
+ * tracks, the display title, an optional lede and the ticked rule that draws
+ * in when the station is revealed. `zone` tints the ground behind it.
  */
-export function Section({
+export function Station({
+  index,
   id,
-  title,
   eyebrow,
-  wash = false,
-  width = "default",
+  title,
+  lede,
+  zone = "teal",
+  width = "wide",
   className = "",
   children,
 }: {
+  index: number;
   id: string;
-  title: string;
-  eyebrow?: string;
-  wash?: boolean;
+  eyebrow: string;
+  title: React.ReactNode;
+  lede?: React.ReactNode;
+  zone?: "teal" | "amber";
   width?: Width;
   className?: string;
   children: React.ReactNode;
@@ -54,127 +68,146 @@ export function Section({
   return (
     <section
       id={id}
-      aria-labelledby={`${id}-heading`}
-      className={`py-[var(--section-y)] ${wash ? "bg-[var(--bg-subtle)]" : ""} ${className}`}
+      aria-labelledby={`${id}-title`}
+      data-station={index}
+      data-station-label={eyebrow}
+      data-zone={zone}
+      className={`relative py-[var(--section-y)] ${className}`}
     >
       <Container width={width}>
-        {eyebrow ? <p className="t-caption mb-3">{eyebrow}</p> : null}
-        <h2 id={`${id}-heading`} className="t-h2">
-          {title}
-        </h2>
-        {children}
+        <Reveal>
+          <p className="t-label">
+            Station {String(index).padStart(2, "0")} / {STATION_COUNT}
+            <span aria-hidden="true"> · </span>
+            <span className="text-[var(--text-secondary)]">{eyebrow}</span>
+          </p>
+          <h2 id={`${id}-title`} className="t-h2 mt-5 max-w-[22ch]">
+            {title}
+          </h2>
+          {lede ? <p className="t-lede mt-5">{lede}</p> : null}
+          <hr className="rule rule--ticked mt-8" aria-hidden="true" />
+        </Reveal>
+        <div className="mt-12 md:mt-16">{children}</div>
       </Container>
     </section>
   );
 }
 
-/**
- * Hairline, no fill, no icon. The site's only chip form.
- *
- * Severity is carried by a dot rather than by tinting the label: with an orange
- * accent, orange text on a hairline chip reads as a link.
- */
-export function Chip({
+/** Matte panel on one of two elevation planes. */
+export function Panel({
+  raised = false,
+  className = "",
+  as: Tag = "div",
   children,
-  tone,
 }: {
+  raised?: boolean;
+  className?: string;
+  as?: "div" | "article" | "li" | "aside";
   children: React.ReactNode;
-  tone?: "critical" | "high" | "medium" | "low" | "info";
 }) {
   return (
-    <span className="t-caption inline-flex items-center gap-2 rounded-[var(--radius-chip)] border border-[var(--border-strong)] px-2.5 py-1 whitespace-nowrap text-[var(--text-secondary)]">
-      {tone ? (
-        <span
-          aria-hidden="true"
-          className="h-1.5 w-1.5 shrink-0 rounded-full"
-          style={{ backgroundColor: `var(--sev-${tone})` }}
-        />
-      ) : null}
+    <Tag className={`panel ${raised ? "panel--raised" : ""} ${className}`}>
+      {children}
+    </Tag>
+  );
+}
+
+export function Rule({
+  ticked = false,
+  className = "",
+}: {
+  ticked?: boolean;
+  className?: string;
+}) {
+  return (
+    <hr
+      className={`rule ${ticked ? "rule--ticked" : ""} ${className}`}
+      aria-hidden="true"
+    />
+  );
+}
+
+export function MonoLabel({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <span className={`t-label ${className}`}>{children}</span>;
+}
+
+/** Hairline mono chip. `xref` marks a chip that is cross-referenced elsewhere. */
+export function Chip({
+  children,
+  xref,
+  className = "",
+}: {
+  children: React.ReactNode;
+  /** Tooltip text naming where else this appears, e.g. "Used in Recon, Discovery". */
+  xref?: string;
+  className?: string;
+}) {
+  return (
+    <span
+      className={`chip ${xref ? "chip--xref" : ""} ${className}`}
+      title={xref}
+    >
       {children}
     </span>
   );
 }
 
-/**
- * The lead-in for a section: centred, in its own measure, with real air under
- * it. Centring the header and left-aligning the content below is what stops a
- * long page reading as one left-hugging column of documentation.
- */
-export function SectionHeader({
-  id,
-  eyebrow,
-  title,
-  intro,
-  align = "center",
-}: {
-  id?: string;
-  eyebrow?: string;
-  title: React.ReactNode;
-  intro?: string;
-  align?: "center" | "left";
-}) {
-  const centred = align === "center";
+/** Severity as word + dot + shape. Never colour alone. */
+export function SeverityTag({ severity }: { severity: Severity }) {
   return (
-    <div className={centred ? "text-center" : ""}>
-      {eyebrow ? (
-        <p className="t-caption tracking-[0.08em] uppercase">{eyebrow}</p>
-      ) : null}
-      {/* Title and intro carry their own measures — a shared wrapper would
-          either crush the intro or let the title run past a readable line. */}
-      <h2
-        id={id}
-        className={`t-h2 ${eyebrow ? "mt-4" : ""} ${centred ? "mx-auto max-w-[20ch]" : "max-w-[20ch]"}`}
-      >
-        {title}
-      </h2>
-      {intro ? (
-        <p className={`t-intro mt-6 ${centred ? "mx-auto" : ""}`}>{intro}</p>
-      ) : null}
-    </div>
+    <span
+      className={`sev sev--${severity}`}
+      style={{ ["--sev" as string]: `var(--sev-${severity})` }}
+    >
+      <span className="sev__mark" aria-hidden="true" />
+      {severity}
+    </span>
   );
 }
-
-const buttonBase =
-  "inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[var(--radius-card)] px-5 text-[0.9375rem] font-medium transition-colors duration-[var(--dur-micro)] ease-[var(--ease-standard)]";
 
 export function Button({
   href,
   variant = "primary",
   external = false,
   download = false,
+  magnetic = false,
   children,
   className = "",
 }: {
   href: string;
-  variant?: "primary" | "secondary";
+  variant?: "primary" | "ghost";
   external?: boolean;
   download?: boolean;
+  magnetic?: boolean;
   children: React.ReactNode;
   className?: string;
 }) {
-  const styles =
-    variant === "primary"
-      ? "bg-[var(--accent)] text-[var(--accent-on)] hover:bg-[var(--accent-hover)]"
-      : "border border-[var(--border-strong)] text-[var(--text)] hover:bg-[var(--bg-subtle)]";
-
-  if (external || download) {
-    return (
+  const cls = `btn btn--${variant} ${className}`;
+  const inner =
+    external || download ? (
       <a
         href={href}
         {...(download ? { download: "" } : {})}
         {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-        className={`${buttonBase} ${styles} ${className}`}
+        className={cls}
       >
         {children}
+        {external ? (
+          <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
+        ) : null}
       </a>
+    ) : (
+      <Link href={href} className={cls}>
+        {children}
+      </Link>
     );
-  }
-
-  return (
-    <Link href={href} className={`${buttonBase} ${styles} ${className}`}>
-      {children}
-    </Link>
-  );
+  return magnetic ? <Magnetic>{inner}</Magnetic> : inner;
 }
 
 /**
@@ -213,5 +246,25 @@ export function ExternalLink({
         />
       ) : null}
     </a>
+  );
+}
+
+/** A register: label (mono) on the left, value on the right. */
+export function KeyValue({
+  rows,
+  className = "",
+}: {
+  rows: { label: string; value: React.ReactNode }[];
+  className?: string;
+}) {
+  return (
+    <dl className={`register ${className}`}>
+      {rows.map((row) => (
+        <div key={row.label}>
+          <dt className="t-label pt-0.5">{row.label}</dt>
+          <dd className="t-small">{row.value}</dd>
+        </div>
+      ))}
+    </dl>
   );
 }

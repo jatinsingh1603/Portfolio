@@ -4,7 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { identity, nav } from "@/content/site";
+import { ThemeToggle } from "./theme-toggle";
 
+/**
+ * Fixed bar: transparent over the hero, glass after 40px. The mobile sheet is
+ * a dialog in behaviour — focus-trapped, Escape closes and returns focus to
+ * the trigger — which the accessibility suite asserts.
+ */
 export function SiteHeader() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -12,9 +18,7 @@ export function SiteHeader() {
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
-    // The hairline appears after 8px of scroll — its opacity animates, never
-    // its width, so the bar never shifts the layout beneath it.
-    const onScroll = () => setScrolled(window.scrollY > 8);
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -22,7 +26,6 @@ export function SiteHeader() {
 
   useEffect(() => {
     if (!open) return;
-
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         setOpen(false);
@@ -30,8 +33,6 @@ export function SiteHeader() {
         return;
       }
       if (event.key !== "Tab") return;
-
-      // Focus trap: the sheet is a dialog, so tabbing must cycle inside it.
       const focusables = sheetRef.current?.querySelectorAll<HTMLElement>(
         "a[href], button:not([disabled])",
       );
@@ -39,7 +40,6 @@ export function SiteHeader() {
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
       if (!first || !last) return;
-
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
@@ -48,43 +48,33 @@ export function SiteHeader() {
         first.focus();
       }
     }
-
     document.addEventListener("keydown", onKeyDown);
     sheetRef.current?.querySelector<HTMLElement>("a")?.focus();
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
   return (
-    <header className="sticky top-0 z-50">
-      <div
-        className="border-b transition-colors duration-[var(--dur-fast)] ease-[var(--ease-standard)]"
-        style={{
-          // Apple's actual nav treatment; the only backdrop-filter on the site.
-          backdropFilter: "blur(20px) saturate(180%)",
-          WebkitBackdropFilter: "blur(20px) saturate(180%)",
-          backgroundColor: "color-mix(in oklab, var(--bg) 72%, transparent)",
-          borderColor: scrolled ? "var(--border)" : "transparent",
-        }}
-      >
+    <header className="fixed top-0 right-0 left-[var(--rail)] z-50">
+      <div className={`header-bar ${scrolled || open ? "is-scrolled" : ""}`}>
         <nav
           aria-label="Primary"
-          className="mx-auto flex h-12 w-full items-center justify-between px-[var(--gutter)]"
+          className="mx-auto flex h-16 w-full items-center justify-between px-[var(--gutter)]"
           style={{ maxWidth: "var(--container-wide)" }}
         >
           <Link
             href="/"
-            className="font-medium tracking-[-0.02em]"
-            style={{ fontSize: "0.9375rem" }}
+            className="nameplate"
+            aria-label={`${identity.name}, home`}
           >
-            {identity.shortName}
+            JKS
           </Link>
 
-          <ul className="hidden items-center gap-8 lg:flex">
+          <ul className="hidden items-center gap-7 lg:flex">
             {nav.map((item) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className="t-small text-[var(--text-secondary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
+                  className="t-label text-[var(--text-secondary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
                 >
                   {item.label}
                 </Link>
@@ -92,10 +82,11 @@ export function SiteHeader() {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
             <Link
               href="/resume"
-              className="hidden h-9 items-center rounded-full border border-[var(--border-strong)] px-4 text-[0.9375rem] transition-colors duration-[var(--dur-micro)] hover:bg-[var(--bg-subtle)] lg:inline-flex"
+              className="btn btn--ghost hidden !min-h-9 !px-4 text-[0.875rem] lg:inline-flex"
             >
               Résumé
             </Link>
@@ -124,19 +115,19 @@ export function SiteHeader() {
         <div
           id="mobile-menu"
           ref={sheetRef}
-          className="material border-x-0 border-t-0 lg:hidden"
-          style={{
-            animation: "sheet-in var(--dur-fast) var(--ease-emphasized)",
-          }}
+          className="sheet border-b border-[var(--border)] lg:hidden"
         >
-          <ul className="mx-auto flex w-full flex-col px-[var(--gutter)] py-2">
-            {[...nav, { label: "Résumé", href: "/resume" }].map((item) => (
+          <ul className="mx-auto flex w-full flex-col px-[var(--gutter)] py-3">
+            {[...nav, { label: "Résumé", href: "/resume" }].map((item, i) => (
               <li key={item.href}>
                 <Link
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex min-h-[44px] items-center border-b border-[var(--border)] text-[1.0625rem] last:border-0"
+                  className="flex min-h-[52px] items-center gap-4 border-b border-[var(--border)] text-[1.125rem] last:border-0"
                 >
+                  <span className="t-data text-[var(--text-tertiary)]">
+                    {String(i + 1).padStart(2, "0")}
+                  </span>
                   {item.label}
                 </Link>
               </li>

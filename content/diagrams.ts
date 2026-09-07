@@ -1,4 +1,4 @@
-import type { Stage } from "@/components/pipeline-diagram";
+import type { Stage } from "./schema";
 
 /**
  * Each diagram is the project’s own pipeline, transcribed. Nothing here is

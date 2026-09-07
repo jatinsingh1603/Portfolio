@@ -1,127 +1,175 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { PipelineDiagram } from "@/components/pipeline-diagram";
 import {
+  Button,
   Chip,
-  Container,
   ExternalLink,
-  SectionHeader,
+  Panel,
+  Plane,
+  Reveal,
+  Station,
 } from "@/components/primitives";
-import { Reveal } from "@/components/reveal";
 import { diagrams } from "@/content/diagrams";
-import { projects } from "@/content/projects";
+import { featuredProject, otherProjects } from "@/content/projects";
 
+/**
+ * Station 03. One large presentation for the featured system — category, name,
+ * status, stack, summary, key highlights and its pipeline — then the remaining
+ * projects as two perspective planes. Every fact is imported from
+ * content/projects.ts and content/diagrams.ts; nothing is typed as a literal.
+ */
 export function Work() {
+  const featuredDiagram = diagrams[featuredProject.slug];
+
   return (
-    <section
+    <Station
+      index={3}
       id="work"
-      aria-labelledby="work-heading"
-      className="ground-page py-[var(--section-y)]"
+      eyebrow="Work"
+      zone="teal"
+      title="Three systems, built end to end."
+      lede="Each one is a working system built end to end — the kind that produces evidence rather than a returned questionnaire."
     >
-      <Container width="wide">
-        <SectionHeader
-          id="work-heading"
-          eyebrow="Selected work"
-          title="Three systems, built to produce evidence rather than opinions."
-          intro="Two platforms that automate risk and compliance work, and one open-source pentest engine whose safety model is enforced structurally."
-        />
-      </Container>
+      {/* Featured presentation */}
+      <Reveal>
+        <Panel raised className="p-6 md:p-8 lg:p-10">
+          <p className="t-label text-[var(--text-secondary)]">
+            {featuredProject.category}
+          </p>
+          <h3 className="t-h3 mt-3 text-[1.75rem] md:text-[2.25rem]">
+            {featuredProject.name}
+          </h3>
 
-      <div className="mt-24 flex flex-col gap-[var(--section-y)]">
-        {projects.map((project, index) => {
-          const diagram = diagrams[project.slug];
-          // Alternate which side the artifact sits on so a three-entry list
-          // does not read as a repeated template.
-          const flip = index % 2 === 1;
+          <div className="mt-5 flex flex-wrap items-center gap-2">
+            <Chip>{featuredProject.status}</Chip>
+            {featuredProject.stack.map((tech) => (
+              <Chip key={tech}>{tech}</Chip>
+            ))}
+          </div>
 
-          return (
-            <Container width="wide" key={project.slug}>
-              <Reveal className="material lift overflow-hidden rounded-[var(--radius-surface)]">
-                <div className="grid gap-12 p-8 lg:grid-cols-12 lg:p-12">
-                  <div
-                    className={`min-w-0 lg:col-span-6 ${flip ? "lg:order-2" : ""}`}
-                  >
-                    <p className="t-mono text-[var(--text-tertiary)]">
-                      {project.stack.join(" · ")}
-                    </p>
-                    <h3 className="t-h2 mt-4">{project.name}</h3>
+          <p className="t-lede mt-6">{featuredProject.summary}</p>
 
-                    <div className="mt-4 flex flex-wrap items-center gap-2">
-                      <Chip>{project.role}</Chip>
-                      {project.license ? <Chip>{project.license}</Chip> : null}
-                    </div>
-
-                    <p className="t-body mt-6 text-[var(--text-secondary)]">
-                      {project.summary}
-                    </p>
-
-                    <dl className="mt-8">
-                      {project.outcomes.map((outcome) => (
-                        <div
-                          key={outcome.label}
-                          className="border-t border-[var(--border)] py-5"
-                        >
-                          <dt className="font-medium">{outcome.label}</dt>
-                          <dd className="t-small mt-1.5 text-[var(--text-secondary)]">
-                            {outcome.detail}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-
-                    {project.recognition ? (
-                      <p className="t-small mt-6 border-l-2 border-[var(--accent)] pl-4 text-[var(--text-secondary)]">
-                        {project.recognition}
-                      </p>
-                    ) : null}
-
-                    <div className="mt-8 flex flex-wrap items-center gap-6">
-                      <Link
-                        href={`/projects/${project.slug}`}
-                        className="inline-flex items-center gap-1 text-[var(--accent)] underline-offset-4 hover:underline"
-                      >
-                        Read the writeup
-                        <ArrowUpRight
-                          size={16}
-                          strokeWidth={1.5}
-                          aria-hidden="true"
-                        />
-                      </Link>
-                      {project.repo ? (
-                        <ExternalLink
-                          href={project.repo}
-                          label={`${project.name} repository on GitHub`}
-                          /* The URL itself, not the word "Repository" — for an
-                           open-source contribution the path is the credential,
-                           and it is the thing a reviewer wants to copy. */
-                          className="t-mono break-all"
-                        >
-                          {project.repo.replace("https://", "")}
-                        </ExternalLink>
-                      ) : null}
-                    </div>
-                  </div>
-
-                  {diagram ? (
-                    <div
-                      /* The artifact sits on the page ground inside the card,
-                         so the card reads as a frame around two panes rather
-                         than a box inside a box. */
-                      className={`flex h-full min-w-0 flex-col justify-center rounded-[var(--radius-card)] border border-[var(--border)] bg-[var(--bg)] p-6 lg:col-span-6 ${flip ? "lg:order-1" : ""}`}
-                    >
-                      <PipelineDiagram
-                        title={diagram.title}
-                        description={diagram.description}
-                        stages={diagram.stages}
-                      />
-                    </div>
-                  ) : null}
-                </div>
+          <p className="t-label mt-10 text-[var(--text-secondary)]">
+            Key highlights
+          </p>
+          <ul className="perspective mt-4 grid gap-4 md:grid-cols-3">
+            {featuredProject.outcomes.map((outcome, i) => (
+              <Reveal
+                as="li"
+                key={outcome.label}
+                delay={i * 60}
+                className="reveal-rotate h-full"
+              >
+                <Panel className="flex h-full flex-col gap-2 p-5">
+                  <p className="t-small font-medium text-[var(--text)]">
+                    {outcome.label}
+                  </p>
+                  <p className="t-small text-[var(--text-secondary)]">
+                    {outcome.detail}
+                  </p>
+                </Panel>
               </Reveal>
-            </Container>
+            ))}
+          </ul>
+
+          {featuredProject.recognition ? (
+            <p className="t-small mt-8 text-[var(--text-secondary)]">
+              {featuredProject.recognition}
+            </p>
+          ) : null}
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            <Button
+              href={`/projects/${featuredProject.slug}`}
+              className="w-full sm:w-auto"
+            >
+              Read the build
+            </Button>
+            {featuredProject.repo ? (
+              <ExternalLink
+                href={featuredProject.repo}
+                label={`${featuredProject.name} source on GitHub`}
+                className="min-h-[44px]"
+              >
+                View the repository
+              </ExternalLink>
+            ) : null}
+            {featuredProject.demo ? (
+              <ExternalLink
+                href={featuredProject.demo}
+                label={`${featuredProject.name} live demo`}
+                className="min-h-[44px]"
+              >
+                Open the demo
+              </ExternalLink>
+            ) : null}
+          </div>
+        </Panel>
+      </Reveal>
+
+      {/* Featured pipeline */}
+      {featuredDiagram ? (
+        <Reveal className="mt-10 md:mt-12">
+          <div className="scroll-x">
+            <PipelineDiagram
+              stages={featuredDiagram.stages}
+              title={featuredDiagram.title}
+              description={featuredDiagram.description}
+            />
+          </div>
+        </Reveal>
+      ) : null}
+
+      {/* Other projects */}
+      <ul className="perspective mt-14 grid gap-4 md:mt-16 md:grid-cols-2">
+        {otherProjects.map((project, i) => {
+          const shown = project.stack.slice(0, 4);
+          const extra = project.stack.length - shown.length;
+          const diagram = diagrams[project.slug];
+          return (
+            <Reveal
+              as="li"
+              key={project.slug}
+              delay={i * 60}
+              className="reveal-rotate h-full"
+            >
+              <Plane
+                href={`/projects/${project.slug}`}
+                label={project.name}
+                className="flex h-full flex-col gap-4 p-6"
+              >
+                <div className="flex flex-col gap-3">
+                  <p className="t-label">{project.category}</p>
+                  <h3 className="t-h3">{project.name}</h3>
+                  <div>
+                    <Chip>{project.status}</Chip>
+                  </div>
+                  <p className="t-small text-[var(--text-secondary)]">
+                    {project.summary}
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {shown.map((tech) => (
+                    <Chip key={tech}>{tech}</Chip>
+                  ))}
+                  {extra > 0 ? <Chip>+{extra}</Chip> : null}
+                </div>
+
+                {diagram ? (
+                  <div className="scroll-x mt-auto">
+                    <PipelineDiagram
+                      stages={diagram.stages}
+                      title={diagram.title}
+                      description={diagram.description}
+                      compact
+                    />
+                  </div>
+                ) : null}
+              </Plane>
+            </Reveal>
           );
         })}
-      </div>
-    </section>
+      </ul>
+    </Station>
   );
 }

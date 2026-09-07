@@ -1,119 +1,60 @@
-export type Stage = {
-  label: string;
-  /** Short note set beside the node — the reason the stage exists. */
-  note?: string;
-  /** Renders as a gate: a hard stop that must be satisfied before continuing. */
-  gate?: boolean;
-};
-
-/* The panel renders ~500px wide, so a 620-unit viewBox scales SVG text down by
-   ~20%. Every size here is set in viewBox units chosen so the smallest rendered
-   glyph still lands at ~12px on screen — the same floor as the caption style. */
-const NODE_H = 46;
-const GAP = 16;
-const PAD = 10;
-const WIDTH = 560;
-const NODE_W = 196;
-const NOTE_X = 212;
+import type { Stage } from "@/content/schema";
 
 /**
- * A real artifact, generated from each project's own pipeline description —
- * not stock illustration. Drawn as inline SVG so it costs no request, themes
- * with CSS variables, and stays sharp at any width.
+ * A project's own pipeline, transcribed from content/diagrams.ts — never
+ * invented for effect. A horizontal stepper on wide screens (scrolling inside
+ * a focusable, labelled region, never the page), a vertical one on phones.
+ * Gate stages — the hard stops that must be satisfied before the pipeline
+ * continues — carry the teal signal. Pure CSS; notes are always visible.
  */
 export function PipelineDiagram({
   stages,
   title,
   description,
+  compact = false,
 }: {
   stages: Stage[];
   /** Accessible name; also the figure's caption. */
   title: string;
   description: string;
+  compact?: boolean;
 }) {
-  const height = PAD * 2 + stages.length * NODE_H + (stages.length - 1) * GAP;
-  const titleId = title.replace(/\W+/g, "-").toLowerCase();
-
   return (
     <figure className="m-0">
-      <svg
-        viewBox={`0 0 ${WIDTH} ${height}`}
-        role="img"
-        aria-labelledby={`${titleId}-title ${titleId}-desc`}
-        className="w-full"
-        style={{ color: "var(--text-secondary)" }}
+      {/* A scrollable region must be keyboard-reachable (axe:
+          scrollable-region-focusable); the lint rule predates that guidance. */}
+      {/* eslint-disable jsx-a11y/no-noninteractive-tabindex */}
+      <div
+        className="pipeline-scroll"
+        role="region"
+        aria-label={`${title}, ${stages.length} stages`}
+        tabIndex={0}
       >
-        <title id={`${titleId}-title`}>{title}</title>
-        <desc id={`${titleId}-desc`}>{description}</desc>
-
-        {stages.map((stage, index) => {
-          const y = PAD + index * (NODE_H + GAP);
-          const isLast = index === stages.length - 1;
-          const stroke = stage.gate ? "var(--accent)" : "var(--border-strong)";
-
-          return (
-            <g
+        {/* eslint-enable jsx-a11y/no-noninteractive-tabindex */}
+        <ol className={`pipeline ${compact ? "pipeline--compact" : ""}`}>
+          {stages.map((stage, i) => (
+            <li
               key={stage.label}
-              className="stage"
-              style={{ animationDelay: `${index * 70}ms` }}
+              className="pipeline__stage"
+              data-gate={stage.gate ? "true" : undefined}
             >
-              <rect
-                x={0}
-                y={y}
-                width={NODE_W}
-                height={NODE_H}
-                rx={8}
-                fill="none"
-                stroke={stroke}
-                strokeWidth={1}
-              />
-              <text
-                x={14}
-                y={y + NODE_H / 2 + 4}
-                fontSize={12}
-                fontWeight={500}
-                fill={stage.gate ? "var(--accent)" : "var(--text)"}
-                fontFamily="var(--font-code), monospace"
-              >
-                {String(index + 1).padStart(2, "0")}
-              </text>
-              <text
-                x={40}
-                y={y + NODE_H / 2 + 4}
-                fontSize={14}
-                fontWeight={500}
-                fill={stage.gate ? "var(--accent)" : "var(--text)"}
-              >
-                {stage.label}
-              </text>
-
+              <span className="pipeline__index t-data">
+                {String(i + 1).padStart(2, "0")}
+                {stage.gate ? (
+                  <span className="pipeline__gate"> gate</span>
+                ) : null}
+              </span>
+              <span className="pipeline__label">{stage.label}</span>
               {stage.note ? (
-                <text
-                  x={NOTE_X}
-                  y={y + NODE_H / 2 + 4}
-                  fontSize={13}
-                  fill="var(--text-secondary)"
-                >
-                  {stage.note}
-                </text>
+                <span className="pipeline__note">{stage.note}</span>
               ) : null}
-
-              {!isLast ? (
-                <line
-                  x1={NODE_W / 2}
-                  y1={y + NODE_H}
-                  x2={NODE_W / 2}
-                  y2={y + NODE_H + GAP}
-                  stroke="var(--border-strong)"
-                  strokeWidth={1}
-                  strokeDasharray={stages[index + 1]?.gate ? "3 3" : undefined}
-                />
-              ) : null}
-            </g>
-          );
-        })}
-      </svg>
-      <figcaption className="t-caption mt-4">{description}</figcaption>
+            </li>
+          ))}
+        </ol>
+      </div>
+      <figcaption className="t-caption mt-4 max-w-[70ch]">
+        {description}
+      </figcaption>
     </figure>
   );
 }

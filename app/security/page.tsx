@@ -1,131 +1,215 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Chip, Container } from "@/components/primitives";
+import {
+  Container,
+  Panel,
+  Reveal,
+  Rule,
+  SeverityTag,
+} from "@/components/primitives";
 import { publicFindings, withheldCount } from "@/content/findings";
+import type { Finding } from "@/content/schema";
 import { disclosurePolicy, identity } from "@/content/site";
 
 export const metadata: Metadata = {
   title: "Security research",
   description:
-    "Disclosure record: findings reported through vendor programmes and a national CERT, with technical detail withheld where programme terms require it.",
+    "The disclosure record: every finding reported through a vendor channel or a national CERT, with the basis on which it is published and the detail that is withheld.",
   alternates: { canonical: "/security" },
 };
 
-export default function SecurityPage() {
-  return (
-    <main id="main" className="py-20">
-      <Container width="wide">
-        <p className="t-caption">Security research</p>
-        <h1 className="t-h1 mt-3 max-w-[20ch]">Disclosure record</h1>
-        <p className="t-intro mt-6">
-          Every finding below went to the vendor&rsquo;s own channel or to a
-          national CERT. What is published here is the organisation, the
-          vulnerability class and the current status — nothing that would help
-          someone reproduce an issue that may still be live.
-        </p>
-      </Container>
+/** UI label for the disclosure basis — a heading, never a fact about a person. */
+function basisLabel(disclosure: Finding["disclosure"]): string {
+  if (!disclosure.public) return "";
+  switch (disclosure.basis) {
+    case "program-permitted":
+      return "Programme permits";
+    case "vendor-approved":
+      return "Vendor approved";
+    case "publicly-acknowledged":
+      return "Publicly acknowledged";
+  }
+}
 
-      <Container width="wide" className="mt-16">
-        <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+/** A bounty value when one was awarded; otherwise an em dash read as "none". */
+function Bounty({ bounty }: { bounty?: string }) {
+  if (bounty) return <>{bounty}</>;
+  return (
+    <>
+      <span aria-hidden="true">—</span>
+      <span className="sr-only">none</span>
+    </>
+  );
+}
+
+/** The reference cell links to the finding sheet when a cleared writeup exists. */
+function RefCell({ id, slug }: { id: string; slug?: string }) {
+  if (slug) {
+    return (
+      <Link
+        href={`/security/${slug}`}
+        className="t-data text-[var(--accent)] underline-offset-4 hover:underline"
+      >
+        {id}
+      </Link>
+    );
+  }
+  return <span className="t-data">{id}</span>;
+}
+
+/**
+ * /security — the full disclosure record and the policy behind it. Only
+ * publicFindings ever render, and only organisation / class / severity /
+ * status / basis / bounty: never an endpoint, payload or reproduction step.
+ */
+export default function SecurityRecordPage() {
+  return (
+    <main id="main" className="pt-32 pb-24">
+      <Container width="wide">
+        <Reveal>
+          <p className="t-label">Disclosure record</p>
+          <h1 className="t-h1 mt-5 max-w-[20ch]">The disclosure ledger.</h1>
+          <p className="t-lede mt-5">{disclosurePolicy}</p>
+          <Rule ticked className="mt-8" />
+        </Reveal>
+
+        <div className="mt-10 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-2 border-b border-[var(--border-strong)] pb-4">
+          <p className="t-label">Details withheld per programme terms</p>
+          <p className="t-data text-[var(--text-tertiary)]">
+            {publicFindings.length} records <span aria-hidden="true">·</span>{" "}
+            {withheldCount} withheld
+          </p>
+        </div>
+
+        {/* Desktop: the ledger table, scrolling within itself on narrow desktops. */}
+        <div className="scroll-x mt-6 hidden md:block">
+          <table className="ledger w-full">
             <caption className="sr-only">
-              Disclosure record: reference, organisation, vulnerability class,
-              severity and status.
+              Public security disclosure records
             </caption>
             <thead>
-              <tr className="border-b border-[var(--border-strong)]">
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Ref
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Organisation
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Finding
-                </th>
-                <th scope="col" className="t-caption py-3 pr-6 font-medium">
-                  Severity
-                </th>
-                <th scope="col" className="t-caption py-3 font-medium">
-                  Status
-                </th>
+              <tr>
+                <th scope="col">Ref</th>
+                <th scope="col">Organisation</th>
+                <th scope="col">Class</th>
+                <th scope="col">Severity</th>
+                <th scope="col">Status</th>
+                <th scope="col">Basis</th>
+                <th scope="col">Bounty</th>
               </tr>
             </thead>
             <tbody>
-              {publicFindings.map((finding) => (
-                <tr
-                  key={finding.id}
-                  className="relative border-b border-[var(--border)] transition-colors duration-[var(--dur-micro)] hover:bg-[color-mix(in_oklab,var(--text)_4%,transparent)]"
-                >
-                  <th
-                    scope="row"
-                    className="t-mono py-6 pr-6 align-top font-normal whitespace-nowrap text-[var(--text-tertiary)]"
-                  >
-                    {finding.id}
-                  </th>
-                  <td className="py-6 pr-6 align-top font-medium whitespace-nowrap">
-                    {finding.slug ? (
-                      <Link
-                        href={`/security/${finding.slug}`}
-                        className="after:absolute after:inset-0 after:content-['']"
-                      >
-                        {finding.org}
-                      </Link>
-                    ) : (
-                      finding.org
-                    )}
+              {publicFindings.map((f, i) => (
+                <Reveal as="tr" key={f.id} delay={Math.min(i, 5) * 60}>
+                  <td>
+                    <RefCell id={f.id} slug={f.slug} />
                   </td>
-                  <td className="max-w-[46ch] py-6 pr-6 align-top">
-                    <p className="t-small">{finding.summary}</p>
-                    <p className="t-caption mt-2">{finding.class}</p>
-                    {finding.disclosure.public && finding.disclosure.note ? (
-                      <p className="t-caption mt-2 text-[var(--text-secondary)]">
-                        {finding.disclosure.note}
-                      </p>
-                    ) : null}
+                  <td className="t-small">{f.org}</td>
+                  <td className="t-small text-secondary">{f.class}</td>
+                  <td>
+                    <SeverityTag severity={f.severity} />
                   </td>
-                  <td className="py-6 pr-6 align-top">
-                    <Chip tone={finding.severity}>{finding.severity}</Chip>
+                  <td className="t-small">{f.status}</td>
+                  <td className="t-small">{basisLabel(f.disclosure)}</td>
+                  <td className="t-data">
+                    <Bounty bounty={f.bounty} />
                   </td>
-                  <td className="t-small py-6 align-top">
-                    {finding.status}
-                    {finding.bounty ? (
-                      <span className="mt-1 block font-medium">
-                        {finding.bounty}
-                      </span>
-                    ) : null}
-                  </td>
-                </tr>
+                </Reveal>
               ))}
             </tbody>
           </table>
         </div>
+
+        {/* Mobile: the same fields as stacked cards. */}
+        <ul className="perspective mt-6 grid gap-4 md:hidden">
+          {publicFindings.map((f, i) => (
+            <Reveal
+              as="li"
+              key={f.id}
+              delay={Math.min(i, 5) * 60}
+              className="reveal-rotate"
+            >
+              <Panel className="p-5">
+                <div className="flex items-center justify-between gap-3">
+                  <RefCell id={f.id} slug={f.slug} />
+                  <SeverityTag severity={f.severity} />
+                </div>
+                <p className="t-h3 mt-3">{f.org}</p>
+                <p className="t-small text-secondary mt-1">{f.class}</p>
+                <dl className="register mt-4">
+                  <div>
+                    <dt className="t-label pt-0.5">Status</dt>
+                    <dd className="t-small">{f.status}</dd>
+                  </div>
+                  <div>
+                    <dt className="t-label pt-0.5">Basis</dt>
+                    <dd className="t-small">{basisLabel(f.disclosure)}</dd>
+                  </div>
+                  {f.bounty ? (
+                    <div>
+                      <dt className="t-label pt-0.5">Bounty</dt>
+                      <dd className="t-small">{f.bounty}</dd>
+                    </div>
+                  ) : null}
+                </dl>
+              </Panel>
+            </Reveal>
+          ))}
+        </ul>
       </Container>
 
       <Container width="text" className="mt-20">
-        <h2 className="t-h3">Disclosure policy</h2>
-        <p className="t-body mt-3 text-[var(--text-secondary)]">
-          {disclosurePolicy}
-        </p>
-        {withheldCount > 0 ? (
-          <p className="t-body mt-4 text-[var(--text-secondary)]">
-            {withheldCount} further{" "}
-            {withheldCount === 1 ? "finding is" : "findings are"} not listed
-            here. They are held back because the testing authorisation or the
-            programme&rsquo;s disclosure approval has not been confirmed in
-            writing — not because the reports do not exist.
+        <Reveal>
+          <h2 className="t-h3">What is published</h2>
+          <p className="t-body text-secondary mt-4">
+            Each record names six things and no more: the organisation, the
+            vulnerability class in vendor-neutral language, the severity, the
+            current status, the basis on which it may be disclosed, and a bounty
+            where one was actually awarded. That is enough to verify the work
+            without handing anyone a recipe.
           </p>
-        ) : null}
-        <p className="t-body mt-4 text-[var(--text-secondary)]">
-          If you are running a programme and want a report resent, or you want
-          something on this page corrected or removed, email{" "}
-          <a
-            href={`mailto:${identity.email}`}
-            className="text-[var(--accent)] underline-offset-4 hover:underline"
-          >
-            {identity.email}
-          </a>
-          .
+        </Reveal>
+
+        <Reveal>
+          <h2 className="t-h3 mt-14">What is withheld, and why</h2>
+          <p className="t-body text-secondary mt-4">
+            No endpoint, payload, parameter, screenshot or reproduction step is
+            published for anything that is not confirmed fixed. Where a
+            programme&rsquo;s terms restrict disclosure, the impact wording is
+            withheld until that programme approves it in writing. The point of a
+            responsible disclosure is that it is not weaponised on the way to
+            being resolved.
+          </p>
+        </Reveal>
+
+        <Reveal>
+          <h2 className="t-h3 mt-14">Basis for publishing</h2>
+          <p className="t-body text-secondary mt-4">
+            Nothing appears here without a reason it may. There are three:{" "}
+            <strong className="font-medium text-[var(--text)]">
+              Programme permits
+            </strong>{" "}
+            — the organisation runs a coordinated disclosure or bug bounty
+            programme whose terms allow the existence of a report to be stated;{" "}
+            <strong className="font-medium text-[var(--text)]">
+              Vendor approved
+            </strong>{" "}
+            — testing was carried out under written authorisation and the owner
+            has confirmed the finding may be listed; and{" "}
+            <strong className="font-medium text-[var(--text)]">
+              Publicly acknowledged
+            </strong>{" "}
+            — a national CERT or the vendor has already issued a public
+            acknowledgement, so the finding&rsquo;s existence is a matter of
+            record. Technical detail stays withheld under all three.
+          </p>
+        </Reveal>
+
+        <Rule className="mt-14" />
+        <p className="t-small text-secondary mt-6">
+          Something on this record wrong or out of date? Write to{" "}
+          <a href={`mailto:${identity.email}`}>{identity.email}</a> and it will
+          be corrected.
         </p>
       </Container>
     </main>

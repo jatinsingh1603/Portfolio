@@ -1,12 +1,14 @@
-# jatinsingh.dev — personal site
+# Jatin Kumar Singh — personal site
 
 Personal site for Jatin Kumar Singh, Information Security Analyst. Static
-Next.js, no CMS, no runtime data fetching, no analytics, no cookies.
+Next.js 15 (App Router), no CMS, no analytics, no cookies, no third-party
+scripts. Positioning: **Cybersecurity × AI × Automation**.
 
 ```bash
 npm install
 npm run dev          # http://localhost:3000
 npm run build        # regenerates security.txt/humans.txt/llms.txt, then builds
+npm start
 ```
 
 ## The rule that matters most
@@ -14,9 +16,24 @@ npm run build        # regenerates security.txt/humans.txt/llms.txt, then builds
 **No fact reaches the page except through `/content`, and no finding is
 rendered unless its `disclosure.public` is `true`.**
 
-Components import from `content/*.ts`. Nothing is hard-coded in JSX — not a
-date, not a metric, not a job title. `tests/unit/content.test.ts` enforces this
-and will fail the build if it drifts.
+Components import from `content/*.ts`. Nothing about the person is hard-coded
+in JSX — not a date, not a metric, not a job title. `tests/unit/content.test.ts`
+and `tests/unit/labs.test.ts` enforce this and fail the build if it drifts.
+
+| Module                    | Holds                                                                |
+| ------------------------- | -------------------------------------------------------------------- |
+| `content/site.ts`         | identity, positioning, nav, recognitions, disclosure policy          |
+| `content/brand.ts`        | tagline, thesis, hero headline, the five system stations, CTAs       |
+| `content/about.ts`        | the story in five chapters, each traceable to another module         |
+| `content/career.ts`       | roles, awards, capabilities, credentials, education                  |
+| `content/projects.ts`     | the three systems (category, status, stack, outcomes, recognition)   |
+| `content/diagrams.ts`     | each project's own pipeline, transcribed                             |
+| `content/findings.ts`     | the disclosure record — only `publicFindings` may render             |
+| `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts) |
+| `content/journey.ts`      | the routed path; dates only where the record carries them            |
+| `content/achievements.ts` | derived cards; every metric verbatim or absent                       |
+| `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                   |
+| `content/schema.ts`       | zod schemas for all of the above                                     |
 
 ## Adding a security finding
 
@@ -47,12 +64,7 @@ To withhold one instead:
 disclosure: { public: false, reason: "Why. This is a record, not a TODO." }
 ```
 
-**Withhold rather than delete.** The reason is part of the disclosure record and
-it stops someone re-adding the same item later without the context. Only
-`publicFindings` is exported for rendering; `findings` is the full private list.
-
-Two rules that are not negotiable, because this is a security researcher's
-public site:
+**Withhold rather than delete.** Two rules that are not negotiable:
 
 1. **Never publish reproduction detail** — no endpoint, payload, parameter or
    screenshot — for anything not confirmed fixed.
@@ -63,75 +75,95 @@ public site:
 ## Adding a number
 
 `content/profiles.ts` renders `metric` verbatim or omits it. There is no
-fallback and no estimate. If you do not have the verified figure, leave it
-`undefined` and the row renders without one.
+fallback and no estimate. The GitHub repository count is the one exception:
+`lib/github.ts` fetches it from the public API **at build time only** (set
+`GITHUB_TOKEN` to raise the rate limit, `PORTFOLIO_SKIP_GITHUB=1` to skip) and
+falls back to the verified static metric on any failure. Nothing is fetched in
+the browser — `connect-src 'self'` would block it anyway.
 
-## Design tokens
+## Design system — "Deep Field Bench"
+
+A dark volume you move through, operated like a precision instrument. Eleven
+home sections are **stations**; a left rail (the depth gauge) counts them and
+fills as you scroll. Colour is a law: `--accent` (teal) is the security signal,
+`--accent-2` (amber) is machine reasoning. Severity hues appear only on the
+ledger, always beside a word and a shape.
+
+Faces: Bricolage Grotesque (display), IBM Plex Sans (reading), IBM Plex Mono
+(every register label), self-hosted through `next/font` so `font-src 'self'`
+holds. One static weight each — the variable display file sat on the LCP path.
 
 Colour, space, radius and motion tokens live in `app/globals.css` as plain
-custom properties, aliased into Tailwind's namespace by `@theme inline`. Dark
-mode swaps the raw properties under `[data-theme="dark"]`; the theme is applied
-pre-paint by the inline script in `lib/theme-script.ts`.
+custom properties, aliased into Tailwind's namespace by `@theme inline`. Dark is
+the canonical theme and the default; light is an explicit choice persisted in
+`localStorage` and applied pre-paint by `lib/theme-script.ts`.
 
-`lib/tokens.ts` mirrors the colour values in TypeScript so
-`tests/unit/contrast.test.ts` can audit every rendered pair in both themes
-(4.5:1 body, 3:1 large text and UI boundaries) and assert the two files have not
-drifted. **Adding a new colour combination to a component means adding it to
-`usedPairs`** — an unaudited pair should not pass review.
+`lib/tokens.ts` is the source of truth for colour. The two token blocks in
+`globals.css` are generated from it, and `tests/unit/contrast.test.ts` audits
+every rendered pair in both themes (4.5:1 body, 3:1 large text and UI) and
+asserts the files have not drifted. **Adding a colour combination to a
+component means adding it to `usedPairs`.** One rule is enforced structurally:
+`--text-tertiary` fails on `--surface-raised` in dark, so `.panel--raised`
+remaps it to secondary.
 
 `/styleguide` renders the whole system with live contrast ratios. It is
 `noindex` and absent from the sitemap.
 
-Two deliberate departures from Apple's own palette, both forced by contrast:
+## The hero
 
-- `--text-tertiary` is `#6e6e73`, not Apple's `#86868b`, which measures 3.33:1
-  on the `#f5f5f7` wash and fails at the 13px caption size. The grey scale is
-  shifted down a step rather than dropped.
-- `--accent-on` (text on a filled accent button) is near-black in dark mode.
-  The dark accent is deliberately bright so links clear 4.5:1 on black, which
-  makes white-on-accent only 3.01:1.
+The object behind the headline is the system the site argues for —
+USER → SECURITY → AI ENGINE → AUTOMATION → RESULT — as five wireframe solids
+along an S-curve in real depth: an octahedron, a ring gate, a gyroscope around
+an icosahedron, a hexagonal lattice of lanes, and a ruled sheet. Packets move
+along the spine, stall at the SECURITY gate, and take the amber tone through
+the engine. Scrolling dollies the camera forward and explodes the assembly.
+
+It is hand-written WebGL 1 (`lib/gl/`: ~90 lines of matrix maths, a two-program
+renderer, deterministic geometry) — about 6 KB gzipped against the ~150 KB a
+scene-graph library would cost. The code is split out of the initial bundle and
+booted on an idle callback; the server renders the identical topology as an
+inline SVG first (`components/hero/system-svg.tsx`), which is also the whole
+hero under reduced motion or without WebGL. The five station labels are real
+DOM text projected through the same camera every frame.
 
 ## Motion
 
-One entrance animation, in `components/reveal.tsx`: opacity with a 12px rise,
-fired once by an IntersectionObserver. Hand-rolled rather than imported —
-`motion` would cost ~34 KB gzipped against a 120 KB budget. Reduced motion is
-handled inside that one component and in CSS, so it cannot be forgotten
-elsewhere, and a `<noscript>` rule keeps everything visible without JavaScript.
+One entrance animation, in `components/reveal.tsx`: opacity with a 24px rise
+(planes also tip back from 6°), fired once by an IntersectionObserver. Planes
+tilt toward a fine pointer (`lib/hooks/use-pointer-tilt.ts`), buttons are
+magnetic (`use-magnetic.ts`), the labs are ARIA tablists. Everything animates
+only `transform` and `opacity`; no animation library. Reduced motion pins every
+`[data-reveal]` to visible, freezes the hero, and disables tilt and magnetism.
 
 ## Budgets, enforced in CI
 
-| Gate               | Command                 | Budget                                  |
-| ------------------ | ----------------------- | --------------------------------------- |
-| Types              | `npm run typecheck`     | no errors                               |
-| Lint               | `npm run lint`          | no warnings                             |
-| Content + contrast | `npm test`              | all pass                                |
-| JS weight          | `npm run check:budget`  | < 120 KB gz on `/`                      |
-| Accessibility      | `npm run test:e2e`      | zero serious/critical axe violations    |
-| Lighthouse         | `npx @lhci/cli autorun` | 100/100/100/100, LCP < 1.5s, CLS < 0.02 |
+| Gate               | Command                 | Budget                                 |
+| ------------------ | ----------------------- | -------------------------------------- |
+| Types              | `npm run typecheck`     | no errors                              |
+| Lint               | `npm run lint`          | no warnings                            |
+| Format             | `npm run format:check`  | prettier clean                         |
+| Content + contrast | `npm test`              | all pass                               |
+| JS weight          | `npm run check:budget`  | < 120 KB gz on `/`                     |
+| Accessibility      | `npm run test:e2e`      | zero serious/critical axe violations   |
+| Lighthouse         | `npx @lhci/cli autorun` | 98/100/100/100, LCP < 1.5s, CLS < 0.02 |
 
 `check-js-budget.mjs` renders the route and measures the scripts the browser
-actually fetches, excluding Next's `noModule` polyfill bundle (no ES-module
-browser requests it).
-
-Lighthouse runs with `throttlingMethod: devtools`. The default simulated
-throttling over-attributes ~1s of LCP to the font swap; real throttled Chrome
-measures the same page at ~720ms.
+actually fetches. Client components never import from `/content`; data reaches
+them as props from server components, which is how the home route stays around
+112 KB with a WebGL hero and two interactive labs.
 
 ## Security
 
 Headers are declared twice — `next.config.ts` for `next start`, `vercel.json`
 for the edge — and `tests/unit/headers.test.ts` fails if they drift apart.
 
-`script-src` carries `'unsafe-inline'`. This was not a shortcut: the App Router
-streams its RSC payload through ~46 inline `self.__next_f.push(...)` scripts per
-route, CSP ignores `'unsafe-inline'` whenever a hash is present, and a
-per-request nonce forces dynamic rendering. Hashing every script was tried and
-broke hydration. The concession is bounded — every byte of content here is a
-compile-time constant, with no user input, no query reflection and no
-authenticated surface — and the directives doing the real work are intact:
-`object-src 'none'`, `base-uri 'self'`, `frame-ancestors 'none'`, and no
-external script host. `'unsafe-eval'` is asserted absent.
+`script-src` carries `'unsafe-inline'` because the App Router streams its RSC
+payload through inline scripts and a per-request nonce would force dynamic
+rendering. The concession is bounded — every byte of content is a compile-time
+constant, with no user input, no query reflection and no authenticated
+surface — and the directives doing the real work are intact: `object-src
+'none'`, `base-uri 'self'`, `frame-ancestors 'none'`, no external script host,
+`'unsafe-eval'` asserted absent.
 
 `/.well-known/security.txt` is regenerated on every build with a one-year
 `Expires`; a test fails if the committed copy has gone stale.

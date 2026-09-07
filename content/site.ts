@@ -29,30 +29,6 @@ export const identity = {
 } as const;
 
 export const positioning = {
-  /**
-   * Two beats, six words. Display type at 80px turns anything longer into a
-   * wall that pushes the calls to action off a phone’s first screen — the full
-   * claim lives in the intro below instead.
-   */
-  headline: "Break the control. Prove the fix.",
-  /**
-   * Rendered as explicit lines. Left to the measure, the wrap lands after
-   * "Prove" and splits a sentence across two lines — a designer would never
-   * let that ship, and no max-width holds it correctly at every viewport.
-   */
-  headlineLines: ["Break the control.", "Prove the fix."],
-  /**
-   * The rotating half of the headline. These are the four control types behind
-   * findings that appear further down this page: session management (JKS-03),
-   * object-level authorisation (JKS-05) and access control (JKS-07). Not a
-   * list of job titles.
-   *
-   * Every word stays within one character of the others: the slot reserves the
-   * width of the longest, so an outlier leaves visible slack in a centred
-   * headline. The canonical word is last, because that is what reduced-motion
-   * users see pinned.
-   */
-  headlineRotating: ["session", "boundary", "control"],
   intro:
     "I test application security controls, then build the automation that proves they\u2019re actually fixed. VAPT, red teaming, vendor risk and SEBI CSCRF.",
   /** Long form, used on /resume and in the llms.txt summary. */
@@ -63,19 +39,9 @@ export const positioning = {
 export const nav = [
   { label: "Work", href: "/#work" },
   { label: "Research", href: "/#research" },
-  { label: "About", href: "/#about" },
+  { label: "Labs", href: "/#cyber-lab" },
+  { label: "Journey", href: "/#journey" },
   { label: "Contact", href: "/#contact" },
-] as const;
-
-/**
- * Rendered in the hero. Each maps to a verifiable item elsewhere on the page —
- * no chip makes a claim the site does not then substantiate.
- */
-export const credibilityChips = [
-  "CRTP",
-  "CERT-In Recognised",
-  "Google Bug Hunter",
-  "Kraken Bounty",
 ] as const;
 
 /** §5.2 — text only. Company logos would read as endorsement and are trademarks. */

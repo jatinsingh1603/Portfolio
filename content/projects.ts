@@ -4,7 +4,10 @@ export const projects: Project[] = [
   {
     slug: "tprm-platform",
     name: "AI-Powered Third-Party Risk Management Platform",
+    category: "AI × Vendor risk automation",
     role: "Built and demonstrated",
+    status: "Built and demonstrated",
+    featured: true,
     stack: [
       "n8n",
       "AI agents",
@@ -36,7 +39,9 @@ export const projects: Project[] = [
   {
     slug: "cscrf-compliance",
     name: "AI-Powered SEBI CSCRF Compliance Platform",
+    category: "AI × Regulatory compliance",
     role: "Built and demonstrated",
+    status: "Built and demonstrated",
     stack: ["n8n", "AI agents", "GRC automation", "Regulatory compliance"],
     summary:
       "A compliance platform that lets an organisation assess and document its posture against the SEBI Cybersecurity and Cyber Resilience Framework. It maps analyst answers to control requirements directly, so the framework interpretation stops being the hard part.",
@@ -68,7 +73,9 @@ export const projects: Project[] = [
   {
     slug: "swiftpentest",
     name: "swiftPentest",
+    category: "Autonomous security testing",
     role: "Contributor",
+    status: "Active · open source",
     stack: [
       "Python 3",
       "Multi-agent systems",
@@ -108,3 +115,11 @@ export const projects: Project[] = [
 export function projectBySlug(slug: string): Project | undefined {
   return projects.find((p) => p.slug === slug);
 }
+
+const featured = projects.find((p) => p.featured);
+if (!featured)
+  throw new Error("content/projects.ts: mark one project featured");
+
+/** The one project that gets the large presentation. */
+export const featuredProject: Project = featured;
+export const otherProjects = projects.filter((p) => p !== featuredProject);

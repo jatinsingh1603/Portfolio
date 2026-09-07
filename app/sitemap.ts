@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { publicFindings } from "@/content/findings";
 import { projects } from "@/content/projects";
 import { SITE_URL } from "@/content/site";
 
@@ -17,5 +18,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       priority: 0.6,
     })),
+    // Only cleared findings have pages; withheld ones never reach the sitemap.
+    ...publicFindings
+      .filter((f) => f.slug)
+      .map((f) => ({
+        url: `${SITE_URL}/security/${f.slug}`,
+        lastModified: new Date(),
+        priority: 0.5,
+      })),
   ];
 }

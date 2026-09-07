@@ -60,7 +60,13 @@ export type Finding = z.infer<typeof findingSchema>;
 export const projectSchema = z.object({
   slug: z.string().min(1),
   name: z.string().min(1),
+  /** Editorial label for the showcase, e.g. "AI × Vendor risk automation". */
+  category: z.string().min(1),
   role: z.string().min(1),
+  /** Plain-language state: built and demonstrated, active, archived. */
+  status: z.string().min(1),
+  /** Exactly one project carries the large featured presentation. */
+  featured: z.boolean().optional(),
   stack: z.array(z.string().min(1)).min(1),
   summary: z.string().min(1),
   outcomes: z
@@ -68,6 +74,8 @@ export const projectSchema = z.object({
     .min(1),
   recognition: z.string().optional(),
   repo: z.string().url().optional(),
+  /** Set only when a public, working demo exists. None do today. */
+  demo: z.string().url().optional(),
   license: z.string().optional(),
 });
 export type Project = z.infer<typeof projectSchema>;
@@ -119,3 +127,84 @@ export const credentialSchema = z.object({
   verifyUrl: z.string().url().optional(),
 });
 export type Credential = z.infer<typeof credentialSchema>;
+
+/**
+ * Lab stages are educational: each names the tools and capabilities from
+ * content/career.ts that apply, and cites the real work that evidences it.
+ * The content test asserts every tool and capability exists in that list.
+ */
+export const labEvidenceSchema = z.object({
+  source: z.enum(["role", "project", "finding", "credential"]),
+  /** Company, project slug, finding id or credential name. */
+  ref: z.string().min(1),
+  text: z.string().min(1),
+});
+export type LabEvidence = z.infer<typeof labEvidenceSchema>;
+
+export const cyberStageSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  headline: z.string().min(1),
+  description: z.string().min(1),
+  tools: z.array(z.string().min(1)).min(1),
+  capabilities: z.array(z.string().min(1)).min(1),
+  evidence: z.array(labEvidenceSchema).min(1),
+});
+export type CyberStage = z.infer<typeof cyberStageSchema>;
+
+export const aiStageSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  description: z.string().min(1),
+});
+export type AiStage = z.infer<typeof aiStageSchema>;
+
+export const aiScenarioSchema = z.object({
+  id: z.string().min(1),
+  label: z.string().min(1),
+  /** The real thing this scenario describes. */
+  source: labEvidenceSchema,
+  /** One entry per AI stage, in order. */
+  steps: z.array(z.string().min(1)).min(1),
+});
+export type AiScenario = z.infer<typeof aiScenarioSchema>;
+
+export const milestoneSchema = z.object({
+  id: z.string().min(1),
+  phase: z.enum(["education", "security", "ai", "automation", "current"]),
+  title: z.string().min(1),
+  detail: z.string().min(1),
+  /** Only when the record carries one. Undated milestones render undated. */
+  date: z.string().min(1).optional(),
+  href: z.string().min(1).optional(),
+});
+export type Milestone = z.infer<typeof milestoneSchema>;
+
+export const achievementSchema = z.object({
+  id: z.string().min(1),
+  kind: z.enum([
+    "bounty",
+    "certification",
+    "hackathon",
+    "practice",
+    "research",
+    "open-source",
+    "national",
+  ]),
+  title: z.string().min(1),
+  detail: z.string().min(1),
+  /** Verbatim verified figure, or absent. Never an estimate. */
+  metric: z.string().optional(),
+  href: z.string().min(1).optional(),
+});
+export type Achievement = z.infer<typeof achievementSchema>;
+
+/** A stage in a project's own pipeline, transcribed for the diagram. */
+export const stageSchema = z.object({
+  label: z.string().min(1),
+  /** Short note set beside the node — the reason the stage exists. */
+  note: z.string().optional(),
+  /** Renders as a gate: a hard stop that must be satisfied before continuing. */
+  gate: z.boolean().optional(),
+});
+export type Stage = z.infer<typeof stageSchema>;

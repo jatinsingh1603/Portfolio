@@ -2,25 +2,54 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
-import { Chip, Container } from "@/components/primitives";
+import {
+  Chip,
+  Container,
+  KeyValue,
+  Reveal,
+  Rule,
+  SeverityTag,
+} from "@/components/primitives";
 import { publicFindings } from "@/content/findings";
+import type { Finding } from "@/content/schema";
 import { disclosurePolicy, identity } from "@/content/site";
 
-/**
- * Only findings cleared for publication get a page. `publicFindings` is the
- * filtered list, so a withheld entry cannot be reached by guessing its slug —
- * generateStaticParams never emits it and dynamicParams is off.
- */
+export const dynamicParams = false;
+
 export function generateStaticParams() {
   return publicFindings
     .filter((f) => f.slug)
     .map((f) => ({ slug: f.slug as string }));
 }
 
-export const dynamicParams = false;
-
-function findBySlug(slug: string) {
+function findBySlug(slug: string): Finding | undefined {
   return publicFindings.find((f) => f.slug === slug);
+}
+
+/** UI label for the disclosure basis. */
+function basisLabel(disclosure: Finding["disclosure"]): string {
+  if (!disclosure.public) return "";
+  switch (disclosure.basis) {
+    case "program-permitted":
+      return "Programme permits";
+    case "vendor-approved":
+      return "Vendor approved";
+    case "publicly-acknowledged":
+      return "Publicly acknowledged";
+  }
+}
+
+/** Per-basis explanation of why this finding may be published at all. */
+function basisExplanation(disclosure: Finding["disclosure"]): string {
+  if (!disclosure.public) return "";
+  switch (disclosure.basis) {
+    case "program-permitted":
+      return "The organisation runs a coordinated disclosure or bug bounty programme whose terms allow the existence of a report to be stated. Organisation, class and outcome are named; impact detail and reproduction steps stay withheld until the programme approves them in writing.";
+    case "vendor-approved":
+      return "Testing was carried out under written authorisation from the owner, and the owner has confirmed the finding may be listed. No endpoint or reproduction detail is published.";
+    case "publicly-acknowledged":
+      return "A national CERT or the vendor has already issued a public acknowledgement of the finding, so its existence is a matter of record. Technical detail remains withheld.";
+  }
 }
 
 export async function generateMetadata({
@@ -38,7 +67,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function FindingPage({
+/**
+ * /security/[slug] — a single disclosure sheet. Only the governance-gated
+ * fields ever appear: never an endpoint, payload or reproduction step.
+ */
+export default async function FindingSheetPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
@@ -47,95 +80,72 @@ export default async function FindingPage({
   const finding = findBySlug(slug);
   if (!finding) notFound();
 
-  const facts = [
+  const note = finding.disclosure.public ? finding.disclosure.note : undefined;
+
+  const rows: { label: string; value: React.ReactNode }[] = [
     { label: "Organisation", value: finding.org },
     { label: "Class", value: finding.class },
-    { label: "Severity", value: finding.severity },
+    { label: "Severity", value: <SeverityTag severity={finding.severity} /> },
     { label: "Status", value: finding.status },
-    ...(finding.bounty ? [{ label: "Bounty", value: finding.bounty }] : []),
   ];
+  if (finding.bounty) {
+    rows.push({ label: "Bounty", value: finding.bounty });
+  }
+  rows.push({ label: "Basis", value: basisLabel(finding.disclosure) });
 
   return (
-    <main id="main" className="ground-page py-20">
-      <Container width="wide">
-        <Link
-          href="/security"
-          className="t-small inline-flex items-center gap-2 text-[var(--text-secondary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
-        >
-          <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
-          Disclosure record
-        </Link>
-      </Container>
-
-      <Container width="text" className="mt-12">
-        <p className="t-mono text-[var(--text-tertiary)]">{finding.id}</p>
-        <h1 className="t-h1 mt-4">{finding.org}</h1>
-        <p className="t-intro mt-6">{finding.summary}</p>
-
-        <div className="mt-8 flex flex-wrap gap-2">
-          <Chip tone={finding.severity}>{finding.severity} severity</Chip>
-          <Chip>{finding.status}</Chip>
-          {finding.bounty ? <Chip>{finding.bounty}</Chip> : null}
-        </div>
-      </Container>
-
-      <Container width="text" className="mt-16">
-        <dl className="material rounded-[var(--radius-surface)] p-8">
-          {facts.map((fact) => (
-            <div
-              key={fact.label}
-              className="flex flex-wrap justify-between gap-4 border-t border-[var(--border)] py-4 first:border-t-0 first:pt-0 last:pb-0"
-            >
-              <dt className="t-caption tracking-[0.08em] uppercase">
-                {fact.label}
-              </dt>
-              <dd className="t-small text-right font-medium">{fact.value}</dd>
-            </div>
-          ))}
-        </dl>
-
-        <h2 className="t-h3 mt-16">What is published, and what is not</h2>
-        <p className="t-body mt-3 text-[var(--text-secondary)]">
-          {finding.disclosure.public && finding.disclosure.note
-            ? finding.disclosure.note
-            : disclosurePolicy}
-        </p>
-
-        {/* The reason this page exists is to be a credible record, so it has to
-            be explicit that the omissions are deliberate rather than an
-            oversight — otherwise a thin page reads as a thin finding. */}
-        <p className="t-body mt-4 text-[var(--text-secondary)]">
-          There is no proof-of-concept, payload, endpoint or screenshot on this
-          page, and that is deliberate. Publishing reproduction detail for an
-          issue that may still be live in production would put users of{" "}
-          {finding.org} at risk and, in most programmes, breach the terms the
-          report was submitted under.
-        </p>
-
-        <h2 className="t-h3 mt-16">Basis for publishing this at all</h2>
-        <p className="t-body mt-3 text-[var(--text-secondary)]">
-          {finding.disclosure.public
-            ? {
-                "program-permitted":
-                  "The programme's own rules permit acknowledging that a report was made. Only the organisation, the vulnerability class and the current status appear here.",
-                "vendor-approved":
-                  "Tested under written authorisation, held on file, which also covers naming the organisation.",
-                "publicly-acknowledged":
-                  "The recognition is already public, issued by the organisation itself.",
-              }[finding.disclosure.basis]
-            : null}
-        </p>
-
-        <p className="t-body mt-16 text-[var(--text-secondary)]">
-          If you run this programme and want this entry corrected or removed,
-          email{" "}
-          <a
-            href={`mailto:${identity.email}`}
-            className="text-[var(--accent)] underline-offset-4 hover:underline"
+    <main id="main" className="pt-32 pb-24">
+      <Container width="text">
+        <Reveal>
+          <Link
+            href="/security"
+            className="t-label inline-flex items-center gap-2 text-[var(--text-tertiary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
           >
-            {identity.email}
-          </a>
-          .
+            <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
+            Disclosure record
+          </Link>
+
+          <p className="t-data mt-8 text-[var(--text-tertiary)]">
+            {finding.id}
+          </p>
+          <h1 className="t-h1 mt-3">{finding.org}</h1>
+          <p className="t-lede mt-5">{finding.summary}</p>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <SeverityTag severity={finding.severity} />
+            <Chip>{finding.status}</Chip>
+            {finding.bounty ? <Chip>{finding.bounty}</Chip> : null}
+          </div>
+
+          <Rule ticked className="mt-8" />
+        </Reveal>
+
+        <Reveal>
+          <KeyValue rows={rows} className="mt-12" />
+        </Reveal>
+
+        <Reveal>
+          <h2 className="t-h3 mt-14">What is published, and what is not</h2>
+          <p className="t-body text-secondary mt-4">
+            {note ?? disclosurePolicy}
+          </p>
+        </Reveal>
+
+        <Reveal>
+          <h2 className="t-h3 mt-14">Basis for publishing this at all</h2>
+          <p className="t-body text-secondary mt-4">
+            <strong className="font-medium text-[var(--text)]">
+              {basisLabel(finding.disclosure)}.
+            </strong>{" "}
+            {basisExplanation(finding.disclosure)}
+          </p>
+        </Reveal>
+
+        <Rule className="mt-14" />
+        <p className="t-small text-secondary mt-6">
+          Something on this record wrong or out of date? Write to{" "}
+          <a href={`mailto:${identity.email}`}>{identity.email}</a> and it will
+          be corrected.
         </p>
       </Container>
     </main>
