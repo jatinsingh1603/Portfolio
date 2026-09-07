@@ -327,20 +327,12 @@ export function WorldCanvas({ labels }: { labels: WorldLabel[] }) {
       requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
       cancelIdleCallback?: (id: number) => void;
     };
-    const boot = () => {
-      if (w.requestIdleCallback)
-        idle = w.requestIdleCallback(start, { timeout: 2000 });
-      else timer = window.setTimeout(start, 300);
-    };
-    let onLoad: (() => void) | null = null;
-    if (document.readyState === "complete") boot();
-    else {
-      onLoad = () => boot();
-      window.addEventListener("load", onLoad, { once: true });
-    }
+    // The loader already waited for a person; take the next idle slice.
+    if (w.requestIdleCallback)
+      idle = w.requestIdleCallback(start, { timeout: 1500 });
+    else timer = window.setTimeout(start, 120);
 
     return () => {
-      if (onLoad) window.removeEventListener("load", onLoad);
       if (idle) w.cancelIdleCallback?.(idle);
       window.clearTimeout(timer);
       pause();

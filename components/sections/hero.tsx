@@ -39,16 +39,13 @@ export function Hero() {
               {identity.location}
             </p>
 
-            <h1 id="hero-title" className="t-display mt-6">
+            {/* One block, so the whole headline is the largest contentful
+                paint rather than four smaller candidates behind the lede. */}
+            <h1 id="hero-title" className="t-display rise mt-6">
               {brand.headline.map((line, i) => (
-                <span key={line} className="rise">
-                  <span
-                    style={{
-                      ["--rise-delay" as string]: `${120 + i * 90}ms`,
-                    }}
-                  >
-                    {line}
-                  </span>
+                <span key={line}>
+                  {line}
+                  {i < brand.headline.length - 1 ? <br /> : null}
                 </span>
               ))}
             </h1>

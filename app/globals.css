@@ -975,16 +975,12 @@ footer {
   transform: none;
 }
 
-/* Headline lines settle into place on load. They are fully painted from the
-   first frame — a clipped, translated-out reveal would hide the largest text
-   on the page from Largest Contentful Paint until the animation finished. */
+/* The headline settles into place on load as one block. It is fully painted
+   from the first frame — a clipped, translated-out reveal would hide the
+   largest text on the page from Largest Contentful Paint until it finished. */
 .rise {
-  display: block;
-}
-.rise > span {
-  display: block;
   animation: rise 700ms var(--ease-out) both;
-  animation-delay: var(--rise-delay, 0ms);
+  animation-delay: 120ms;
 }
 @keyframes rise {
   from {
@@ -1062,7 +1058,7 @@ footer {
   .rule--ticked {
     transform: none !important;
   }
-  .rise > span {
+  .rise {
     animation: none;
   }
   .plane {
