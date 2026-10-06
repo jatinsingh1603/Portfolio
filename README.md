@@ -163,8 +163,9 @@ section position. Without JavaScript, the
 scene presents a static reading sequence and links to the underlying detail
 pages. Interactive evidence dialogs, labs, and sound controls require JavaScript.
 
-`components/case-soundtrack.tsx` plays the local original soundtrack at
-`/audio/case-notes-score.mp3` through a looping HTML audio element. It attempts
+`components/case-soundtrack.tsx` plays a locally hosted copy of
+["Darkest Child" by Kevin MacLeod](https://www.incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783)
+at `/audio/darkest-child.mp3` through a looping HTML audio element. It attempts
 **unmuted playback on entry** unless the visitor has explicitly muted it during
 the current browser session, following the requested default-on experience.
 Browser autoplay policy may block that attempt. The control then shows
@@ -181,9 +182,16 @@ when the visitor has not muted it; browser refusal leaves the play control
 and trusted-gesture fallback available. Leaving the homepage releases the audio
 and effects. Returning creates a new player and respects the session mute choice.
 
-The original music file comes from `scripts/generate-case-score.py`, using
-procedural instruments without external recordings or samples. Regeneration
-requires Python with NumPy/SciPy and ffmpeg; playback has no Python dependency.
+The soundtrack is licensed under
+[Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+The closing section visibly credits Kevin MacLeod (incompetech.com) and links
+to the source and license. Playback uses the local asset without a third-party
+player or streaming service. The complete 238.68-second recording is preserved,
+compressed for web as an 80 kbps stereo MP3, with its level reduced by 3 dB.
+`public/audio/ATTRIBUTION.txt` records the source, license and modifications.
+`scripts/generate-case-score.py` and `public/audio/case-notes-score.mp3` are
+retained as the previous procedural score's generator and output; neither
+supplies the current soundtrack.
 Web Audio supplies optional mechanical and paper effects after interaction.
 Effects failures do not prevent the HTML audio soundtrack from playing.
 Motion and sound use separate controls. There is no autoplay video.
@@ -209,9 +217,9 @@ browser verification work; they are not claimed as measured results here.
 | Lighthouse         | `npx @lhci/cli autorun` | 98/100/100/100, LCP < 1.5s, CLS < 0.02 |
 
 `check-js-budget.mjs` renders the route and measures the scripts the browser
-actually fetches. Client components never import from `/content`; data reaches
-them as props from server components, keeping content modules out of the
-client bundle. Recheck the route budget after changing the cinematic
+actually fetches. Portfolio datasets reach client components as props from
+server components. Only the small shared soundtrack metadata record is
+imported directly by the player and footer. Recheck the route budget after changing the cinematic
 interactions or either interactive lab.
 
 ## Security
