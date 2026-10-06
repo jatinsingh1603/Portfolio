@@ -11,7 +11,7 @@ Keep the mechanical rolling-letter opening and red/black identity. A case file
 opens with native scroll, then reveals the journey, all ten public security
 reports, and the swiftPentest showcase. Scene copy is brief; black folders open into white
 evidence sheets with formal typography and red annotations. The portrait appears
-once in the closing section. An original continuous soundtrack attempts playback
+once in the closing section. A continuous mystery soundtrack attempts playback
 on entry, with a visible play control when browser autoplay policy blocks it.
 
 ## Current revision
@@ -43,9 +43,12 @@ on entry, with a visible play control when browser autoplay policy blocks it.
   keyboard support, focus and exact scroll restoration.
 - `components/case-soundtrack.tsx`: native HTML audio playback and optional
   Web Audio mechanical and paper effects.
-- `public/audio/case-notes-score.mp3`: the original continuous music loop.
-- `scripts/generate-case-score.py`: deterministic procedural music generation;
-  no external recordings or samples.
+- `public/audio/darkest-child.mp3`: a locally hosted copy of "Darkest Child" by
+  Kevin MacLeod, with visible source and license credits in the closing section.
+- `public/audio/ATTRIBUTION.txt`: source, license and modification details.
+- `scripts/generate-case-score.py`: retained generator for the previous
+  procedural score; its output, `public/audio/case-notes-score.mp3`, is retained
+  but unused. Neither supplies the current licensed track.
 
 The scene uses transform/opacity animation with one requestAnimationFrame per
 scroll event batch. It keeps native wheel behavior and does no continuous idle
@@ -53,6 +56,12 @@ rendering. Reduced-motion preferences and very short viewports (480px or less) u
 The manual motion switch preserves the current chapter while changing layouts.
 
 ## Sound behavior
+
+Music: ["Darkest Child" by Kevin MacLeod (incompetech.com)](https://www.incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783),
+licensed under [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/).
+The site serves the audio itself without a third-party player or streaming service.
+The complete 238.68-second recording is preserved, compressed for web as an
+80 kbps stereo MP3, with its level reduced by 3 dB. The track is not trimmed.
 
 The homepage attempts unmuted playback when its soundtrack component mounts,
 unless an explicit mute is saved for the current browser session.
@@ -98,7 +107,8 @@ exact easing curves or implementation details.
 
 The WWI reel is a presentation and the architectural reel is a montage, so we
 do not claim every observed transition is scroll-linked. No gated prompts,
-paid template sources, fictional testimonials or third-party assets were used.
+paid template sources or fictional testimonials were used. The soundtrack is
+the separately credited Creative Commons recording described above.
 
 ## Latest résumé and device revision
 

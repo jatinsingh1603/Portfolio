@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { caseMusic } from "@/content/music";
 
 export type CaseCue = "tick" | "unlock" | "page" | "close" | "transition";
 const CUE_TYPES = new Set<CaseCue>([
@@ -11,7 +12,6 @@ const CUE_TYPES = new Set<CaseCue>([
   "transition",
 ]);
 
-const MUSIC_URL = "/audio/case-notes-score.mp3";
 const START_TIMEOUT_MS = 12000;
 const MUTE_STORAGE_KEY = "jatin:case-soundtrack:muted";
 
@@ -331,7 +331,7 @@ export function CaseSoundtrack() {
     }
     const audio = new Audio();
     audio.preload = "none";
-    audio.src = MUSIC_URL;
+    audio.src = caseMusic.src;
     audio.loop = true;
     audio.volume = 0.8;
     audio.muted = false;
@@ -556,7 +556,7 @@ export function CaseSoundtrack() {
           message ||
           (state === "on"
             ? "Music is playing. Check your device's media volume if you cannot hear it."
-            : "Continuous original detective music")
+            : `${caseMusic.title} by ${caseMusic.artist}`)
         }
         onClick={() => control.current?.toggle()}
       >

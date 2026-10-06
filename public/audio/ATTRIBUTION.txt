@@ -1,0 +1,19 @@
+Darkest Child
+Kevin MacLeod (incompetech.com)
+ISRC: USUAN1100783
+
+Source:
+https://www.incompetech.com/music/royalty-free/index.html?isrc=USUAN1100783
+Downloaded from the official source on 2026-10-06.
+
+Licensed under Creative Commons Attribution 4.0 International (CC BY 4.0):
+https://creativecommons.org/licenses/by/4.0/
+
+Local asset: darkest-child.mp3
+Modifications: Compressed for web as an 80 kbps stereo MP3; level reduced
+by 3 dB. The complete 238.68-second recording is preserved without trimming.
+The website repeats the track through its audio player's loop setting.
+
+This attribution applies to darkest-child.mp3. The separately retained
+case-notes-score.mp3 is the site's previous procedural score and is not used
+for current soundtrack playback.

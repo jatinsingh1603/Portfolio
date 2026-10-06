@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import { BrandMark } from "@/components/brand-mark";
 import type { EvidenceRecord } from "@/components/evidence-sheet";
 import type { motionStudyContent } from "@/content/motion-study";
+import { caseMusic } from "@/content/music";
 
 const EvidenceSheet = dynamic(
   () =>
@@ -740,6 +741,14 @@ export function MotionStudy({
             </a>
           </nav>
         </div>
+        <p className="ms-music-credit">
+          Music:{" "}
+          <a href={caseMusic.source}>
+            {caseMusic.title} by {caseMusic.artist} ({caseMusic.artistSite})
+          </a>
+          . <a href={caseMusic.licenseUrl}>{caseMusic.license}</a>.{" "}
+          {caseMusic.processingNote}
+        </p>
       </section>
 
       <div className="ms-controls">

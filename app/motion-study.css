@@ -1093,6 +1093,18 @@ html:has(.motion-study) {
   font-size: 13px;
   letter-spacing: 0;
 }
+.ms-music-credit {
+  max-width: 75ch;
+  margin: 24px 0 0;
+  color: #160807;
+  font-size: 14px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.ms-music-credit a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
 .ms-noscript {
   padding: 30px;
   background: #f7f5f1;
