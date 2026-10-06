@@ -1,71 +1,87 @@
 @import "tailwindcss";
 
-/* Theme is driven by a data attribute set pre-paint, never by the media query
-   alone — the toggle has to be able to override the OS in both directions.
-   Dark is the canonical design; light is a real, audited alternative. */
+/* Keep stored theme attributes compatible. Both choices now use the same
+   red/black palette across the home, labs, and detail pages. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ── Colour ──────────────────────────────────────────────────────────────
-   Raw values live here as plain custom properties so `[data-theme]` can swap
-   them; `@theme inline` below only aliases them into Tailwind's namespace.
-   The two colour blocks are GENERATED from lib/tokens.ts and audited by
-   tests/unit/contrast.test.ts. Edit the TS, then regenerate.
-
-   Colour is a law on this site: --accent (teal) is the security signal,
-   --accent-2 (amber) is machine reasoning. Severity hues appear only on the
-   ledger, always beside a word and a shape. */
+   lib/tokens.ts is the palette source; keep these two blocks synchronized.
+   Tests audit the values and foreground/background pairs. Tailwind aliases
+   appear below. Red marks emphasis; severity includes a word and a shape. */
 :root {
-  --bg: #f5f7f9;
-  --bg-subtle: #edf0f3;
-  --surface: #ffffff;
-  --surface-raised: #fbfcfd;
-  --text: #0e141a;
-  --text-secondary: #41505c;
-  --text-tertiary: #5c6b77;
-  --accent: #0a7263;
-  --accent-hover: #085a4e;
-  --accent-on: #ffffff;
-  --accent-2: #9a5b00;
-  --focus: #0a7263;
-  --sev-critical: #c0392b;
-  --sev-high: #9c5000;
-  --sev-medium: #8a6d00;
-  --sev-low: #1e7a54;
-  --sev-info: #2a5da8;
-  --border: rgba(0, 0, 0, 0.12);
-  --border-strong: rgba(0, 0, 0, 0.2);
-  --shadow-panel:
-    0 1px 2px rgba(10, 14, 19, 0.06), 0 12px 40px rgba(10, 14, 19, 0.08);
-  --highlight: rgba(255, 255, 255, 0.9);
-  --grid-line: rgba(14, 20, 26, 0.06);
-  --scrim: rgba(20, 26, 32, 0.55);
-}
-
-[data-theme="dark"] {
-  --bg: #0a0e13;
-  --bg-subtle: #10151b;
-  --surface: #141a21;
-  --surface-raised: #1b222b;
-  --text: #e6ebf0;
-  --text-secondary: #a2aeb9;
-  --text-tertiary: #78838e;
-  --accent: #38d9c0;
-  --accent-hover: #5fe3ce;
-  --accent-on: #04120f;
-  --accent-2: #f2b441;
-  --focus: #7fe9da;
-  --sev-critical: #ff6b6b;
-  --sev-high: #ff9f5a;
-  --sev-medium: #f2c94c;
-  --sev-low: #56cc9d;
-  --sev-info: #7fa8e0;
-  --border: rgba(255, 255, 255, 0.1);
-  --border-strong: rgba(255, 255, 255, 0.18);
+  --film-ink: #11110f;
+  --film-paper: #efebe2;
+  --film-red: #ed3826;
+  --film-muted: #b4afa5;
+  --film-card-surface: #34211e;
+  --film-card-secondary: #beafa8;
+  --film-status: #f58e7f;
+  --film-chapter-status: #f49183;
+  --film-accent: #ff8b7b;
+  --film-stamp-surface: #b92e20;
+  --film-stamp-text: #fff0e9;
+  --bg: #11110f;
+  --bg-subtle: #171414;
+  --surface: #1a1919;
+  --surface-raised: #242222;
+  --text: #f3efeb;
+  --text-secondary: #c1b9b5;
+  --text-tertiary: #b4aaa5;
+  --accent: #ff7766;
+  --accent-hover: #ffa99d;
+  --accent-on: #11110f;
+  --accent-2: #ff7766;
+  --focus: #ff7766;
+  --sev-critical: #ff7766;
+  --sev-high: #ff9d8e;
+  --sev-medium: #d8b9b3;
+  --sev-low: #c8c0bb;
+  --sev-info: #b4aaa5;
+  --border: rgba(255, 255, 255, 0.15);
+  --border-strong: rgba(255, 255, 255, 0.31);
   --shadow-panel:
     0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px rgba(0, 0, 0, 0.45);
   --highlight: rgba(255, 255, 255, 0.07);
-  --grid-line: rgba(230, 235, 240, 0.045);
-  --scrim: rgba(6, 9, 13, 0.72);
+  --grid-line: rgba(243, 239, 235, 0.045);
+  --scrim: rgba(17, 17, 15, 0.82);
+}
+
+[data-theme="dark"] {
+  --film-ink: #11110f;
+  --film-paper: #efebe2;
+  --film-red: #ed3826;
+  --film-muted: #b4afa5;
+  --film-card-surface: #34211e;
+  --film-card-secondary: #beafa8;
+  --film-status: #f58e7f;
+  --film-chapter-status: #f49183;
+  --film-accent: #ff8b7b;
+  --film-stamp-surface: #b92e20;
+  --film-stamp-text: #fff0e9;
+  --bg: #11110f;
+  --bg-subtle: #171414;
+  --surface: #1a1919;
+  --surface-raised: #242222;
+  --text: #f3efeb;
+  --text-secondary: #c1b9b5;
+  --text-tertiary: #b4aaa5;
+  --accent: #ff7766;
+  --accent-hover: #ffa99d;
+  --accent-on: #11110f;
+  --accent-2: #ff7766;
+  --focus: #ff7766;
+  --sev-critical: #ff7766;
+  --sev-high: #ff9d8e;
+  --sev-medium: #d8b9b3;
+  --sev-low: #c8c0bb;
+  --sev-info: #b4aaa5;
+  --border: rgba(255, 255, 255, 0.15);
+  --border-strong: rgba(255, 255, 255, 0.31);
+  --shadow-panel:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset, 0 24px 60px rgba(0, 0, 0, 0.45);
+  --highlight: rgba(255, 255, 255, 0.07);
+  --grid-line: rgba(243, 239, 235, 0.045);
+  --scrim: rgba(17, 17, 15, 0.82);
 }
 
 @theme inline {
@@ -153,7 +169,7 @@ html {
   color-scheme: dark;
 }
 html[data-theme="light"] {
-  color-scheme: light;
+  color-scheme: dark;
 }
 
 body {
@@ -316,8 +332,7 @@ body {
 .panel--raised {
   background-color: var(--surface-raised);
   border-color: var(--border-strong);
-  /* The token rule, enforced structurally: tertiary text measures 4.15:1 on
-     the raised ground in dark, so inside a raised panel it becomes secondary. */
+  /* Raised-panel captions use secondary emphasis. */
   --text-tertiary: var(--text-secondary);
 }
 
@@ -1191,4 +1206,35 @@ footer {
   .pipeline__stage:hover {
     transform: translateY(-3px);
   }
+}
+
+/* Shared identity on secondary portfolio routes. */
+.portfolio-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 18px;
+  letter-spacing: -0.5px;
+  white-space: nowrap;
+}
+.portfolio-brand-mark {
+  width: 32px;
+  height: 32px;
+  flex: none;
+}
+@media (max-width: 400px) {
+  .portfolio-brand {
+    font-size: 16px;
+    gap: 7px;
+  }
+  .portfolio-brand-mark {
+    width: 28px;
+    height: 28px;
+  }
+}
+.sev--unrated .sev__mark {
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  background: transparent;
 }

@@ -4,15 +4,14 @@ import {
   IBM_Plex_Mono,
   IBM_Plex_Sans,
 } from "next/font/google";
-import { Interactions } from "@/components/interactions";
-import { Rail } from "@/components/rail";
+import { RouteChrome, TopChrome } from "@/components/route-chrome";
 import { SiteFooter } from "@/components/site-footer";
-import { SiteHeader } from "@/components/site-header";
 import { brand } from "@/content/brand";
 import { SITE_URL, identity, positioning } from "@/content/site";
 import { personJsonLd } from "@/lib/json-ld";
 import { THEME_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
+import "./cinematic.css";
 
 /**
  * All three faces are downloaded and self-hosted at build time (no runtime
@@ -73,8 +72,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   viewportFit: "cover",
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f5f7f9" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0e13" },
+    { media: "(prefers-color-scheme: light)", color: "#101012" },
+    { media: "(prefers-color-scheme: dark)", color: "#101012" },
   ],
 };
 
@@ -92,7 +91,7 @@ export default function RootLayout({
       <head>
         <noscript>
           {/* Scripting off: reveals must never hide content permanently. */}
-          <style>{`[data-reveal="out"]{opacity:1!important;transform:none!important}.rule--ticked{transform:none!important}`}</style>
+          <style>{`[data-reveal="out"],.lab-fade{opacity:1!important;transform:none!important}.rule--ticked{transform:none!important}.film-controls,.film-scene-label{display:none!important}.film-hero-scroll{height:auto!important}.film-hero{position:relative!important}`}</style>
         </noscript>
         {/* Runs before first paint; see lib/theme-script.ts. */}
         <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
@@ -105,11 +104,11 @@ export default function RootLayout({
         <a href="#main" className="skip-link">
           Skip to content
         </a>
-        <Interactions />
-        <Rail />
-        <SiteHeader />
+        <TopChrome />
         {children}
-        <SiteFooter />
+        <RouteChrome>
+          <SiteFooter />
+        </RouteChrome>
       </body>
     </html>
   );
