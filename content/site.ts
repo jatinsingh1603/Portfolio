@@ -3,12 +3,10 @@
  */
 
 /**
- * Canonical origin. Set NEXT_PUBLIC_SITE_URL in the Vercel project once the
- * domain is registered — the fallback is a placeholder, not a claim that this
- * domain exists.
+ * Canonical production origin. Deployments may override this when required.
  */
 export const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL ?? "https://jatinkumarsingh.com";
+  process.env.NEXT_PUBLIC_SITE_URL ?? "https://jatin.swiftsane.com";
 
 export const identity = {
   name: "Jatin Kumar Singh",
@@ -28,27 +26,44 @@ export const identity = {
   phoneInHtml: false,
 } as const;
 
+/** Contribution recorded in the owner-supplied résumé; no merge is claimed. */
+export const googleMcpContribution = {
+  title: "Chrome DevTools MCP",
+  role: "Open-source contributor",
+  summary:
+    "Reported an access-control bypass in Google's Chrome DevTools MCP, received appreciation, and submitted a pull request with a fix at Google's request.",
+  evidence: {
+    label: "Owner-supplied résumé",
+    href: identity.resumePdf,
+  },
+} as const;
+
 export const positioning = {
   intro:
-    "I test application security controls, then build the automation that proves they\u2019re actually fixed. VAPT, red teaming, vendor risk and SEBI CSCRF.",
+    "I test application security and build AI-driven automation for security assessments, vendor due diligence and compliance.",
   /** Long form, used on /resume and in the llms.txt summary. */
   statement:
-    "Cybersecurity professional specialising in application security and AI-driven automation. CRTP (Certified Red Team Professional, Altered Security), with validated hands-on skills in Active Directory attacks and red team operations. Hands-on experience across VAPT and building production-grade AI automation workflows using n8n. Recognised by Google, CERT-In and Kraken through responsible disclosure. Currently designing security automation platforms that reduce manual effort in third-party risk management, vendor due diligence and regulatory compliance (SEBI CSCRF).",
+    "Cybersecurity professional specialising in application security, VAPT and AI-driven security automation. CRTP certified by Altered Security, with hands-on skills in Active Directory attacks and red team operations. Recognised by Google, CERT-In, Kraken and Blinkit for responsible disclosure, and an authorised open-source contributor to Google's Chrome DevTools MCP. Currently building n8n-based platforms that reduce manual effort in third-party risk management, vendor due diligence and SEBI CSCRF compliance.",
 } as const;
 
 export const nav = [
+  { label: "Story", href: "/#about" },
   { label: "Work", href: "/#work" },
-  { label: "Research", href: "/#research" },
-  { label: "Labs", href: "/#cyber-lab" },
-  { label: "Contact", href: "/#contact" },
+  { label: "Research", href: "/security" },
+  { label: "Labs", href: "/labs" },
+  { label: "Contact", href: "/#ms-contact" },
 ] as const;
 
 /** §5.2 — text only. Company logos would read as endorsement and are trademarks. */
 export const recognitions = [
   {
-    org: "Google",
+    org: "Blinkit",
     detail:
-      "Reported a persistent session flaw in a third-party application using Google SSO, through the Google Bug Hunters programme.",
+      "Awarded a $1,500 bounty for identifying an arbitrary file read vulnerability in the Blinkit APK.",
+  },
+  {
+    org: "Google",
+    detail: `Reported a persistent session flaw in a third-party application using Google SSO. ${googleMcpContribution.summary}`,
   },
   {
     org: "CERT-In",
@@ -58,7 +73,7 @@ export const recognitions = [
   {
     org: "Meta",
     detail:
-      "Two reports accepted through Meta’s bug bounty programme, including one against Mapillary.",
+      "Reported prompt injection in Meta AI and an access-control vulnerability in Mapillary.",
   },
   {
     org: "Kraken",
@@ -68,4 +83,4 @@ export const recognitions = [
 ] as const;
 
 export const disclosurePolicy =
-  "All findings on this page were reported through the vendor’s official channel or a national CERT. Technical details are withheld where a program’s terms require it or where a fix is not yet confirmed deployed.";
+  "Public summaries reflect the owner-supplied résumé and recorded disclosure outcomes. Technical details are withheld where a programme’s terms require it or a fix is not confirmed deployed.";

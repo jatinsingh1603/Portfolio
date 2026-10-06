@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import type { Severity } from "@/content/schema";
 import { STATION_COUNT } from "@/lib/stations";
 import { Magnetic } from "./magnetic";
@@ -163,10 +162,15 @@ export function SeverityTag({ severity }: { severity: Severity }) {
   return (
     <span
       className={`sev sev--${severity}`}
-      style={{ ["--sev" as string]: `var(--sev-${severity})` }}
+      style={{
+        ["--sev" as string]:
+          severity === "unrated"
+            ? "var(--text-secondary)"
+            : `var(--sev-${severity})`,
+      }}
     >
       <span className="sev__mark" aria-hidden="true" />
-      {severity}
+      {severity === "unrated" ? "Not rated" : severity}
     </span>
   );
 }
@@ -198,9 +202,6 @@ export function Button({
         className={cls}
       >
         {children}
-        {external ? (
-          <ArrowUpRight size={16} strokeWidth={1.5} aria-hidden="true" />
-        ) : null}
       </a>
     ) : (
       <Link href={href} className={cls}>
@@ -219,14 +220,12 @@ export function ExternalLink({
   label,
   children,
   className = "",
-  showIcon = true,
 }: {
   href: string;
   /** Destination in plain words, e.g. "GitHub profile". */
   label: string;
   children: React.ReactNode;
   className?: string;
-  showIcon?: boolean;
 }) {
   return (
     <a
@@ -234,17 +233,9 @@ export function ExternalLink({
       target="_blank"
       rel="noopener noreferrer"
       aria-label={`${label} (opens in a new tab)`}
-      className={`group inline-flex items-center gap-1 text-[var(--accent)] underline-offset-4 transition-colors duration-[var(--dur-micro)] hover:underline ${className}`}
+      className={`group inline-flex items-center text-[var(--accent)] underline-offset-4 transition-colors duration-[var(--dur-micro)] hover:underline ${className}`}
     >
       {children}
-      {showIcon ? (
-        <ArrowUpRight
-          size={16}
-          strokeWidth={1.5}
-          aria-hidden="true"
-          className="shrink-0"
-        />
-      ) : null}
     </a>
   );
 }

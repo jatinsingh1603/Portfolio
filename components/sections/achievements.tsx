@@ -62,9 +62,8 @@ export function Achievements() {
                 </p>
               ) : null}
               {item.evidence ? (
-                <span className="t-label mt-4 inline-flex items-center gap-2 text-[var(--accent)]">
+                <span className="t-label mt-4 text-[var(--accent)]">
                   Evidence · {item.evidence.label}
-                  <span aria-hidden="true">↗</span>
                 </span>
               ) : null}
             </Plane>

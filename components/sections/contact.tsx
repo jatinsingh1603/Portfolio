@@ -1,4 +1,3 @@
-import { ArrowUpRight } from "lucide-react";
 import { Button, Reveal, Station } from "@/components/primitives";
 import { profiles } from "@/content/profiles";
 import { identity } from "@/content/site";
@@ -56,21 +55,14 @@ export function Contact({ github }: { github: GithubStats | null }) {
                     {profile.handle}
                   </span>
                 </span>
-                <span className="flex min-w-0 shrink items-center gap-4">
-                  {metric ? (
-                    <span className="flex min-w-0 flex-col items-end text-right">
-                      <span className="t-data">{metric}</span>
-                      <span className="t-caption">
-                        {isGithub && github ? "verified at build" : "verified"}
-                      </span>
+                {metric ? (
+                  <span className="flex min-w-0 shrink flex-col items-end text-right">
+                    <span className="t-data">{metric}</span>
+                    <span className="t-caption">
+                      {isGithub && github ? "verified at build" : "verified"}
                     </span>
-                  ) : null}
-                  <ArrowUpRight
-                    size={18}
-                    strokeWidth={1.5}
-                    aria-hidden="true"
-                  />
-                </span>
+                  </span>
+                ) : null}
               </a>
             </Reveal>
           );

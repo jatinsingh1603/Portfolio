@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
 import { Reveal, Station } from "@/components/primitives";
 import { about } from "@/content/about";
 import { brand } from "@/content/brand";
@@ -9,7 +8,7 @@ import { positioning } from "@/content/site";
  * Station 02. The argument first — the three-beat thesis, each claim linking to
  * the place on the page that evidences it — then the record itself as a
  * two-column register of chapters, what the work is pointed at now, and the
- * four organisations that have accepted a report. No photo exists; none is
+ * organisations represented in the public research record. No photo exists; none is
  * designed around.
  */
 export function About() {
@@ -32,23 +31,16 @@ export function About() {
             className="reveal-rotate flex flex-col"
           >
             <p className="t-body text-[var(--text-tertiary)]">{beat.dont}</p>
-            <p className="mt-2 flex items-baseline gap-3">
-              <span
-                aria-hidden="true"
-                className="t-data shrink-0 text-[var(--accent)]"
-              >
-                &rarr;
-              </span>
+            <p className="mt-2">
               <span className="t-h3">{beat.do}</span>
             </p>
             <Link
               href={beat.anchor}
-              className="mt-4 inline-flex min-h-[44px] items-center gap-1.5 self-start text-[var(--accent)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--accent-hover)]"
+              className="mt-4 inline-flex min-h-[44px] items-center self-start text-[var(--accent)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--accent-hover)]"
             >
               <span className="t-label !text-[var(--accent)]">
                 See the proof
               </span>
-              <ArrowRight size={16} strokeWidth={1.5} aria-hidden="true" />
             </Link>
           </Reveal>
         ))}

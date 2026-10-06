@@ -1,22 +1,19 @@
 import type { Metadata } from "next";
-import {
-  Button,
-  Chip,
-  Container,
-  ExternalLink,
-  KeyValue,
-  Rule,
-} from "@/components/primitives";
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { BrandMark } from "@/components/brand-mark";
 import {
   awards,
   capabilities,
   credentials,
   education,
   roles,
+  secondaryEducation,
 } from "@/content/career";
 import { publicFindings } from "@/content/findings";
 import { projects } from "@/content/projects";
 import { identity, positioning } from "@/content/site";
+import "./resume.css";
 
 export const metadata: Metadata = {
   title: "Résumé",
@@ -24,235 +21,304 @@ export const metadata: Metadata = {
   alternates: { canonical: "/resume" },
 };
 
-/** One register block: a mono heading, the ticked-off hairline, then rows. */
-function Block({
-  title,
+const sections = [
+  { id: "experience", title: "Experience" },
+  { id: "projects", title: "Projects" },
+  { id: "research", title: "Security research" },
+  { id: "recognition", title: "Recognition" },
+  { id: "education", title: "Certification & education" },
+  { id: "capabilities", title: "Capabilities" },
+] as const;
+
+const visibleProjects = projects.filter(
+  (project) => project.slug === "swiftpentest",
+);
+
+/** Keep the source facts while using the document's plain punctuation. */
+function documentText(text: string) {
+  return text
+    .replace(/\s*[\u2013\u2014]\s*/g, ", ")
+    .replace(/\s*\u2192\s*/g, " / ");
+}
+
+function ResumeSection({
+  index,
   children,
 }: {
-  title: string;
-  children: React.ReactNode;
+  index: number;
+  children: ReactNode;
 }) {
+  const section = sections[index]!;
   return (
-    <section className="mt-16 md:mt-20">
-      <h2 className="t-label">{title}</h2>
-      <Rule className="mt-4" />
-      <div className="mt-8">{children}</div>
+    <section
+      className="resume-section"
+      id={`resume-${section.id}`}
+      aria-labelledby={`resume-${section.id}-title`}
+    >
+      <div className="resume-section-heading">
+        <span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
+        <h2 id={`resume-${section.id}-title`}>{section.title}</h2>
+      </div>
+      <div className="resume-section-content">{children}</div>
     </section>
   );
 }
 
-/**
- * The full résumé in the register style, with a download for the PDF that
- * carries the details this page deliberately keeps out of the HTML (the phone
- * number lives on the PDF only — never rendered here).
- */
 export default function ResumePage() {
   return (
-    <main id="main" className="pt-32 pb-24">
-      <Container width="default">
-        <header className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between md:gap-6">
+    <div className="resume-page">
+      <header className="resume-header">
+        <Link
+          className="resume-brand"
+          href="/"
+          aria-label={`${identity.name}, home`}
+        >
+          <BrandMark className="resume-brand-mark" />
+          <span>{identity.shortName}</span>
+        </Link>
+        <nav aria-label="Main navigation" className="resume-navigation">
+          <Link href="/">Home</Link>
+          <Link href="/security">Research</Link>
+          <Link href="/#ms-contact">Contact</Link>
+        </nav>
+        <a className="resume-download" href={identity.resumePdf} download>
+          Download PDF
+        </a>
+      </header>
+
+      <main id="main" className="resume-main">
+        <header className="resume-masthead">
           <div>
-            <h1 className="t-h1">{identity.name}</h1>
-            <p className="t-lede mt-3">
-              {identity.title}
-              <span aria-hidden="true"> · </span>
-              {identity.location}
-            </p>
-            <p className="mt-4">
-              <a
-                href={`mailto:${identity.email}`}
-                className="t-data text-[var(--accent)] underline-offset-4 hover:underline"
-              >
-                {identity.email}
-              </a>
-            </p>
+            <p className="resume-eyebrow">Résumé / Professional record</p>
+            <h1>{identity.name}</h1>
+            <p className="resume-role">{identity.title}</p>
           </div>
-          <Button
-            href={identity.resumePdf}
-            download
-            className="w-full md:w-auto"
-          >
-            Download PDF
-          </Button>
+          <address className="resume-contact">
+            <span>{identity.location}</span>
+            <a href={`mailto:${identity.email}`}>{identity.email}</a>
+          </address>
         </header>
 
-        <p className="t-body mt-10">{positioning.statement}</p>
+        <article className="resume-paper" aria-label="Professional résumé">
+          <div className="resume-document-heading">
+            <p>Cybersecurity, AI & automation</p>
+            <span>Public profile</span>
+          </div>
+          <p className="resume-summary">
+            {documentText(positioning.statement)}
+          </p>
 
-        <Block title="Experience">
-          <div className="flex flex-col gap-12">
+          <nav className="resume-index" aria-label="Résumé sections">
+            {sections.map((section, index) => (
+              <a href={`#resume-${section.id}`} key={section.id}>
+                <span aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                {section.title}
+              </a>
+            ))}
+          </nav>
+
+          <ResumeSection index={0}>
             {roles.map((role) => (
-              <article key={`${role.title}-${role.company}`}>
-                <div className="flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between sm:gap-x-4">
-                  <h3 className="t-h3">
-                    {role.title}
-                    <span aria-hidden="true"> · </span>
-                    {role.company}
-                  </h3>
-                  <p className="t-data text-tertiary">
-                    {role.arrangement}
-                    <span aria-hidden="true"> · </span>
-                    {role.start}
-                    <span aria-hidden="true"> – </span>
-                    {role.end}
+              <article className="resume-role-record" key={role.company}>
+                <div className="resume-record-heading">
+                  <div>
+                    <h3>{role.title}</h3>
+                    <p>{role.company}</p>
+                  </div>
+                  <p className="resume-record-meta">
+                    <span>
+                      {role.start} to {role.end}
+                    </span>
+                    <span>{role.arrangement}</span>
                   </p>
                 </div>
-                <KeyValue
-                  className="mt-6"
-                  rows={role.highlights.map((h) => ({
-                    label: h.label,
-                    value: h.detail,
-                  }))}
-                />
+                <dl className="resume-highlights">
+                  {role.highlights.map((highlight) => (
+                    <div key={highlight.label}>
+                      <dt>{documentText(highlight.label)}</dt>
+                      <dd>{documentText(highlight.detail)}</dd>
+                    </div>
+                  ))}
+                </dl>
               </article>
             ))}
-          </div>
-        </Block>
+          </ResumeSection>
 
-        <Block title="Projects">
-          <ul className="flex flex-col">
-            {projects.map((project, i) => (
-              <li
-                key={project.slug}
-                className={i > 0 ? "border-border mt-10 border-t pt-10" : ""}
-              >
-                <p className="t-label text-secondary">{project.category}</p>
-                <h3 className="t-h3 mt-2">{project.name}</h3>
-                <p className="t-data text-tertiary mt-1">{project.role}</p>
-                <ul className="mt-4 flex flex-wrap gap-2">
-                  {project.stack.map((tech) => (
-                    <li key={tech}>
-                      <Chip>{tech}</Chip>
-                    </li>
+          <ResumeSection index={1}>
+            {visibleProjects.map((project) => (
+              <article className="resume-project" key={project.slug}>
+                <p className="resume-detail">{project.category}</p>
+                <div className="resume-record-heading">
+                  <h3>
+                    <Link href={`/projects/${project.slug}`}>
+                      {project.name}
+                    </Link>
+                  </h3>
+                  <p className="resume-record-meta">{project.role}</p>
+                </div>
+                <p>{documentText(project.summary)}</p>
+                <dl className="resume-highlights">
+                  {project.outcomes.map((outcome) => (
+                    <div key={outcome.label}>
+                      <dt>{documentText(outcome.label)}</dt>
+                      <dd>{documentText(outcome.detail)}</dd>
+                    </div>
                   ))}
-                </ul>
-                <p className="t-body mt-4">{project.summary}</p>
+                </dl>
+                <p className="resume-project-stack">
+                  <strong>Tools and technologies</strong>
+                  {project.stack.join(" / ")}
+                </p>
                 {project.recognition ? (
-                  <p className="t-small text-secondary mt-3">
-                    {project.recognition}
+                  <p className="resume-annotation">
+                    {documentText(project.recognition)}
                   </p>
                 ) : null}
                 {project.repo ? (
-                  <p className="mt-3">
-                    <ExternalLink
-                      href={project.repo}
-                      label={`${project.name} source repository`}
-                    >
-                      View repository
-                    </ExternalLink>
-                  </p>
+                  <a
+                    className="resume-text-link"
+                    href={project.repo}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={`${project.name} source repository, opens in a new tab`}
+                  >
+                    View source repository
+                  </a>
                 ) : null}
-              </li>
+              </article>
             ))}
-          </ul>
-        </Block>
+          </ResumeSection>
 
-        <Block title="Security research">
-          <ul className="flex flex-col">
-            {publicFindings.map((finding, i) => (
-              <li
-                key={finding.id}
-                className={`flex flex-col gap-1 py-4 sm:flex-row sm:gap-6 ${
-                  i > 0 ? "border-border border-t" : ""
-                }`}
-              >
-                <span className="t-data text-tertiary sm:w-24 sm:shrink-0">
-                  {finding.id}
-                </span>
-                <div>
-                  <p className="t-small">
-                    <span className="font-medium text-[var(--text)]">
-                      {finding.org}
-                    </span>
-                    <span aria-hidden="true"> · </span>
-                    {finding.class}
-                  </p>
-                  <p className="t-caption mt-0.5">
-                    {finding.status}
-                    {finding.bounty ? (
-                      <>
-                        <span aria-hidden="true"> · </span>
-                        {finding.bounty}
-                      </>
+          <ResumeSection index={2}>
+            <ul className="resume-findings">
+              {publicFindings.map((finding) => (
+                <li key={finding.id}>
+                  <p className="resume-finding-id">{finding.id}</p>
+                  <div>
+                    <h3>
+                      {finding.slug ? (
+                        <Link href={`/security/${finding.slug}`}>
+                          {finding.org}
+                        </Link>
+                      ) : (
+                        finding.org
+                      )}
+                    </h3>
+                    <p className="resume-finding-class">
+                      {documentText(finding.class)}
+                    </p>
+                    <p>{documentText(finding.summary)}</p>
+                    <p className="resume-finding-status">
+                      <span>Status</span>
+                      {finding.status}
+                      {finding.bounty ? (
+                        <strong>{finding.bounty}</strong>
+                      ) : null}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </ResumeSection>
+
+          <ResumeSection index={3}>
+            <ul className="resume-awards">
+              {awards.map((award) => (
+                <li key={award.event}>
+                  <p className="resume-award-placement">{award.placement}</p>
+                  <div>
+                    <h3>{award.event}</h3>
+                    <p>{documentText(award.organiser)}</p>
+                    {award.venue ? (
+                      <p className="resume-detail">{award.venue}</p>
                     ) : null}
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </ResumeSection>
+
+          <ResumeSection index={4}>
+            <div className="resume-qualifications">
+              <div className="resume-certifications">
+                <p className="resume-detail">Certifications</p>
+                {credentials.map((credential) => (
+                  <article key={credential.name}>
+                    <h3>{documentText(credential.name)}</h3>
+                    <p>{credential.issuer}</p>
+                    {credential.detail ? (
+                      <p>{documentText(credential.detail)}</p>
+                    ) : null}
+                  </article>
+                ))}
+              </div>
+              <div className="resume-education">
+                <p className="resume-detail">Education</p>
+                <article>
+                  <h3>{education.degree}</h3>
+                  <p>{education.institution}</p>
+                  <p>Specialization: {education.specialization}</p>
+                  <p className="resume-education-dates">
+                    {education.start} to {education.end}
+                    {education.expected ? " (Expected)" : ""}
                   </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </Block>
-
-        <Block title="Recognition">
-          <ul className="flex flex-col">
-            {awards.map((award, i) => (
-              <li
-                key={`${award.placement}-${award.event}`}
-                className={i > 0 ? "mt-6" : ""}
-              >
-                <p className="t-small">
-                  <span className="font-medium text-[var(--text)]">
-                    {award.placement}
-                  </span>
-                  <span aria-hidden="true"> — </span>
-                  {award.event}
-                </p>
-                <p className="t-caption mt-0.5">
-                  {award.organiser}
-                  {award.venue ? (
-                    <>
-                      <span aria-hidden="true"> · </span>
-                      {award.venue}
-                    </>
-                  ) : null}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </Block>
-
-        <Block title="Certification & education">
-          <div className="flex flex-col gap-8">
-            {credentials.map((credential) => (
-              <div key={credential.name}>
-                <h3 className="t-h3">{credential.name}</h3>
-                <p className="t-small text-secondary mt-1">
-                  {credential.issuer}
-                </p>
-                {credential.detail ? (
-                  <p className="t-small mt-1">{credential.detail}</p>
-                ) : null}
+                  <p className="resume-annotation">{education.detail}</p>
+                </article>
+                {secondaryEducation.map((record) => (
+                  <article key={record.degree}>
+                    <h3>{record.degree}</h3>
+                    <p>{record.institution}</p>
+                    <p className="resume-education-dates">{record.year}</p>
+                    <p className="resume-annotation">{record.detail}</p>
+                  </article>
+                ))}
               </div>
-            ))}
-            <div>
-              <h3 className="t-h3">{education.degree}</h3>
-              <p className="t-small text-secondary mt-1">
-                {education.institution}
-                <span aria-hidden="true"> · </span>
-                {education.start}
-                <span aria-hidden="true"> – </span>
-                {education.end}
-              </p>
-              <p className="t-small mt-1">{education.detail}</p>
             </div>
-          </div>
-        </Block>
+          </ResumeSection>
 
-        <Block title="Capabilities">
-          <div className="flex flex-col gap-8">
-            {capabilities.map((group) => (
-              <div key={group.label}>
-                <h3 className="t-label text-secondary">{group.label}</h3>
-                <ul className="mt-3 flex flex-wrap gap-2">
-                  {group.items.map((item) => (
-                    <li key={item}>
-                      <Chip>{item}</Chip>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <ResumeSection index={5}>
+            <div className="resume-capabilities">
+              {capabilities.map((group) => (
+                <section key={group.label}>
+                  <h3>{group.label}</h3>
+                  <ul>
+                    {group.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </section>
+              ))}
+            </div>
+          </ResumeSection>
+
+          <div className="resume-document-end">
+            <p>{identity.name}</p>
+            <a href={identity.resumePdf} download>
+              Download the résumé PDF
+            </a>
           </div>
-        </Block>
-      </Container>
-    </main>
+        </article>
+      </main>
+
+      <footer className="resume-footer">
+        <div className="resume-footer-name">
+          <BrandMark className="resume-footer-mark" />
+          <div>
+            <p>{identity.name}</p>
+            <span>{identity.title}</span>
+          </div>
+        </div>
+        <nav aria-label="Footer navigation">
+          <Link href="/">Home</Link>
+          <Link href="/security">Research</Link>
+          <a href={`mailto:${identity.email}`}>Contact</a>
+          <a href={identity.resumePdf} download>
+            Download PDF
+          </a>
+        </nav>
+      </footer>
+    </div>
   );
 }

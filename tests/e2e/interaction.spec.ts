@@ -1,12 +1,14 @@
 import { expect, test } from "@playwright/test";
+import { findingEvidence } from "@/content/motion-study";
+import { chapterStops } from "@/lib/case-choreography";
 
 /**
- * The interactive instruments must work from the keyboard, the rail must track
- * the station, and the hero must degrade to its server-rendered SVG.
+ * The labs and evidence sheets work from the keyboard. The case follows native
+ * scrolling, while reduced motion exposes the complete story as readable text.
  */
 
 test("cyber lab tabs are keyboard operable", async ({ page }) => {
-  await page.goto("/#cyber-lab");
+  await page.goto("/labs/#cyber-lab");
   const tabs = page.getByRole("tablist").first().getByRole("tab");
   await expect(tabs).toHaveCount(6);
   await tabs.first().focus();
@@ -21,7 +23,7 @@ test("cyber lab tabs are keyboard operable", async ({ page }) => {
 });
 
 test("ai lab scenarios swap every stage's step", async ({ page }) => {
-  await page.goto("/#ai-lab");
+  await page.goto("/labs/#ai-lab");
   const lab = page.locator("#ai-lab");
   const tabs = lab.getByRole("tab");
   await expect(tabs).toHaveCount(4);
@@ -34,36 +36,196 @@ test("ai lab scenarios swap every stage's step", async ({ page }) => {
     .toBe(true);
 });
 
-test("rail tracks the current station and the progress bar advances", async ({
+test("the rolling case follows native wheel scrolling in both directions", async ({
   page,
 }) => {
   await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
   await page.goto("/");
-  await expect(page.locator(".rail")).toBeVisible();
-  await page.locator("#research").scrollIntoViewIfNeeded();
-  await page.waitForTimeout(300);
-  const current = page.locator('.rail__tick[aria-current="true"]');
-  await expect(current).toHaveText(/0[3-5]/);
-  const progress = await page.evaluate(() =>
-    Number(
-      getComputedStyle(document.documentElement).getPropertyValue("--progress"),
-    ),
-  );
-  expect(progress).toBeGreaterThan(0.05);
+  const story = page.locator(".motion-study");
+  const stage = page.locator(".ms-stage");
+  const reels = page.locator(".ms-reel-track");
+  await expect(story).not.toHaveClass(/ms-static/);
+  await expect(stage).toHaveAttribute("style", /--progress:/);
+  await expect(reels).toHaveCount(8);
+
+  const distance = await page
+    .locator(".ms-sequence")
+    .evaluate((sequence) =>
+      Math.round(
+        ((sequence as HTMLElement).offsetHeight - window.innerHeight) * 0.08,
+      ),
+    );
+  expect(distance).toBeGreaterThan(0);
+  await page.mouse.move(720, 450);
+  await page.mouse.wheel(0, distance);
+  await expect
+    .poll(() =>
+      page.evaluate((target) => Math.abs(window.scrollY - target), distance),
+    )
+    .toBeLessThan(2);
+  await expect
+    .poll(() =>
+      reels
+        .first()
+        .evaluate(
+          (reel) => new DOMMatrixReadOnly(getComputedStyle(reel).transform).m42,
+        ),
+    )
+    .toBeLessThan(-1);
+  await expect(stage).toHaveAttribute("data-chapter", "0");
+
+  await page.mouse.wheel(0, -distance);
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBeLessThan(2);
+  await expect
+    .poll(() =>
+      reels
+        .first()
+        .evaluate((reel) =>
+          Math.abs(new DOMMatrixReadOnly(getComputedStyle(reel).transform).m42),
+        ),
+    )
+    .toBeLessThan(1);
 });
 
-test("hero paints an SVG before WebGL and never hides the labels from assistive tech", async ({
+test("Next chapter advances the journey, evidence, and systems", async ({
   page,
 }) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  const stage = page.locator(".ms-stage");
+  const navigation = page.getByRole("navigation", { name: "Story chapters" });
+  await expect(stage).toHaveAttribute("style", /--progress:/);
+
+  for (const [index, label] of [
+    "The journey",
+    "The evidence",
+    "The systems",
+  ].entries()) {
+    await page.getByRole("button", { name: "Next chapter" }).click();
+    await expect(stage).toHaveAttribute("data-chapter", String(index + 1));
+    await expect(
+      navigation.getByRole("button", { name: label, exact: true }),
+    ).toHaveAttribute("aria-current", "step");
+    const scene = page.locator(`#ms-static-${index + 1}`);
+    await expect(scene).toHaveAttribute("aria-hidden", "false");
+    await expect(scene.getByRole("heading", { level: 2 })).toBeInViewport();
+  }
+  await page.getByRole("button", { name: "Meet the person" }).click();
+  await expect(page.locator("#ms-contact-title")).toBeInViewport();
+});
+
+test("evidence sheets close to the same folder, focus, and scroll position", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.emulateMedia({ reducedMotion: "no-preference" });
+  await page.goto("/");
+  await expect(page.locator(".ms-stage")).toHaveAttribute(
+    "style",
+    /--progress:/,
+  );
+  await page
+    .getByRole("navigation", { name: "Story chapters" })
+    .getByRole("button", { name: "The evidence", exact: true })
+    .click();
+  await expect(page.locator(".ms-stage")).toHaveAttribute("data-chapter", "2");
+  const chapterTarget = await page
+    .locator(".ms-sequence")
+    .evaluate(
+      (sequence, stop) =>
+        sequence.getBoundingClientRect().top +
+        window.scrollY +
+        ((sequence as HTMLElement).offsetHeight - window.innerHeight) * stop,
+      chapterStops[2],
+    );
+  // The scene becomes active before smooth navigation reaches its final stop.
+  await expect
+    .poll(() =>
+      page.evaluate((y) => Math.abs(window.scrollY - y), chapterTarget),
+    )
+    .toBeLessThan(1);
+  const defaultFinding = findingEvidence[0]!.evidence;
+  const folder = page.getByRole("button", {
+    name: `Open evidence folder: ${defaultFinding.title}`,
+    exact: true,
+  });
+  // Hover the folder only after chapter navigation has settled.
+  await folder.hover();
+
+  for (const closeWith of ["button", "Escape"] as const) {
+    const before = await page.evaluate(() => ({
+      y: window.scrollY,
+      overflow: document.documentElement.style.overflow,
+    }));
+    await folder.click();
+    const sheet = page.getByRole("dialog", {
+      name: defaultFinding.title,
+      exact: true,
+    });
+    await expect(sheet).toBeVisible();
+    expect(
+      await page.evaluate((y) => Math.abs(window.scrollY - y), before.y),
+    ).toBeLessThan(2);
+    await expect(sheet.getByRole("heading", { level: 2 })).toHaveText(
+      defaultFinding.title,
+    );
+    await expect(
+      sheet.getByRole("link", { name: "Read the public disclosure record" }),
+    ).toHaveAttribute("href", /^\/security\/.+/);
+    const close = sheet.getByRole("button", { name: "Close", exact: true });
+    await expect(close).toBeFocused();
+
+    if (closeWith === "button") await close.click();
+    else await page.keyboard.press("Escape");
+
+    await expect(sheet).toHaveCount(0);
+    await expect(folder).toBeFocused();
+    await expect
+      .poll(() => page.evaluate((y) => Math.abs(window.scrollY - y), before.y))
+      .toBeLessThan(2);
+    expect(
+      await page.evaluate(() => document.documentElement.style.overflow),
+    ).toBe(before.overflow);
+    await expect(page.locator(".ms-stage")).toHaveAttribute(
+      "data-chapter",
+      "2",
+    );
+  }
+});
+
+test("reduced motion makes every chapter readable without the animated case", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1440, height: 900 });
   await page.emulateMedia({ reducedMotion: "reduce" });
   await page.goto("/");
-  const scene = page.locator(".system-scene").first();
-  await expect(scene).toHaveAttribute("aria-label", /User.*Result/);
-  await expect(scene.locator("svg")).toHaveCount(1);
-  // Under reduced motion WebGL is skipped, so the SVG stays and no canvas
-  // overlays it.
-  await page.waitForTimeout(800);
-  await expect(page.locator(".system-scene.is-live")).toHaveCount(0);
+  await expect(page.locator(".motion-study")).toHaveClass(/ms-static/);
+  const motion = page.getByRole("button", {
+    name: "Reduced motion",
+    exact: true,
+  });
+  await expect(motion).toHaveAttribute("aria-pressed", "true");
+  await expect(motion).toBeDisabled();
+  await expect(page.locator(".ms-case-anchor")).toBeHidden();
+  await expect(page.locator(".ms-folder-anchor")).toBeHidden();
+
+  await expect(
+    page.locator("#ms-static-0").getByRole("heading", { level: 1 }),
+  ).toBeVisible();
+  for (const index of [1, 2, 3]) {
+    const scene = page.locator(`#ms-static-${index}`);
+    await expect(scene).toHaveAttribute("aria-hidden", "false");
+    await expect(scene).toHaveJSProperty("inert", false);
+    await expect(scene).toHaveCSS("opacity", "1");
+    await expect(scene).toHaveCSS("transform", "none");
+    await scene.scrollIntoViewIfNeeded();
+    await expect(scene.getByRole("heading", { level: 2 })).toBeInViewport();
+    await expect(scene.locator(".ms-text-action")).toBeEnabled();
+  }
+  await page.locator("#ms-contact").scrollIntoViewIfNeeded();
+  await expect(page.locator("#ms-contact-title")).toBeVisible();
 });
 
 test("every finding and project page is reachable and names its subject", async ({

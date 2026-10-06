@@ -48,7 +48,7 @@ function Fade({
   }, []);
   return (
     <span
-      className={className}
+      className={`lab-fade ${className}`}
       style={{
         opacity: shown ? 1 : 0,
         transition: "opacity var(--dur-fast) var(--ease-out)",

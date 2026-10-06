@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Menu, X } from "lucide-react";
 import { identity, nav } from "@/content/site";
 import { ThemeToggle } from "./theme-toggle";
+import { BrandMark } from "./brand-mark";
 
 /**
  * Fixed bar: transparent over the hero, glass after 40px. The mobile sheet is
@@ -54,7 +55,7 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className="fixed top-0 right-0 left-[var(--rail)] z-50">
+    <header className="site-header fixed top-0 right-0 left-[var(--rail)] z-50">
       <div className={`header-bar ${scrolled || open ? "is-scrolled" : ""}`}>
         <nav
           aria-label="Primary"
@@ -63,10 +64,11 @@ export function SiteHeader() {
         >
           <Link
             href="/"
-            className="nameplate"
+            className="nameplate portfolio-brand"
             aria-label={`${identity.name}, home`}
           >
-            JKS
+            <BrandMark className="portfolio-brand-mark" />
+            <span>{identity.shortName}</span>
           </Link>
 
           <ul className="hidden items-center gap-7 lg:flex">

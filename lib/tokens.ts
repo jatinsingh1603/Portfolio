@@ -1,59 +1,95 @@
 /**
- * Mirrors the colour tokens declared in app/globals.css. Kept in TS so the
- * contrast test and the styleguide can read them; the test asserts this file
- * and the stylesheet have not drifted apart.
- *
- * Dark is the canonical theme. Light is a real theme, not an inversion: every
- * pair below is audited in both.
+ * Source of truth for the red/black palette in app/globals.css. Both retained
+ * theme keys intentionally match, including previously saved light choices.
+ * The styleguide and contrast tests share these values with every page.
  */
+const caseNotesPalette = {
+  "film-ink": "#11110f",
+  "film-paper": "#efebe2",
+  "film-red": "#ed3826",
+  "film-muted": "#b4afa5",
+  "film-card-surface": "#34211e",
+  "film-card-secondary": "#beafa8",
+  "film-status": "#f58e7f",
+  "film-chapter-status": "#f49183",
+  "film-accent": "#ff8b7b",
+  "film-stamp-surface": "#b92e20",
+  "film-stamp-text": "#fff0e9",
+  bg: "#11110f",
+  "bg-subtle": "#171414",
+  surface: "#1a1919",
+  "surface-raised": "#242222",
+  text: "#f3efeb",
+  "text-secondary": "#c1b9b5",
+  "text-tertiary": "#b4aaa5",
+  accent: "#ff7766",
+  "accent-hover": "#ffa99d",
+  "accent-on": "#11110f",
+  "accent-2": "#ff7766",
+  focus: "#ff7766",
+  "sev-critical": "#ff7766",
+  "sev-high": "#ff9d8e",
+  "sev-medium": "#d8b9b3",
+  "sev-low": "#c8c0bb",
+  "sev-info": "#b4aaa5",
+} as const;
+
 export const palette = {
-  light: {
-    bg: "#f5f7f9",
-    "bg-subtle": "#edf0f3",
-    surface: "#ffffff",
-    "surface-raised": "#fbfcfd",
-    text: "#0e141a",
-    "text-secondary": "#41505c",
-    "text-tertiary": "#5c6b77",
-    accent: "#0a7263",
-    "accent-hover": "#085a4e",
-    "accent-on": "#ffffff",
-    "accent-2": "#9a5b00",
-    focus: "#0a7263",
-    "sev-critical": "#c0392b",
-    "sev-high": "#9c5000",
-    "sev-medium": "#8a6d00",
-    "sev-low": "#1e7a54",
-    "sev-info": "#2a5da8",
-  },
-  dark: {
-    bg: "#0a0e13",
-    "bg-subtle": "#10151b",
-    surface: "#141a21",
-    "surface-raised": "#1b222b",
-    text: "#e6ebf0",
-    "text-secondary": "#a2aeb9",
-    "text-tertiary": "#78838e",
-    accent: "#38d9c0",
-    "accent-hover": "#5fe3ce",
-    "accent-on": "#04120f",
-    "accent-2": "#f2b441",
-    focus: "#7fe9da",
-    "sev-critical": "#ff6b6b",
-    "sev-high": "#ff9f5a",
-    "sev-medium": "#f2c94c",
-    "sev-low": "#56cc9d",
-    "sev-info": "#7fa8e0",
-  },
+  light: caseNotesPalette,
+  dark: caseNotesPalette,
 } as const;
 
 export type Theme = keyof typeof palette;
 export type TokenName = keyof (typeof palette)["light"];
 
+/** Scoped lab colours, checked against .film-labs in app/cinematic.css. */
+export const filmLabPalette = {
+  ...caseNotesPalette,
+  surface: "#1b1818",
+  "surface-raised": "#27201f",
+  "text-secondary": "#c7bdb7",
+  "text-tertiary": "#bbaeaa",
+  accent: "#ff8b7b",
+  "accent-hover": "#ffc3b8",
+  "accent-2": "#ff8b7b",
+  focus: "#ff8b7b",
+} as const;
+
+/** Literal cinematic declarations that need an audited foreground/background. */
+export const cinematicBindings = [
+  {
+    selector: ".paper-sheet",
+    property: "background",
+    token: "film-card-surface",
+  },
+  {
+    selector: ".terminal-window p > span",
+    property: "color",
+    token: "film-card-secondary",
+  },
+  {
+    selector: ".case-copy > .film-eyebrow",
+    property: "color",
+    token: "film-status",
+  },
+  { selector: ".chapter-tag", property: "color", token: "film-chapter-status" },
+  { selector: ".file-stamp", property: "color", token: "film-accent" },
+  {
+    selector: ".paper-sheet--back",
+    property: "background",
+    token: "film-stamp-surface",
+  },
+  {
+    selector: ".paper-sheet--back",
+    property: "color",
+    token: "film-stamp-text",
+  },
+] as const;
+
 /** Border alphas, which are declared as rgba() rather than hex. */
 export const borderAlpha = {
-  light: { border: 0.12, "border-strong": 0.2, over: "#000000" },
-  dark: { border: 0.1, "border-strong": 0.18, over: "#ffffff" },
+  light: { border: 0.15, "border-strong": 0.31, over: "#ffffff" },
+  dark: { border: 0.15, "border-strong": 0.31, over: "#ffffff" },
 } as const;
 
 /**
@@ -61,8 +97,8 @@ export const borderAlpha = {
  * test walks this list; adding a new combination to a component means adding
  * it here, which is the point — an unaudited pair should fail review.
  *
- * Deliberate omission: text-tertiary on surface-raised. It measures 4.15:1 in
- * dark and is therefore banned — captions on raised panels use text-secondary.
+ * Both stored theme preferences now use the same red/black palette. The
+ * cinematic card audit uses the lightest dark card as its conservative ground.
  */
 export const usedPairs: {
   fg: TokenName;
@@ -71,6 +107,43 @@ export const usedPairs: {
   large?: boolean;
   note: string;
 }[] = [
+  { fg: "film-ink", bg: "film-red", note: "cinematic red opening and method" },
+  { fg: "film-paper", bg: "film-ink", note: "cinematic dark text" },
+  { fg: "film-ink", bg: "film-paper", note: "cinematic paper text" },
+  { fg: "film-muted", bg: "film-ink", note: "cinematic secondary text" },
+  {
+    fg: "film-red",
+    bg: "film-ink",
+    large: true,
+    note: "cinematic large emphasis and icons",
+  },
+  { fg: "film-paper", bg: "film-card-surface", note: "dark card body copy" },
+  { fg: "film-muted", bg: "film-card-surface", note: "dark card caption" },
+  {
+    fg: "film-card-secondary",
+    bg: "film-card-surface",
+    note: "dark card secondary copy",
+  },
+  {
+    fg: "film-status",
+    bg: "film-card-surface",
+    note: "dark card status labels",
+  },
+  {
+    fg: "film-chapter-status",
+    bg: "film-card-surface",
+    note: "chapter status labels",
+  },
+  {
+    fg: "film-accent",
+    bg: "film-card-surface",
+    note: "dark card accent and links",
+  },
+  {
+    fg: "film-stamp-text",
+    bg: "film-stamp-surface",
+    note: "red evidence paper text",
+  },
   { fg: "text", bg: "bg", note: "body copy" },
   { fg: "text", bg: "bg-subtle", note: "body copy on a section wash" },
   { fg: "text", bg: "surface", note: "body copy on a panel" },
@@ -81,17 +154,22 @@ export const usedPairs: {
   {
     fg: "text-secondary",
     bg: "surface-raised",
-    note: "captions on a raised panel (tertiary is banned there)",
+    note: "captions on a raised panel",
   },
   { fg: "text-tertiary", bg: "bg", note: "captions and mono labels" },
   { fg: "text-tertiary", bg: "bg-subtle", note: "captions on a wash" },
   { fg: "text-tertiary", bg: "surface", note: "captions on a panel" },
+  {
+    fg: "text-tertiary",
+    bg: "surface-raised",
+    note: "captions on the raised ground",
+  },
   { fg: "accent", bg: "bg", note: "links and the security signal" },
   { fg: "accent", bg: "bg-subtle", note: "links on a wash" },
   { fg: "accent", bg: "surface", note: "links on a panel" },
   { fg: "accent-hover", bg: "bg", note: "link hover" },
   { fg: "accent-2", bg: "bg", note: "the machine-reasoning signal as text" },
-  { fg: "accent-2", bg: "surface", note: "amber labels on a panel" },
+  { fg: "accent-2", bg: "surface", note: "secondary accent labels on a panel" },
   { fg: "accent-on", bg: "accent", note: "text on the filled primary button" },
   {
     fg: "accent-on",

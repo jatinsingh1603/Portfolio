@@ -4,6 +4,7 @@ import { expect, test } from "@playwright/test";
 const routes = [
   "/",
   "/security",
+  "/labs",
   "/security/irctc-dom-xss",
   "/resume",
   "/contact",
@@ -39,15 +40,19 @@ for (const route of routes) {
   }
 }
 
-test("reduced motion reveals all content immediately", async ({ page }) => {
+test("reduced motion exposes every story chapter immediately", async ({
+  page,
+}) => {
   await page.goto("/");
-  const hidden = await page.evaluate(
-    () =>
-      [...document.querySelectorAll("[data-reveal]")].filter(
-        (el) => getComputedStyle(el).opacity !== "1",
-      ).length,
-  );
-  expect(hidden).toBe(0);
+  await expect(page.locator(".motion-study")).toHaveClass(/ms-static/);
+  const chapters = page.locator(".ms-intro, .ms-scene-copy");
+  await expect(chapters).toHaveCount(4);
+  for (const chapter of await chapters.all()) {
+    await expect(chapter).toBeVisible();
+    await expect(chapter).toHaveCSS("opacity", "1");
+    await expect(chapter).toHaveJSProperty("inert", false);
+    await expect(chapter.getByRole("heading")).toBeVisible();
+  }
 });
 
 test("no horizontal overflow from 320px to 2560px", async ({ page }) => {
@@ -82,7 +87,7 @@ test("skip link is the first tabbable element and reaches main", async ({
 
 test("mobile menu traps focus and returns it on Escape", async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto("/");
+  await page.goto("/security");
   const trigger = page.getByRole("button", { name: "Open menu" });
   await trigger.click();
   await expect(page.getByRole("navigation").getByRole("link")).not.toHaveCount(

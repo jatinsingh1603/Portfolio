@@ -1,120 +1,83 @@
+import Image from "next/image";
 import Link from "next/link";
-import { brand } from "@/content/brand";
+import { cinematic } from "@/content/cinematic";
 import { profiles } from "@/content/profiles";
 import { identity, nav } from "@/content/site";
-import { Container } from "./primitives";
 
-/**
- * The title block. A drawing is signed in its bottom-right corner; so is this
- * site. Every cell is a fact from /content, and the revision is the build date.
- */
-const BUILD_DATE = new Date().toISOString().slice(0, 10);
-
-const social = profiles.filter((p) =>
-  ["GitHub", "LinkedIn", "X"].includes(p.platform),
+const social = profiles.filter((profile) =>
+  ["GitHub", "LinkedIn", "X"].includes(profile.platform),
 );
 
 export function SiteFooter() {
+  const closing = cinematic.closing;
+
   return (
-    <footer className="border-t border-[var(--border)] py-16">
-      <Container width="wide">
-        <div className="panel overflow-hidden">
-          <dl className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6">
-            {[
-              { k: "Drawn by", v: identity.name },
-              { k: "Title", v: brand.tagline },
-              { k: "Location", v: identity.location },
-              { k: "Sheet", v: "01 of 01" },
-              { k: "Rev", v: BUILD_DATE },
-              {
-                k: "Contact",
-                v: (
-                  <a
-                    href={`mailto:${identity.email}`}
-                    className="break-all text-[var(--accent)] underline-offset-4 hover:underline"
-                  >
-                    {identity.email}
-                  </a>
-                ),
-              },
-            ].map((cell) => (
-              <div
-                key={cell.k}
-                className="border-r border-b border-[var(--border)] p-4 last:border-r-0 lg:border-b-0 md:[&:nth-child(3n)]:border-r-0 lg:[&:nth-child(3n)]:border-r lg:[&:nth-child(6n)]:border-r-0"
-              >
-                <dt className="t-label">{cell.k}</dt>
-                <dd className="t-data mt-2 text-[var(--text)]">{cell.v}</dd>
-              </div>
-            ))}
-          </dl>
+    <footer
+      id="contact"
+      className="film-footer"
+      data-station="9"
+      data-station-label="Contact"
+      aria-labelledby="contact-title"
+    >
+      <div className="film-footer__stage">
+        <div className="film-footer__copy">
+          <p className="film-eyebrow">{closing.eyebrow}</p>
+          <h2 id="contact-title">{closing.title}</h2>
+          <p className="film-footer__description">{closing.text}</p>
+          <a className="film-cta" href={`mailto:${identity.email}`}>
+            Start a conversation
+          </a>
+          <a className="film-footer__email" href={`mailto:${identity.email}`}>
+            {identity.email}
+          </a>
         </div>
 
-        <div className="mt-10 flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {nav.map((item) => (
-              <li key={item.href}>
-                <Link
-                  href={item.href}
-                  className="t-label text-[var(--text-secondary)] hover:text-[var(--text)]"
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-            <li>
-              <Link
-                href="/resume"
-                className="t-label text-[var(--text-secondary)] hover:text-[var(--text)]"
-              >
-                Résumé
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="/security"
-                className="t-label text-[var(--text-secondary)] hover:text-[var(--text)]"
-              >
-                Disclosure record
-              </Link>
-            </li>
-          </ul>
-          <ul className="flex flex-wrap gap-x-6 gap-y-2">
-            {social.map((p) => (
-              <li key={p.url}>
-                <a
-                  href={p.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={`${p.platform} profile (opens in a new tab)`}
-                  className="t-label text-[var(--text-secondary)] hover:text-[var(--text)]"
-                >
-                  {p.platform}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
+        <figure className="film-footer__photo">
+          <span className="film-eyebrow">The person behind the portfolio</span>
+          <div className="film-footer__photo-frame">
+            <Image
+              src={closing.image}
+              alt={closing.imageAlt}
+              width={1254}
+              height={1254}
+              sizes="(max-width: 767px) 90vw, 45vw"
+            />
+          </div>
+          <figcaption>{closing.caption}</figcaption>
+        </figure>
+      </div>
 
-        <p className="t-caption mt-10 max-w-[70ch]">
-          No third-party scripts. No trackers. No cookies.
-          Content-Security-Policy: script-src &apos;self&apos;. Vulnerability
-          reports:{" "}
-          <a
-            href="/.well-known/security.txt"
-            className="t-mono text-[var(--accent)] underline-offset-4 hover:underline"
-          >
-            /.well-known/security.txt
-          </a>
-          . Machine-readable summary:{" "}
-          <a
-            href="/llms.txt"
-            className="t-mono text-[var(--accent)] underline-offset-4 hover:underline"
-          >
-            /llms.txt
-          </a>
-          .
-        </p>
-      </Container>
+      <div className="film-footer__meta">
+        <div className="film-footer__signature">
+          <p>{identity.name}</p>
+          <span>
+            {identity.title} / {identity.location}
+          </span>
+        </div>
+        <nav aria-label="Footer navigation" className="film-footer__links">
+          {nav.map((item) => (
+            <Link key={item.href} href={item.href}>
+              {item.label}
+            </Link>
+          ))}
+          <Link href="/resume">Résumé</Link>
+          <Link href="/security">Disclosure record</Link>
+        </nav>
+        <div className="film-footer__links">
+          {social.map((profile) => (
+            <a
+              key={profile.url}
+              href={profile.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${profile.platform} profile (opens in a new tab)`}
+            >
+              {profile.platform}
+            </a>
+          ))}
+          <a href="/.well-known/security.txt">Security policy</a>
+        </div>
+      </div>
     </footer>
   );
 }

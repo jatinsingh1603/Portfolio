@@ -28,9 +28,9 @@ export const findings: Finding[] = [
     slug: "kraken-desktop-misconfiguration",
     org: "Kraken",
     summary:
-      "Security misconfiguration in Kraken’s desktop application. Bounty awarded.",
+      "Critical security misconfiguration in Kraken’s desktop application. Bounty awarded.",
     class: "Security misconfiguration",
-    severity: "high",
+    severity: "critical",
     status: "Resolved",
     bounty: "$500 awarded",
     disclosure: {
@@ -64,7 +64,7 @@ export const findings: Finding[] = [
     org: "Meta",
     summary:
       "Prompt injection in an AI assistant surface, reported through Meta’s bug bounty programme.",
-    class: "LLM prompt injection → information disclosure",
+    class: "LLM prompt injection / information disclosure",
     severity: "high",
     status: "Reported",
     disclosure: {
@@ -124,6 +124,52 @@ export const findings: Finding[] = [
       public: true,
       basis: "vendor-approved",
       note: "Tested under written authorisation from the university. The affected protocol, interface and reproduction steps are withheld.",
+    },
+  },
+  {
+    id: "JKS-08",
+    slug: "blinkit-apk-arbitrary-file-read",
+    org: "Blinkit",
+    summary:
+      "Arbitrary file read in Blinkit’s Android application, recognised with a $1,500 bounty.",
+    class: "Arbitrary file read",
+    severity: "unrated",
+    status: "Bounty awarded",
+    bounty: "$1,500 awarded",
+    disclosure: {
+      public: true,
+      basis: "owner-supplied",
+      note: "High-level résumé summary published at the portfolio owner’s request. No endpoint, payload, personal data or reproduction detail is published. A severity rating is not specified in the supplied record.",
+    },
+  },
+  {
+    id: "JKS-09",
+    slug: "google-chrome-devtools-mcp-acl-bypass",
+    org: "Google",
+    summary:
+      "Access-control and redirect-validation bypass in Chrome DevTools MCP, reported to and acknowledged by Google. A fix was submitted in a pull request at Google’s request.",
+    class: "Access control / redirect validation bypass",
+    severity: "unrated",
+    status: "Acknowledged by Google",
+    disclosure: {
+      public: true,
+      basis: "owner-supplied",
+      note: "High-level résumé summary published at the portfolio owner’s request. The fix was submitted as a pull request; merge and release status are not asserted. No endpoint, payload or reproduction detail is published. A severity rating is not specified in the supplied record.",
+    },
+  },
+  {
+    id: "JKS-10",
+    slug: "meesho-apk-arbitrary-code-injection",
+    org: "Meesho",
+    summary:
+      "Arbitrary code injection identified in Meesho’s Android application.",
+    class: "Arbitrary code injection",
+    severity: "unrated",
+    status: "Identified",
+    disclosure: {
+      public: true,
+      basis: "owner-supplied",
+      note: "High-level résumé summary published at the portfolio owner’s request. No bounty, vendor acknowledgement or severity rating is recorded. No endpoint, payload or reproduction detail is published.",
     },
   },
 ];

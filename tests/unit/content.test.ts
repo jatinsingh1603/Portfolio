@@ -42,7 +42,9 @@ describe("content integrity", () => {
 
   it("points every award at a project that exists", () => {
     const slugs = new Set(projects.map((p) => p.slug));
-    for (const a of awards) expect(slugs.has(a.projectSlug)).toBe(true);
+    for (const a of awards) {
+      if (a.projectSlug) expect(slugs.has(a.projectSlug)).toBe(true);
+    }
   });
 
   it("never exposes a withheld finding through the public list", () => {

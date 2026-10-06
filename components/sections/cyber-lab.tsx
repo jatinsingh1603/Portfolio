@@ -4,7 +4,7 @@ import { publicFindings } from "@/content/findings";
 import { CyberLabClient, type CyberStageView } from "./cyber-lab-client";
 
 /**
- * Station 05 — Cyber lab. An educational walk-through of the six-stage
+ * Station 05. Cyber lab. An educational walk-through of the six-stage
  * methodology. The server resolves every evidence reference to a real route
  * (a project sheet, a finding sheet or the résumé) and hands the client a
  * plain, serialisable array; the client renders the ARIA tablist. Nothing
@@ -31,8 +31,8 @@ export function CyberLab() {
       index={5}
       id="cyber-lab"
       eyebrow="Cyber lab"
-      title="Six stages, real tools, no live fire."
-      lede="An educational walk-through of the methodology, stage by stage. Nothing here scans, probes or exploits anything — it only describes how the work is done."
+      title="How I investigate a security gap."
+      lede="Follow six stages, from mapping the application to explaining the fix. This interactive walkthrough shows the method and the work behind it."
       zone="teal"
     >
       <CyberLabClient stages={stages} />

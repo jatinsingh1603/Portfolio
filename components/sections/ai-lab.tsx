@@ -4,8 +4,8 @@ import type { LabEvidence } from "@/content/schema";
 import { AiLabClient } from "./ai-lab-client";
 
 /**
- * Station 06. The same staged model — input, reasoning, a gated action, a
- * result — is shown running under four real automations. Data (stages,
+ * Station 06. The same staged model of input, reasoning, a gated action, and a
+ * result is shown running under four real automations. Data (stages,
  * scenarios, resolved source links) is resolved here in the server component;
  * the interactive scenario selector and the animated chain live in a small
  * client sibling that receives everything as plain props.
@@ -50,8 +50,8 @@ export function AiLab() {
       id="ai-lab"
       eyebrow="AI automation lab"
       zone="amber"
-      title="Where a prompt becomes a security action."
-      lede="One staged model — input, reasoning, a gated action, a result — runs under every automation here, so a prompt turns into something a security team can act on."
+      title="How I turn a process into a workflow."
+      lede="Choose a project to follow its steps. See how documents and questions become checks, decisions, and reports."
     >
       <AiLabClient stages={stages} scenarios={scenarios} />
     </Station>

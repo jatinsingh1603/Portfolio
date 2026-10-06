@@ -1,3 +1,5 @@
+import { education } from "./career";
+
 /**
  * The story, told from the record. Every sentence traces to content/career.ts,
  * content/findings.ts, content/projects.ts or content/site.ts — nothing here
@@ -8,12 +10,12 @@ export const about = {
     {
       id: "education",
       label: "Education",
-      text: "B.Tech in Computer Science & Engineering at The NorthCap University, Gurugram, 2023 to 2027, CGPA 8.39. The university was also a system I tested under written authorisation: cross-site scripting and a denial-of-service condition in its website and ERP portal, and an administrative interface of the biometric attendance system reachable over insecure protocols, both reported to the university.",
+      text: `B.Tech in Computer Science & Engineering at ${education.institution}, ${education.start} to ${education.end} (expected), ${education.detail}. The university was also a system I tested under written authorisation: cross-site scripting and a denial-of-service condition in its website and ERP portal, and an administrative interface of the biometric attendance system reachable over insecure protocols, both reported to the university.`,
     },
     {
       id: "security",
       label: "Security",
-      text: "Responsible disclosure followed. A DOM-based cross-site scripting flaw on IRCTC, reported through CERT-In and acknowledged by them. A session that persisted after logout in a third-party application using Google SSO, reported via Google Bug Hunters. A prompt injection in an AI assistant surface and an insecure direct object reference in Mapillary, both accepted by Meta. A misconfiguration in Kraken’s desktop application, which earned a $500 bounty. CRTP from Altered Security validated the hands-on Active Directory attack and red-team side.",
+      text: "Responsible disclosure followed. A DOM-based cross-site scripting flaw on IRCTC, reported through CERT-In and acknowledged by them. A session that persisted after logout in a third-party application using Google SSO, reported via Google Bug Hunters. A prompt injection in an AI assistant surface and an insecure direct object reference in Mapillary, both reported to Meta. An arbitrary file read in Blinkit’s Android app earned a $1,500 bounty, and a misconfiguration in Kraken’s desktop application earned $500. Google acknowledged a Chrome DevTools MCP access-control bypass and requested a fix, which I submitted in a pull request. I also identified arbitrary code injection in Meesho’s Android app. CRTP from Altered Security validated the hands-on Active Directory attack and red-team side.",
     },
     {
       id: "ai",
