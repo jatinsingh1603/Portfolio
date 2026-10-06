@@ -20,21 +20,21 @@ Components import from `content/*.ts`. Nothing about the person is hard-coded
 in JSX — not a date, not a metric, not a job title. `tests/unit/content.test.ts`
 and `tests/unit/labs.test.ts` enforce this and fail the build if it drifts.
 
-| Module                    | Holds                                                                   |
-| ------------------------- | ----------------------------------------------------------------------- |
-| `content/site.ts`         | identity, positioning, nav, recognitions, disclosure policy             |
-| `content/brand.ts`        | tagline, thesis, hero headline, the five system stations, CTAs          |
-| `content/about.ts`        | the earlier story, each chapter traceable to another module             |
-| `content/cinematic.ts`    | retained narrative copy and the closing portrait reference              |
-| `content/motion-study.ts` | homepage identity and six evidence records derived from portfolio facts |
-| `content/career.ts`       | roles, awards, capabilities, credentials, education                     |
-| `content/projects.ts`     | the three systems (category, status, stack, outcomes, recognition)      |
-| `content/diagrams.ts`     | each project's own pipeline, transcribed                                |
-| `content/findings.ts`     | the disclosure record — only `publicFindings` may render                |
-| `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts)    |
-| `content/achievements.ts` | derived cards; every metric verbatim or absent                          |
-| `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                      |
-| `content/schema.ts`       | shared Zod schemas for structured portfolio records                     |
+| Module                    | Holds                                                                      |
+| ------------------------- | -------------------------------------------------------------------------- |
+| `content/site.ts`         | identity, positioning, nav, recognitions, disclosure policy                |
+| `content/brand.ts`        | tagline, thesis, hero headline, the five system stations, CTAs             |
+| `content/about.ts`        | the earlier story, each chapter traceable to another module                |
+| `content/cinematic.ts`    | retained narrative copy and the closing portrait reference                 |
+| `content/motion-study.ts` | homepage identity and twelve evidence records derived from portfolio facts |
+| `content/career.ts`       | roles, awards, capabilities, credentials, education                        |
+| `content/projects.ts`     | the three systems (category, status, stack, outcomes, recognition)         |
+| `content/diagrams.ts`     | each project's own pipeline, transcribed                                   |
+| `content/findings.ts`     | the disclosure record — only `publicFindings` may render                   |
+| `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts)       |
+| `content/achievements.ts` | derived cards; every metric verbatim or absent                             |
+| `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                         |
+| `content/schema.ts`       | shared Zod schemas for structured portfolio records                        |
 
 ## Adding a security finding
 
@@ -88,10 +88,10 @@ The cinematic design is the homepage at `/`. `/motion-study/` renders the
 same experience as an alternate entry, not a separate preview. A red mechanical
 rolling-letter opening unlocks a black case file, followed by three chapters:
 **the journey, the findings, and the systems**. Short scene copy introduces
-education and experience, public security findings, and automation projects.
+education and experience, public security findings, and swiftPentest.
 
 The case and folders move with native scrolling through CSS 3D transforms.
-The page does not intercept the wheel or run WebGL. Six evidence records open
+The page does not intercept the wheel or run WebGL. Twelve evidence records open
 as white sheets with formal typography and red annotations: one journey
 record, ten public findings, and swiftPentest. `components/evidence-sheet.tsx`
 uses a native modal dialog with keyboard handling, opener focus restoration,
@@ -104,7 +104,7 @@ section. `components/route-chrome.tsx` suppresses the ordinary header, rail,
 and shared footer on `/` and `/motion-study/`, where the scene supplies its
 own navigation and ending. Detail pages retain their normal framing.
 
-`content/motion-study.ts` derives the six evidence records from canonical
+`content/motion-study.ts` derives the twelve evidence records from canonical
 portfolio content. `components/motion-study.tsx` composes the scenes and folder
 selection; `lib/case-choreography.ts` defines navigation stops and interpolation.
 `app/motion-study.css` and `app/evidence-sheet.css` style the experience.
@@ -142,11 +142,11 @@ checks for layout, focus, and interactive states.
 
 ## Evidence
 
-Every card in Recognition links to the public place that substantiates it:
-hackathon placements and the CRTP certification to the LinkedIn listing, the
-Google report to the Bug Hunters profile, findings to their sheets, the
-open-source work to its repository. `content/schema.ts` carries the
-`evidence` shape; `tests/unit/labs.test.ts` fails if a card ships without one.
+Achievement cards link to their source: a disclosure sheet, a repository,
+a supplied profile, or the owner's downloadable résumé. The latest résumé
+supplies the current career, education, competition and certification records.
+`content/schema.ts` carries the evidence shape; `tests/unit/labs.test.ts`
+requires an evidence link for each achievement.
 
 ## Motion, sound, and fallbacks
 
@@ -156,27 +156,47 @@ chapter copy. The scene does no continuous idle rendering. Chapter navigation
 jumps to defined stops; opening an evidence sheet preserves its scroll position.
 
 The **Pause motion / Enable motion** control switches to a reading layout while
-preserving the current chapter. Reduced-motion preferences and viewports
-480 px high or less automatically use that layout. Without JavaScript, the
+preserving the current chapter. Portrait tablets stack the scene vertically.
+Reduced-motion preferences and viewports 480 px high or less automatically use
+the reading layout; automatic layout changes preserve the chapter or closing
+section position. Without JavaScript, the
 scene presents a static reading sequence and links to the underlying detail
 pages. Interactive evidence dialogs, labs, and sound controls require JavaScript.
 
-**Sound off / Sound on** controls `components/case-soundtrack.tsx`, an original
-Web Audio score with mechanical and paper cues. Sound is **off by default**
-and starts only after an explicit click. It stops when the page becomes hidden
-or the component unmounts, and never resumes automatically. The score and cues
-use synthesized audio. Motion and sound have separate controls; there is no
-autoplay audio or video.
+`components/case-soundtrack.tsx` plays the local original soundtrack at
+`/audio/case-notes-score.mp3` through a looping HTML audio element. It attempts
+**unmuted playback on entry** unless the visitor has explicitly muted it during
+the current browser session, following the requested default-on experience.
+Browser autoplay policy may block that attempt. The control then shows
+**Play music** and retries after a trusted click, Enter, or Space. It only shows
+**Sound on** after playback succeeds; errors expose a **Retry music** action.
+
+The sound button can cancel loading or mute playback. Explicit mute persists
+in `sessionStorage` across reloads and route changes. Scrolling, ordinary
+gestures, and visibility changes do not override that choice. If storage is
+unavailable, the current mounted player still respects mute.
+
+Hiding the tab pauses playback. Returning attempts to resume automatically
+when the visitor has not muted it; browser refusal leaves the play control
+and trusted-gesture fallback available. Leaving the homepage releases the audio
+and effects. Returning creates a new player and respects the session mute choice.
+
+The original music file comes from `scripts/generate-case-score.py`, using
+procedural instruments without external recordings or samples. Regeneration
+requires Python with NumPy/SciPy and ffmpeg; playback has no Python dependency.
+Web Audio supplies optional mechanical and paper effects after interaction.
+Effects failures do not prevent the HTML audio soundtrack from playing.
+Motion and sound use separate controls. There is no autoplay video.
 
 Detail-page reveals, pointer tilt, and magnetic buttons retain their
 reduced-motion fallbacks. The labs retain ARIA tablists and keyboard controls.
 
 ## Budgets, enforced in CI
 
-Current draft checks: the build generated 24 routes, 194 unit tests passed,
-and initial homepage JavaScript measured 116.1 KB gzip against the 120 KB budget.
-Local browser QA was unavailable. Updated end-to-end tests have **not** been run;
-the accessibility and Lighthouse targets below are gates, not measured results.
+Run the gates below for each release. Local browser QA is unavailable in this
+workspace, and the updated end-to-end tests have not been run locally.
+Accessibility, visual playback, responsive layout and Lighthouse targets remain
+browser verification work; they are not claimed as measured results here.
 
 | Gate               | Command                 | Budget                                 |
 | ------------------ | ----------------------- | -------------------------------------- |
