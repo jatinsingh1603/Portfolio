@@ -20,18 +20,15 @@ function basisLabel(disclosure: Finding["disclosure"]): string {
       return "Vendor approved";
     case "publicly-acknowledged":
       return "Publicly acknowledged";
+    case "owner-supplied":
+      return "Résumé summary";
   }
 }
 
-/** A bounty value when one was awarded; otherwise an em dash read as "none". */
+/** Show only recorded awards; never infer an amount for other findings. */
 function Bounty({ bounty }: { bounty?: string }) {
   if (bounty) return <>{bounty}</>;
-  return (
-    <>
-      <span aria-hidden="true">—</span>
-      <span className="sr-only">none</span>
-    </>
-  );
+  return <span>Not listed</span>;
 }
 
 /** The reference cell links to the finding sheet when a cleared writeup exists. */
@@ -114,7 +111,7 @@ export function Research() {
                         aria-label={`${f.evidence.label} (opens in a new tab)`}
                         className="t-label whitespace-nowrap text-[var(--accent)] underline-offset-4 hover:underline"
                       >
-                        Evidence ↗
+                        Evidence
                       </a>
                     </>
                   ) : null}

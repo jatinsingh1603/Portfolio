@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { ArrowDown } from "lucide-react";
 import { SystemSvg } from "@/components/hero/system-svg";
 import { Button, Container } from "@/components/primitives";
 import { brand } from "@/content/brand";
@@ -111,9 +110,7 @@ export function Hero() {
               aria-hidden="true"
             >
               <span className="scroll-cue" />
-              <span className="t-label inline-flex items-center gap-2">
-                Scroll <ArrowDown size={12} strokeWidth={1.5} />
-              </span>
+              <span className="t-label">Scroll</span>
             </div>
           </div>
         </div>
