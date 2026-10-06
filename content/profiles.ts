@@ -10,8 +10,6 @@ export const profiles: Profile[] = [
     platform: "GitHub",
     handle: "jatinsingh1603",
     url: "https://github.com/jatinsingh1603",
-    // Verified against the public GitHub API on 2026-09-07.
-    metric: "17 public repositories",
   },
   {
     platform: "LinkedIn",
@@ -35,7 +33,6 @@ export const profiles: Profile[] = [
     platform: "LeetCode",
     handle: "jatinsingh1603",
     url: "https://leetcode.com/u/jatinsingh1603/",
-    metric: "535 problems solved",
   },
   {
     platform: "swiftPentest",

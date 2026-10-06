@@ -13,6 +13,7 @@ export const severitySchema = z.enum([
   "medium",
   "low",
   "info",
+  "unrated",
 ]);
 export type Severity = z.infer<typeof severitySchema>;
 
@@ -20,7 +21,9 @@ export type Severity = z.infer<typeof severitySchema>;
  * §4.6 governance gate. A finding is rendered only when `public` is true, and
  * a public finding must state the basis on which it may be disclosed — a
  * program’s own rules, written vendor approval, or an existing public
- * acknowledgement. Withheld findings must carry a reason so the decision is
+ * acknowledgement, or a high-level résumé summary explicitly supplied by
+ * the portfolio owner. Owner-supplied does not imply vendor disclosure approval.
+ * Withheld findings must carry a reason so the decision is
  * recorded in the repo rather than lost in a chat log.
  */
 export const disclosureSchema = z.discriminatedUnion("public", [
@@ -30,6 +33,7 @@ export const disclosureSchema = z.discriminatedUnion("public", [
       "program-permitted",
       "vendor-approved",
       "publicly-acknowledged",
+      "owner-supplied",
     ]),
     note: z.string().optional(),
   }),
@@ -83,7 +87,7 @@ export const projectSchema = z.object({
     .min(1),
   recognition: z.string().optional(),
   repo: z.string().url().optional(),
-  /** Set only when a public, working demo exists. None do today. */
+  /** Public project URL supplied by the portfolio owner. */
   demo: z.string().url().optional(),
   license: z.string().optional(),
 });
@@ -106,7 +110,7 @@ export const awardSchema = z.object({
   event: z.string().min(1),
   organiser: z.string().min(1),
   venue: z.string().optional(),
-  projectSlug: z.string().min(1),
+  projectSlug: z.string().min(1).optional(),
   evidence: evidenceSchema.optional(),
 });
 export type Award = z.infer<typeof awardSchema>;

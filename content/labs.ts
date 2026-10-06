@@ -71,7 +71,7 @@ export const cyberLab: CyberStage[] = [
     evidence: [
       {
         source: "credential",
-        ref: "CRTP — Certified Red Team Professional",
+        ref: "Certified Red Team Professional (CRTP)",
         text: "Hands-on certification in Active Directory attacks and red team operations.",
       },
       {
@@ -108,7 +108,12 @@ export const cyberLab: CyberStage[] = [
     headline: "Close the loop: remediation, detection, controls.",
     description:
       "The report names what was found, how serious it is and how to fix it. Then the gaps go into detection coverage and control mappings so the same class does not come back.",
-    tools: ["Tenable (Nessus)", "Qualys", "Azure", "Git"],
+    tools: [
+      "Tenable (Nessus)",
+      "Qualys",
+      "Azure (VMs, budget controls)",
+      "Git",
+    ],
     capabilities: ["Cloud security (Azure)", "Threat detection & log analysis"],
     evidence: [
       {
@@ -170,7 +175,7 @@ export const aiScenarios: AiScenario[] = [
       "Vendor profile, questionnaire answers and uploaded documentation",
       "AI agents collect vendor data and auto-populate the risk profile",
       "Answers are validated against the documents; claims the evidence does not support are flagged",
-      "Onboarding → criticality tiering → due diligence → reporting, as one pipeline",
+      "Onboarding, criticality tiering, due diligence and reporting in one pipeline",
       "External assessment across 20+ parameters, gathered without vendor input",
       "An evidence-backed risk position instead of a returned questionnaire",
     ],

@@ -14,34 +14,34 @@ export const roles: Role[] = [
     end: "Present",
     highlights: [
       {
-        label: "CERT-In empanelment — OFFPST, OLPST and PIS",
+        label: "CERT-In empanelment",
         detail:
-          "Cleared the OFFPST and OLPST examinations and the Personal Interaction Session conducted under CERT-In empanelment requirements, validating hands-on offensive security competency at a national level and securing CERT-In empanelment for Tinycrows.",
+          "Secured CERT-In empanelment for Tinycrows by clearing the OFFPST and OLPST examinations and the Personal Interaction Session (PIS), validating hands-on offensive security competency at a national level.",
       },
       {
         label: "Threat detection",
         detail:
-          "Analysed security logs and recreated real attack scenarios for a major UPI provider, exposing detection blind spots and strengthening their threat detection coverage.",
+          "Strengthened threat detection coverage for a major UPI provider by analysing security logs and recreating real attack scenarios that exposed detection blind spots.",
       },
       {
         label: "AI merchant risk tool",
         detail:
-          "Built an automated merchant onboarding system in n8n for an Indian fintech bank, replacing manual due diligence with automated checks and approvals, so decisions land faster with less analyst load.",
+          "Replaced manual merchant due diligence for an Indian fintech bank with an n8n-based onboarding system that automates checks and approvals, delivering faster decisions and reducing analyst workload.",
       },
       {
         label: "GRC assessments",
         detail:
-          "Reviewed company security policies and controls against CSCRF and internal compliance standards, documenting gaps and remediation guidance to confirm compliance readiness.",
+          "Confirmed compliance readiness by reviewing security policies and controls against CSCRF and internal standards, documenting gaps with remediation guidance.",
       },
       {
         label: "Web penetration testing",
         detail:
-          "Tested client web applications with Burp Suite, OWASP ZAP and Nmap, manually verifying each issue and reporting confirmed vulnerabilities with remediation steps.",
+          "Tested client web applications with Burp Suite, OWASP ZAP and Nmap, manually verifying each finding and reporting confirmed vulnerabilities with remediation steps.",
       },
       {
-        label: "Security reporting",
+        label: "Security reports",
         detail:
-          "Wrote evidence-based reports explaining what was found, how serious it is and how to fix it, so engineering and risk owners can act from a single document.",
+          "Enabled engineering and risk owners to act from a single document by writing clear, evidence-based reports covering findings, severity and fixes.",
       },
     ],
   },
@@ -51,22 +51,31 @@ export const awards: Award[] = [
   {
     placement: "Winner",
     event: "Eclipse 6.0 Hackathon",
-    organiser: "Thapar Institute of Technology",
+    organiser: "Thapar Institute of Engineering & Technology",
     projectSlug: "tprm-platform",
   },
   {
-    placement: "2nd Runner Up",
+    placement: "2nd Runner-Up",
     event: "Sprint4Good Hackathon",
-    organiser: "NASSCOM Foundation × Cisco",
+    organiser: "NASSCOM Foundation and Cisco",
     venue: "IIT Delhi",
     projectSlug: "cscrf-compliance",
   },
   {
-    placement: "2nd Place, Security",
+    placement: "2nd Place, Security Domain",
     event: "India Innovates Hackathon",
     organiser: "Delhi Government",
     venue: "Bharat Mandapam, Delhi",
     projectSlug: "tprm-platform",
+  },
+  {
+    placement: "7th Place",
+    event: "GenCyS 2.0 CTF",
+    organiser: "UST",
+    evidence: {
+      label: "Owner-supplied résumé",
+      href: "/resume/Jatin-Kumar-Singh-Resume.pdf",
+    },
   },
 ];
 
@@ -81,6 +90,8 @@ export const capabilities: CapabilityGroup[] = [
       "Payment & PoS security",
       "Attack surface management",
       "Threat detection & log analysis",
+      "Red teaming",
+      "Active Directory exploitation",
       "Responsible disclosure",
       "Bug bounty hunting",
       "Cloud security (Azure)",
@@ -91,6 +102,7 @@ export const capabilities: CapabilityGroup[] = [
     items: [
       "n8n workflow automation",
       "AI agent design",
+      "Agentic workflows",
       "LLM integration",
       "GRC automation",
       "Compliance scoring pipelines",
@@ -114,7 +126,7 @@ export const capabilities: CapabilityGroup[] = [
       "Postman",
       "Amass",
       "Nikto",
-      "Azure",
+      "Azure (VMs, budget controls)",
       "Git",
     ],
   },
@@ -130,23 +142,57 @@ export const capabilities: CapabilityGroup[] = [
   },
 ];
 
+/** Credentials transcribed from the owner-supplied October 2026 résumé. */
 export const credentials: Credential[] = [
   {
-    name: "CRTP — Certified Red Team Professional",
+    name: "Certified Red Team Professional (CRTP)",
     issuer: "Altered Security",
     detail:
       "Hands-on certification in Active Directory attacks and red team operations.",
-    // verifyUrl intentionally absent — no badge is shown without a real
-    // credential URL to link it to. The LinkedIn listing is the public record;
-    // content/achievements.ts attaches it, so this module stays loadable by
-    // plain Node in scripts/generate-static-files.mjs.
+  },
+  {
+    name: "Jr. Penetration Tester",
+    issuer: "TryHackMe",
+  },
+  {
+    name: "CompTIA PenTest+ Learning Path",
+    issuer: "TryHackMe",
+  },
+  {
+    name: "E-Business",
+    issuer: "NPTEL",
+  },
+  {
+    name: "Information Security - Secure System Engineering",
+    issuer: "NPTEL",
+  },
+  {
+    name: "DSA with C",
+    issuer: "Ducat India",
   },
 ];
 
 export const education = {
-  degree: "B.Tech, Computer Science & Engineering",
-  institution: "The NorthCap University, Gurugram",
+  degree: "Bachelor of Technology (B.Tech), Computer Science and Engineering",
+  institution: "The NorthCap University, Gurugram, India",
+  specialization: "Cyber Security",
   start: "2023",
   end: "2027",
-  detail: "CGPA 8.39",
+  expected: true,
+  detail: "CGPA 8.31",
 } as const;
+
+export const secondaryEducation = [
+  {
+    degree: "Senior Secondary (Class XII), CBSE",
+    institution: "Mata Bhatee Devi Public School",
+    year: "2023",
+    detail: "87%",
+  },
+  {
+    degree: "Secondary (Class X), CBSE",
+    institution: "Modern International School",
+    year: "2021",
+    detail: "78%",
+  },
+] as const;

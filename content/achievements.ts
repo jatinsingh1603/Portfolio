@@ -3,58 +3,63 @@ import { publicFindings } from "./findings";
 import { profiles } from "./profiles";
 import { projects } from "./projects";
 import type { Achievement } from "./schema";
-import { recognitions } from "./site";
+import { googleMcpContribution, identity, recognitions } from "./site";
 
 /**
  * Achievement cards are derived from the other content modules wherever a
  * figure can be computed, so a count here can never disagree with the list
  * it summarises. `metric` is verbatim or absent. Every card carries the
- * public place that substantiates it.
+ * source that substantiates it, including the owner-supplied résumé.
  */
 const profile = (platform: string) =>
   profiles.find((p) => p.platform === platform);
 
-const bountied = publicFindings.filter((f) => f.bounty);
+const bountied = publicFindings.filter((f) => f.bounty && f.slug);
 const tryHackMe = profile("TryHackMe");
 const leetCode = profile("LeetCode");
-const bugHunters = profile("Google Bug Hunters");
 const linkedIn = profile("LinkedIn");
 /** Hackathon placements and the certification are listed publicly on LinkedIn. */
 const onLinkedIn = linkedIn
   ? { label: "Listed on LinkedIn", href: linkedIn.url }
   : undefined;
 const swift = projects.find((p) => p.slug === "swiftpentest");
+const resumeEvidence = {
+  label: "Owner-supplied résumé",
+  href: identity.resumePdf,
+};
 const cert = credentials[0];
 const irctc = publicFindings.find((f) => f.org === "IRCTC");
 
 export const achievements: Achievement[] = [
   {
     id: "disclosure",
-    kind: "bounty",
-    title: "Reports accepted by four organisations",
+    kind: "research",
+    title: "Responsible disclosure record",
     detail: recognitions.map((r) => r.org).join(", "),
     metric: `${recognitions.length} organisations`,
     href: "/security",
-    evidence: bugHunters
-      ? { label: "Google Bug Hunters profile", href: bugHunters.url }
-      : undefined,
+    evidence: resumeEvidence,
   },
-  ...(bountied[0]
-    ? [
-        {
-          id: "kraken-bounty",
-          kind: "bounty" as const,
-          title: `${bountied[0].org} bounty`,
-          detail: bountied[0].summary,
-          metric: bountied[0].bounty,
-          href: `/security/${bountied[0].slug}`,
-          evidence: {
-            label: "Finding sheet",
-            href: `/security/${bountied[0].slug}`,
-          },
-        },
-      ]
-    : []),
+  ...bountied.map((finding) => ({
+    id: `${finding.id.toLowerCase()}-bounty`,
+    kind: "bounty" as const,
+    title: `${finding.org} bounty`,
+    detail: finding.summary,
+    metric: finding.bounty,
+    href: `/security/${finding.slug}`,
+    evidence: finding.evidence ?? {
+      label: "Finding sheet",
+      href: `/security/${finding.slug}`,
+    },
+  })),
+  {
+    id: "google-mcp-contribution",
+    kind: "open-source",
+    title: `${googleMcpContribution.title} contribution`,
+    detail: googleMcpContribution.summary,
+    href: "/resume#resume-recognition",
+    evidence: googleMcpContribution.evidence,
+  },
   ...(irctc
     ? [
         {
@@ -96,11 +101,13 @@ export const achievements: Achievement[] = [
     : []),
   ...awards.map((a) => ({
     id: `award-${a.event.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
-    kind: "hackathon" as const,
+    kind: (a.projectSlug ? "hackathon" : "practice") as Achievement["kind"],
     title: `${a.placement} — ${a.event}`,
     detail: `${a.organiser}${a.venue ? `, ${a.venue}` : ""}`,
-    href: `/projects/${a.projectSlug}`,
-    evidence: a.evidence ?? onLinkedIn,
+    href: a.projectSlug
+      ? `/projects/${a.projectSlug}`
+      : "/resume#resume-recognition",
+    evidence: a.evidence ?? (a.projectSlug ? onLinkedIn : resumeEvidence),
   })),
   {
     id: "research",

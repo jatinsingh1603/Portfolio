@@ -6,11 +6,13 @@ export const projects: Project[] = [
     name: "AI-Powered Third-Party Risk Management Platform",
     category: "AI × Vendor risk automation",
     role: "Built and demonstrated",
-    status: "Built and demonstrated",
+    status: "Built · January–July 2026",
     featured: true,
     stack: [
       "n8n",
+      "JavaScript",
       "AI agents",
+      "Agentic workflows",
       "Automated reconnaissance",
       "Vendor due diligence",
     ],
@@ -18,9 +20,14 @@ export const projects: Project[] = [
       "An end-to-end vendor risk platform that replaces manual TPRM workflows. Onboarding, criticality tiering, technical due diligence and reporting run as a single automated pipeline, so a vendor assessment produces evidence rather than a returned questionnaire.",
     outcomes: [
       {
-        label: "Vendor onboarding and criticality engine",
+        label: "Vendor onboarding",
         detail:
           "AI agents collect vendor data and auto-populate risk profiles, removing the manual data entry that gates every assessment.",
+      },
+      {
+        label: "Criticality engine",
+        detail:
+          "Tiers vendors by business impact, data access and regulatory exposure, focusing assessment effort on the highest-exposure vendors.",
       },
       {
         label: "Cyber due diligence scanner",
@@ -32,9 +39,14 @@ export const projects: Project[] = [
         detail:
           "Automated security questionnaires with AI validation of vendor responses against uploaded documentation, flagging claims the evidence does not support.",
       },
+      {
+        label: "Reporting",
+        detail:
+          "Generates per-vendor risk scorecards with prioritised remediation and audit trails.",
+      },
     ],
     recognition:
-      "Winner, Eclipse 6.0 Hackathon (Thapar Institute of Technology). 2nd place, Security domain, India Innovates Hackathon (Bharat Mandapam, Delhi Government).",
+      "Winner, Eclipse 6.0 Hackathon (Thapar Institute of Engineering & Technology). 2nd place, Security domain, India Innovates Hackathon (Bharat Mandapam, Delhi Government).",
   },
   {
     slug: "cscrf-compliance",
@@ -73,41 +85,36 @@ export const projects: Project[] = [
   {
     slug: "swiftpentest",
     name: "swiftPentest",
-    category: "Autonomous security testing",
+    category: "Agentic penetration testing",
     role: "Contributor",
-    status: "Active · open source",
-    stack: [
-      "Python 3",
-      "Multi-agent systems",
-      "Claude Code",
-      "Docker",
-      "SARIF",
-    ],
+    status: "Active · August 2026 to present",
+    stack: ["Python", "Shell", "Dockerfile"],
     summary:
-      "An open-source multi-agent system for web application security testing: a team of AI agents that finds real web vulnerabilities and proves them with control-contrast before it reports. Its safety model is structural rather than prompt-based, which is the part worth studying.",
+      "An AI-driven web application penetration testing platform with 12+ specialised agents. It automates reconnaissance, vulnerability hypothesis generation, validation and reporting, with authorisation controls and reproducible evidence.",
     outcomes: [
       {
-        label: "Safety enforced by structure, not by prompting",
+        label: "Validation engine",
         detail:
-          "A scope.yaml with authorised: false by default gates every packet-sending stage. Detection-only by design: it confirms weaknesses and refuses exploitation. A hash-chained append-only audit log with secret redaction, five enforcement hooks, scope enforcement and target-output isolation.",
+          "Compares control and test results and requires a minimum 3/5 reproduction gate, preventing unverified AI-generated findings from reaching final reports.",
       },
       {
-        label: "Planning instead of enumeration",
+        label: "99 integrated tools",
         detail:
-          "Expected-value ranking of hypotheses over a technique knowledge graph, rather than running every check in a catalogue.",
+          "Integrates 99 security and reconnaissance tools into a reproducible Docker-based environment, reducing manual setup and keeping assessments consistent.",
       },
       {
-        label: "Validation instead of assertion",
+        label: "Attack prioritisation",
         detail:
-          "Control-contrast plus N-of-M reproduction behind a ≥3/5 gate, so a finding is evidence rather than a model’s claim.",
+          "Ranks vulnerability hypotheses by probability, impact, exploit-chain potential and testing cost to focus effort on higher-value attack surfaces.",
       },
       {
-        label: "Termination instead of completion",
+        label: "Coverage and audit controls",
         detail:
-          "A coverage ledger over resolved hypotheses decides when testing is done. Eleven stages run as a DAG with convergence-bounded discovery loops, and the zero-packet passive phases run before any authorisation gate.",
+          "Tracks coverage and maintains audit logs, SARIF reports and authorisation controls so automated security testing remains transparent and auditable.",
       },
     ],
     repo: "https://github.com/swiftsaneai/swiftPentest",
+    demo: "https://swiftpentest.swiftsane.com",
     license: "MIT",
   },
 ];
