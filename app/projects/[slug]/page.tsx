@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { PipelineDiagram } from "@/components/pipeline-diagram";
 import {
   Chip,
@@ -67,9 +66,8 @@ export default async function ProjectPage({
         <Reveal>
           <Link
             href="/#work"
-            className="t-label inline-flex min-h-[44px] items-center gap-2 text-[var(--text-secondary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
+            className="t-label inline-flex min-h-[44px] items-center text-[var(--text-secondary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
           >
-            <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
             Work
           </Link>
 
