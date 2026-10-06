@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { STATION_COUNT } from "@/lib/stations";
 
 /**
@@ -12,6 +13,7 @@ import { STATION_COUNT } from "@/lib/stations";
  * Purely presentational: aria-hidden, one passive scroll listener, one rAF.
  */
 export function Rail() {
+  const pathname = usePathname();
   const [current, setCurrent] = useState<{ index: number; label: string }>({
     index: 1,
     label: "",
@@ -19,23 +21,23 @@ export function Rail() {
 
   useEffect(() => {
     const root = document.documentElement;
-    const stations = () =>
-      [...document.querySelectorAll<HTMLElement>("[data-station]")].sort(
-        (a, b) => Number(a.dataset.station) - Number(b.dataset.station),
-      );
+    const stationElements = [
+      ...document.querySelectorAll<HTMLElement>("[data-station]"),
+    ];
+    let stations: { element: HTMLElement; top: number }[] = [];
+    let max = 1;
     let frame = 0;
     let lastIndex = 0;
 
     const measure = () => {
       frame = 0;
-      const max = root.scrollHeight - window.innerHeight;
       const progress = max > 0 ? Math.min(1, window.scrollY / max) : 0;
       root.style.setProperty("--progress", progress.toFixed(4));
 
-      const line = window.innerHeight * 0.42;
+      const line = window.scrollY + window.innerHeight * 0.42;
       let active: HTMLElement | null = null;
-      for (const s of stations()) {
-        if (s.getBoundingClientRect().top <= line) active = s;
+      for (const station of stations) {
+        if (station.top <= line) active = station.element;
       }
       const index = active ? Number(active.dataset.station) : 1;
       if (index !== lastIndex) {
@@ -52,15 +54,28 @@ export function Rail() {
     const onScroll = () => {
       if (!frame) frame = requestAnimationFrame(measure);
     };
-    measure();
+    const onResize = () => {
+      max = root.scrollHeight - window.innerHeight;
+      stations = stationElements
+        .map((element) => ({
+          element,
+          top: element.getBoundingClientRect().top + window.scrollY,
+        }))
+        .sort((a, b) => a.top - b.top);
+      onScroll();
+    };
+    const resizeObserver = new ResizeObserver(onResize);
+    resizeObserver.observe(document.body);
+    onResize();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
+    window.addEventListener("resize", onResize);
     return () => {
       cancelAnimationFrame(frame);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("resize", onResize);
+      resizeObserver.disconnect();
     };
-  }, []);
+  }, [pathname]);
 
   const ticks = Array.from({ length: STATION_COUNT }, (_, i) => i + 1);
 
@@ -83,7 +98,7 @@ export function Rail() {
         </div>
       </aside>
       <div
-        className="t-label pointer-events-none fixed top-[64px] right-[var(--gutter)] z-30 hidden [@media(max-width:1023px)]:block"
+        className="rail-mobile-readout t-label pointer-events-none fixed top-[64px] right-[var(--gutter)] z-30 hidden [@media(max-width:1023px)]:block"
         aria-hidden="true"
       >
         {String(current.index).padStart(2, "0")} / {STATION_COUNT}

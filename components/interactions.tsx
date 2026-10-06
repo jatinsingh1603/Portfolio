@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 
 /**
  * One client component for every ambient interaction on the page:
@@ -16,6 +17,7 @@ import { useEffect } from "react";
  * devices.
  */
 export function Interactions() {
+  const pathname = usePathname();
   useEffect(() => {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
@@ -44,7 +46,8 @@ export function Interactions() {
     const fine = window.matchMedia(
       "(hover: hover) and (pointer: fine)",
     ).matches;
-    if (!fine) return () => observer.disconnect();
+    if (!fine || document.querySelector(".cinematic"))
+      return () => observer.disconnect();
 
     let plane: HTMLElement | null = null;
     let magnet: HTMLElement | null = null;
@@ -113,7 +116,7 @@ export function Interactions() {
       document.removeEventListener("pointermove", onMove);
       document.removeEventListener("pointerleave", onLeave);
     };
-  }, []);
+  }, [pathname]);
 
   return null;
 }
