@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ArrowUpRight } from "lucide-react";
 import { Button, Container, Reveal } from "@/components/primitives";
 import { profiles } from "@/content/profiles";
 import { identity } from "@/content/site";
@@ -84,19 +83,11 @@ export default function ContactPage() {
                         {profile.handle}
                       </span>
                     </span>
-                    <span className="flex shrink-0 items-center gap-3">
-                      {profile.metric ? (
-                        <span className="t-data text-[var(--text-secondary)]">
-                          {profile.metric}
-                        </span>
-                      ) : null}
-                      <ArrowUpRight
-                        size={16}
-                        strokeWidth={1.5}
-                        aria-hidden="true"
-                        className="text-[var(--text-tertiary)]"
-                      />
-                    </span>
+                    {profile.metric ? (
+                      <span className="t-data shrink-0 text-[var(--text-secondary)]">
+                        {profile.metric}
+                      </span>
+                    ) : null}
                   </a>
                 </li>
               ))}
