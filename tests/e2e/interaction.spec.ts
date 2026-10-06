@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { findingEvidence } from "@/content/motion-study";
 
 /**
  * The labs and evidence sheets work from the keyboard. The case follows native
@@ -129,8 +130,10 @@ test("evidence sheets close to the same folder, focus, and scroll position", asy
     .getByRole("button", { name: "The evidence", exact: true })
     .click();
   await expect(page.locator(".ms-stage")).toHaveAttribute("data-chapter", "2");
+  const defaultFinding = findingEvidence[0]!.evidence;
   const folder = page.getByRole("button", {
-    name: /Open evidence folder: Kraken desktop application/,
+    name: `Open evidence folder: ${defaultFinding.title}`,
+    exact: true,
   });
   // Hover's actionability checks wait for the native chapter scroll to settle.
   await folder.hover();
@@ -142,11 +145,12 @@ test("evidence sheets close to the same folder, focus, and scroll position", asy
     }));
     await folder.click();
     const sheet = page.getByRole("dialog", {
-      name: "Kraken desktop application",
+      name: defaultFinding.title,
+      exact: true,
     });
     await expect(sheet).toBeVisible();
     await expect(sheet.getByRole("heading", { level: 2 })).toHaveText(
-      "Kraken desktop application",
+      defaultFinding.title,
     );
     await expect(
       sheet.getByRole("link", { name: "Read the public disclosure record" }),
