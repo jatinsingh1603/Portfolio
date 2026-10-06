@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { findingEvidence } from "@/content/motion-study";
+import { chapterStops } from "@/lib/case-choreography";
 
 /**
  * The labs and evidence sheets work from the keyboard. The case follows native
@@ -130,12 +131,27 @@ test("evidence sheets close to the same folder, focus, and scroll position", asy
     .getByRole("button", { name: "The evidence", exact: true })
     .click();
   await expect(page.locator(".ms-stage")).toHaveAttribute("data-chapter", "2");
+  const chapterTarget = await page
+    .locator(".ms-sequence")
+    .evaluate(
+      (sequence, stop) =>
+        sequence.getBoundingClientRect().top +
+        window.scrollY +
+        ((sequence as HTMLElement).offsetHeight - window.innerHeight) * stop,
+      chapterStops[2],
+    );
+  // The scene becomes active before smooth navigation reaches its final stop.
+  await expect
+    .poll(() =>
+      page.evaluate((y) => Math.abs(window.scrollY - y), chapterTarget),
+    )
+    .toBeLessThan(1);
   const defaultFinding = findingEvidence[0]!.evidence;
   const folder = page.getByRole("button", {
     name: `Open evidence folder: ${defaultFinding.title}`,
     exact: true,
   });
-  // Hover's actionability checks wait for the native chapter scroll to settle.
+  // Hover the folder only after chapter navigation has settled.
   await folder.hover();
 
   for (const closeWith of ["button", "Escape"] as const) {
@@ -149,6 +165,9 @@ test("evidence sheets close to the same folder, focus, and scroll position", asy
       exact: true,
     });
     await expect(sheet).toBeVisible();
+    expect(
+      await page.evaluate((y) => Math.abs(window.scrollY - y), before.y),
+    ).toBeLessThan(2);
     await expect(sheet.getByRole("heading", { level: 2 })).toHaveText(
       defaultFinding.title,
     );
