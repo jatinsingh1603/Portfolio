@@ -14,7 +14,7 @@ import { disclosurePolicy, identity } from "@/content/site";
 export const metadata: Metadata = {
   title: "Security research",
   description:
-    "The disclosure record: every finding reported through a vendor channel or a national CERT, with the basis on which it is published and the detail that is withheld.",
+    "Public security findings, recorded bounty awards and responsible disclosure outcomes from Jatin’s portfolio and latest résumé.",
   alternates: { canonical: "/security" },
 };
 
@@ -28,18 +28,15 @@ function basisLabel(disclosure: Finding["disclosure"]): string {
       return "Vendor approved";
     case "publicly-acknowledged":
       return "Publicly acknowledged";
+    case "owner-supplied":
+      return "Résumé summary";
   }
 }
 
-/** A bounty value when one was awarded; otherwise an em dash read as "none". */
+/** Show only recorded awards; never infer an amount for other findings. */
 function Bounty({ bounty }: { bounty?: string }) {
   if (bounty) return <>{bounty}</>;
-  return (
-    <>
-      <span aria-hidden="true">—</span>
-      <span className="sr-only">none</span>
-    </>
-  );
+  return <span>Not listed</span>;
 }
 
 /** The reference cell links to the finding sheet when a cleared writeup exists. */
