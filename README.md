@@ -20,19 +20,21 @@ Components import from `content/*.ts`. Nothing about the person is hard-coded
 in JSX — not a date, not a metric, not a job title. `tests/unit/content.test.ts`
 and `tests/unit/labs.test.ts` enforce this and fail the build if it drifts.
 
-| Module                    | Holds                                                                |
-| ------------------------- | -------------------------------------------------------------------- |
-| `content/site.ts`         | identity, positioning, nav, recognitions, disclosure policy          |
-| `content/brand.ts`        | tagline, thesis, hero headline, the five system stations, CTAs       |
-| `content/about.ts`        | the story in five chapters, each traceable to another module         |
-| `content/career.ts`       | roles, awards, capabilities, credentials, education                  |
-| `content/projects.ts`     | the three systems (category, status, stack, outcomes, recognition)   |
-| `content/diagrams.ts`     | each project's own pipeline, transcribed                             |
-| `content/findings.ts`     | the disclosure record — only `publicFindings` may render             |
-| `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts) |
-| `content/achievements.ts` | derived cards; every metric verbatim or absent                       |
-| `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                   |
-| `content/schema.ts`       | zod schemas for all of the above                                     |
+| Module                    | Holds                                                                   |
+| ------------------------- | ----------------------------------------------------------------------- |
+| `content/site.ts`         | identity, positioning, nav, recognitions, disclosure policy             |
+| `content/brand.ts`        | tagline, thesis, hero headline, the five system stations, CTAs          |
+| `content/about.ts`        | the earlier story, each chapter traceable to another module             |
+| `content/cinematic.ts`    | retained narrative copy and the closing portrait reference              |
+| `content/motion-study.ts` | homepage identity and six evidence records derived from portfolio facts |
+| `content/career.ts`       | roles, awards, capabilities, credentials, education                     |
+| `content/projects.ts`     | the three systems (category, status, stack, outcomes, recognition)      |
+| `content/diagrams.ts`     | each project's own pipeline, transcribed                                |
+| `content/findings.ts`     | the disclosure record — only `publicFindings` may render                |
+| `content/labs.ts`         | Cyber Lab stages and AI Automation Lab scenarios (tools ⊆ career.ts)    |
+| `content/achievements.ts` | derived cards; every metric verbatim or absent                          |
+| `content/profiles.ts`     | external profiles; `metric` is verbatim or omitted                      |
+| `content/schema.ts`       | shared Zod schemas for structured portfolio records                     |
 
 ## Adding a security finding
 
@@ -80,54 +82,63 @@ fallback and no estimate. The GitHub repository count is the one exception:
 falls back to the verified static metric on any failure. Nothing is fetched in
 the browser — `connect-src 'self'` would block it anyway.
 
-## Design system — "Deep Field Bench"
+## Design — the cinematic case file
 
-A dark volume you fly through, operated like a precision instrument. Nine
-home sections are **stations**; a left rail (the depth gauge) counts them and
-fills as you scroll. Colour is a law: `--accent` (teal) is the security signal,
-`--accent-2` (amber) is machine reasoning. Severity hues appear only on the
-ledger, always beside a word and a shape.
+The cinematic design is the homepage at `/`. `/motion-study/` renders the
+same experience as an alternate entry, not a separate preview. A red mechanical
+rolling-letter opening unlocks a black case file, followed by three chapters:
+**the journey, the findings, and the systems**. Short scene copy introduces
+education and experience, public security findings, and automation projects.
 
-Faces: Bricolage Grotesque (display), IBM Plex Sans (reading), IBM Plex Mono
-(every register label), self-hosted through `next/font` so `font-src 'self'`
-holds. One static weight each — the variable display file sat on the LCP path.
+The case and folders move with native scrolling through CSS 3D transforms.
+The page does not intercept the wheel or run WebGL. Six evidence records open
+as white sheets with formal typography and red annotations: one journey
+record, ten public findings, and swiftPentest. `components/evidence-sheet.tsx`
+uses a native modal dialog with keyboard handling, opener focus restoration,
+and scroll restoration. Links lead to the complete résumé, disclosure records,
+and project pages.
 
-Colour, space, radius and motion tokens live in `app/globals.css` as plain
-custom properties, aliased into Tailwind's namespace by `@theme inline`. Dark is
-the canonical theme and the default; light is an explicit choice persisted in
-`localStorage` and applied pre-paint by `lib/theme-script.ts`.
+The original portrait from Jatin's GitHub profile README is stored at
+`public/images/jatin-portrait.png`. It appears once in the homepage's closing
+section. `components/route-chrome.tsx` suppresses the ordinary header, rail,
+and shared footer on `/` and `/motion-study/`, where the scene supplies its
+own navigation and ending. Detail pages retain their normal framing.
 
-`lib/tokens.ts` is the source of truth for colour. The two token blocks in
-`globals.css` are generated from it, and `tests/unit/contrast.test.ts` audits
-every rendered pair in both themes (4.5:1 body, 3:1 large text and UI) and
-asserts the files have not drifted. **Adding a colour combination to a
-component means adding it to `usedPairs`.** One rule is enforced structurally:
-`--text-tertiary` fails on `--surface-raised` in dark, so `.panel--raised`
-remaps it to secondary.
+`content/motion-study.ts` derives the six evidence records from canonical
+portfolio content. `components/motion-study.tsx` composes the scenes and folder
+selection; `lib/case-choreography.ts` defines navigation stops and interpolation.
+`app/motion-study.css` and `app/evidence-sheet.css` style the experience.
+The investigative presentation adds no claims about access or finding outcomes.
 
-`/styleguide` renders the whole system with live contrast ratios. It is
-`noindex` and absent from the sitemap.
+The interactive Cyber Lab and AI Automation Lab remain available at `/labs/`.
+The earlier cinematic components and WebGL code remain in the repository but
+do not power the current homepage. See `docs/motion-preview.md` for the design
+reference notes and implementation overview.
 
-## The world
+## Shared type and colour
 
-The whole page sits over a fixed, full-viewport WebGL scene: as the document
-scrolls, a camera flies along a path through gate rings and past the five
-solids of the system — USER → SECURITY → AI ENGINE → AUTOMATION → RESULT — an
-octahedron, a ring gate you pass through, a gyroscope around an icosahedron,
-a hexagonal lattice of lanes and a ruled sheet — inside a hyperspace field of
-light streaks that stretch with scroll velocity. Packets travel the path and
-stall at the gate. The station labels are real DOM text projected through the
-same camera.
+The homepage and detail pages share a red-and-black visual identity. The scene
+uses its own CSS palette, white reading text, and white evidence sheets.
+Existing project, research, résumé, and lab pages retain their content layouts
+and shared semantic tokens. Severity uses red and neutral tones, always beside
+a word and a shape. Previously saved light and dark preferences both resolve
+to the same shared palette.
 
-It is hand-written WebGL 1 (`lib/gl/`): a two-program glow renderer whose
-streak field lives entirely in one static buffer and is positioned in the
-vertex shader, so the CPU does almost nothing per frame. About 7 KB gzipped
-and code-split: not even its code is fetched until the visitor starts
-exploring (first scroll, pointer move, touch or key press), and then it boots
-on an idle slice. It refuses software renderers (no GPU → the page stands on
-its own) and is never mounted under reduced motion; the hero shows a
-server-rendered SVG of the same object until the world takes over. Append
-`?world=force` to see the world on a software-rendered browser.
+The homepage uses a system sans-serif face and formal evidence-sheet typography.
+Detail pages retain Bricolage Grotesque for display, IBM Plex Sans for reading,
+and IBM Plex Mono for register labels, self-hosted through `next/font`.
+
+`lib/tokens.ts` is the source of truth for shared colours in `app/globals.css`,
+with Tailwind aliases in `@theme inline`. The labs use warmer surface overrides,
+recorded in `filmLabPalette` and checked against the stylesheet.
+`tests/unit/contrast.test.ts` audits the shared text combinations, inherited
+lab colours, and retained cinematic card bindings at WCAG AA thresholds.
+**Add new shared colour combinations to `usedPairs` and keep bindings in sync.**
+The new scene and evidence-sheet styles also need browser accessibility review.
+
+`/styleguide` displays the shared tokens with live contrast ratios. It is
+`noindex` and absent from the sitemap. Token checks do not replace browser
+checks for layout, focus, and interactive states.
 
 ## Evidence
 
@@ -137,16 +148,35 @@ Google report to the Bug Hunters profile, findings to their sheets, the
 open-source work to its repository. `content/schema.ts` carries the
 `evidence` shape; `tests/unit/labs.test.ts` fails if a card ships without one.
 
-## Motion
+## Motion, sound, and fallbacks
 
-One entrance animation, in `components/reveal.tsx`: opacity with a 24px rise
-(planes also tip back from 6°), fired once by an IntersectionObserver. Planes
-tilt toward a fine pointer (`lib/hooks/use-pointer-tilt.ts`), buttons are
-magnetic (`use-magnetic.ts`), the labs are ARIA tablists. Everything animates
-only `transform` and `opacity`; no animation library. Reduced motion pins every
-`[data-reveal]` to visible, freezes the hero, and disables tilt and magnetism.
+Native scroll updates the CSS 3D scene through one requestAnimationFrame per
+scroll-event batch. Transform and opacity changes move the case, folders, and
+chapter copy. The scene does no continuous idle rendering. Chapter navigation
+jumps to defined stops; opening an evidence sheet preserves its scroll position.
+
+The **Pause motion / Enable motion** control switches to a reading layout while
+preserving the current chapter. Reduced-motion preferences and viewports
+480 px high or less automatically use that layout. Without JavaScript, the
+scene presents a static reading sequence and links to the underlying detail
+pages. Interactive evidence dialogs, labs, and sound controls require JavaScript.
+
+**Sound off / Sound on** controls `components/case-soundtrack.tsx`, an original
+Web Audio score with mechanical and paper cues. Sound is **off by default**
+and starts only after an explicit click. It stops when the page becomes hidden
+or the component unmounts, and never resumes automatically. The score and cues
+use synthesized audio. Motion and sound have separate controls; there is no
+autoplay audio or video.
+
+Detail-page reveals, pointer tilt, and magnetic buttons retain their
+reduced-motion fallbacks. The labs retain ARIA tablists and keyboard controls.
 
 ## Budgets, enforced in CI
+
+Current draft checks: the build generated 24 routes, 194 unit tests passed,
+and initial homepage JavaScript measured 116.1 KB gzip against the 120 KB budget.
+Local browser QA was unavailable. Updated end-to-end tests have **not** been run;
+the accessibility and Lighthouse targets below are gates, not measured results.
 
 | Gate               | Command                 | Budget                                 |
 | ------------------ | ----------------------- | -------------------------------------- |
@@ -160,8 +190,9 @@ only `transform` and `opacity`; no animation library. Reduced motion pins every
 
 `check-js-budget.mjs` renders the route and measures the scripts the browser
 actually fetches. Client components never import from `/content`; data reaches
-them as props from server components, which is how the home route stays around
-112 KB with a WebGL hero and two interactive labs.
+them as props from server components, keeping content modules out of the
+client bundle. Recheck the route budget after changing the cinematic
+interactions or either interactive lab.
 
 ## Security
 
@@ -181,6 +212,7 @@ surface — and the directives doing the real work are intact: `object-src
 
 ## Deploying
 
-Set `NEXT_PUBLIC_SITE_URL` in the Vercel project to the real origin. The
-fallback in `content/site.ts` is a placeholder, and canonical URLs, the sitemap,
-JSON-LD and security.txt all read from it.
+The production origin defaults to `https://jatin.swiftsane.com` in
+`content/site.ts`. Set `NEXT_PUBLIC_SITE_URL` in the hosting project only when
+overriding that origin. Canonical URLs, the sitemap, JSON-LD, and security.txt
+all read the same value.
