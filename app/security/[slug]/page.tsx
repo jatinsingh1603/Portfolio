@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import {
   Chip,
   Container,
@@ -36,6 +35,8 @@ function basisLabel(disclosure: Finding["disclosure"]): string {
       return "Vendor approved";
     case "publicly-acknowledged":
       return "Publicly acknowledged";
+    case "owner-supplied":
+      return "Résumé summary";
   }
 }
 
@@ -49,6 +50,8 @@ function basisExplanation(disclosure: Finding["disclosure"]): string {
       return "Testing was carried out under written authorisation from the owner, and the owner has confirmed the finding may be listed. No endpoint or reproduction detail is published.";
     case "publicly-acknowledged":
       return "A national CERT or the vendor has already issued a public acknowledgement of the finding, so its existence is a matter of record. Technical detail remains withheld.";
+    case "owner-supplied":
+      return "This summary follows Jatin’s latest résumé, supplied for this portfolio update. It lists the vulnerability class and stated outcome without publishing technical reproduction details.";
   }
 }
 
@@ -99,9 +102,8 @@ export default async function FindingSheetPage({
         <Reveal>
           <Link
             href="/security"
-            className="t-label inline-flex items-center gap-2 text-[var(--text-tertiary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
+            className="t-label inline-flex items-center text-[var(--text-tertiary)] transition-colors duration-[var(--dur-micro)] hover:text-[var(--text)]"
           >
-            <ArrowLeft size={16} strokeWidth={1.5} aria-hidden="true" />
             Disclosure record
           </Link>
 
