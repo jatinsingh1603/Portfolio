@@ -198,7 +198,7 @@ describe("continuous detective music", () => {
     playback = "allow";
     await mount();
     expect(players).toHaveLength(1);
-    expect(players[0]!.src).toBe("/audio/case-notes-score.mp3");
+    expect(players[0]!.src).toBe("/audio/darkest-child.mp3");
     expect(players[0]!.loop).toBe(true);
     expect(players[0]!.volume).toBeGreaterThanOrEqual(0.7);
     expect(players[0]!.play).toHaveBeenCalledOnce();
